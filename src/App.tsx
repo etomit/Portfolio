@@ -457,7 +457,7 @@ function EducationSection() {
             <div className="edu-card" key={i} style={{ animationDelay: `${i * 0.1}s` }}>
               <div className="edu-card-top">
                 <div className="edu-logo-badge">
-                  {schoolMap[item.school] ?? item.school.slice(0, 4)}
+                  {schoolMap[item.school] ?? item.school.slice(0, 5)}
                 </div>
                 <div className="edu-level-badge">{item.level}</div>
               </div>
