@@ -560,7 +560,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <span>© 2025 Timothée Maire</span>
+        <span>© 2026 Timothée Maire</span>
       </div>
     </footer>
   )
