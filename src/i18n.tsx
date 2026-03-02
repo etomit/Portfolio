@@ -9,6 +9,7 @@ const translations = {
       experience: 'Expérience',
       skills: 'Compétences',
       education: 'Éducation',
+      projects: 'Projets',
       contact: 'Contact',
     },
     hero: {
@@ -39,6 +40,20 @@ const translations = {
       contractor: 'EN ALTERNANCE',
       internship: 'STAGE',
       jobs: [
+        {
+          company: 'Daimler Buses France',
+          role: 'Développeur web',
+          period: 'Sept. 2024 — Actuel',
+          location: 'Ligny-en-Barrois',
+          type: 'current',
+          tasks: [
+            "Développement d'un intranet Symfony/React pour 1200+ employés",
+            "Module de gestion des Propositions d'Amélioration Continue (PAC) avec système de vote",
+            "Module de gestion du magasin d'outillage (interface e-commerce)",
+            "Modules d'entreposage et de gestion des déplacements de véhicules",
+          ],
+          tags: ['Symfony', 'React', 'PHP', 'TypeScript'],
+        },
         {
           company: 'Nexiom SAS',
           role: "Développeur d'applications",
@@ -130,6 +145,26 @@ const translations = {
       location: 'Localisation',
       locationValue: 'Grand Est, France',
     },
+    projects: {
+      title: 'PROJETS',
+      playNow: 'Jouer',
+      techLabel: 'Technologies',
+      game2048Title: '2048',
+      game2048Desc: 'Le classique jeu de puzzle. Combinez les tuiles pour atteindre 2048 !',
+      wordleTitle: 'Wordle',
+      wordleDesc: 'Devinez le mot en 6 essais. Les couleurs vous indiquent si vos lettres sont bien placées.',
+    },
+    games: {
+      score: 'SCORE',
+      best: 'MEILLEUR',
+      newGame: 'Nouvelle partie',
+      won: '🎉 Félicitations !',
+      lost: '😞 Perdu !',
+      retry: 'Rejouer',
+      hint2048: 'Utilisez les flèches du clavier ou swipez pour déplacer les tuiles.',
+      wordleSubFr: 'Trouvez le mot de 5 lettres en 6 essais.',
+      wordleSubEn: 'Find the 5-letter word in 6 tries.',
+    },
     lang: {
       french: 'FR',
       english: 'EN',
@@ -141,6 +176,7 @@ const translations = {
       experience: 'Experience',
       skills: 'Skills',
       education: 'Education',
+      projects: 'Projects',
       contact: 'Contact',
     },
     hero: {
@@ -171,6 +207,20 @@ const translations = {
       contractor: 'APPRENTICESHIP',
       internship: 'INTERNSHIP',
       jobs: [
+        {
+          company: 'Daimler Buses France',
+          role: 'Web Developer',
+          period: 'Sept. 2024 — Present',
+          location: 'Ligny-en-Barrois',
+          type: 'current',
+          tasks: [
+            'Development of an intranet with Symfony/React for 1200+ employees',
+            'Continuous Improvement Proposals (PAC) management module with voting system',
+            'Tool store management module (e-commerce interface)',
+            'Vehicle storage and movement management modules',
+          ],
+          tags: ['Symfony', 'React', 'PHP', 'TypeScript'],
+        },
         {
           company: 'Nexiom SAS',
           role: 'Application Developer',
@@ -261,6 +311,26 @@ const translations = {
       phone: 'Phone',
       location: 'Location',
       locationValue: 'Grand Est, France',
+    },
+    projects: {
+      title: 'PROJECTS',
+      playNow: 'Play',
+      techLabel: 'Technologies',
+      game2048Title: '2048',
+      game2048Desc: 'The classic puzzle game. Combine tiles to reach 2048!',
+      wordleTitle: 'Wordle',
+      wordleDesc: 'Guess the word in 6 tries. Colors tell you if your letters are in the right spot.',
+    },
+    games: {
+      score: 'SCORE',
+      best: 'BEST',
+      newGame: 'New Game',
+      won: '🎉 You won!',
+      lost: '😞 Game over!',
+      retry: 'Play again',
+      hint2048: 'Use arrow keys or swipe to move tiles.',
+      wordleSubFr: 'Trouvez le mot de 5 lettres en 6 essais.',
+      wordleSubEn: 'Find the 5-letter word in 6 tries.',
     },
     lang: {
       french: 'FR',
