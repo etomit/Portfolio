@@ -273,7 +273,7 @@ const translations = {
           role: 'Intern Developer',
           period: 'Jan. 2023 — Feb. 2023',
           location: 'Limas',
-          type: 'internship',
+          type: 'contractor',
           tasks: [
             'Developer portal in JavaScript/CSS with NGINX deployment',
             'Technical specifications and Front-End mockups',
@@ -298,7 +298,7 @@ const translations = {
           role: 'Web Developer',
           period: 'May 2022 — Jul. 2022',
           location: 'Nancy',
-          type: 'internship',
+          type: 'contractor',
           tasks: [
             'Development of a dynamic website with WordPress',
             'Presentation to the entire teaching staff',
