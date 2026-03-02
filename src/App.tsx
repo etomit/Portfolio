@@ -1,8 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, createContext, useContext } from 'react'
 import { I18nProvider, useI18n } from './i18n'
 import Game2048 from './Game2048'
-import WordleGame from './Wordlegame'
+import WordleGame from './WordleGame'
 import './App.css'
+
+/* ── Theme Context ── */
+type Theme = 'dark' | 'light'
+const ThemeContext = createContext<{ theme: Theme; toggleTheme: () => void }>({
+  theme: 'dark',
+  toggleTheme: () => {},
+})
+function useTheme() { return useContext(ThemeContext) }
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [theme, setTheme] = useState<Theme>('dark')
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme: () => setTheme(t => t === 'dark' ? 'light' : 'dark') }}>
+      {children}
+    </ThemeContext.Provider>
+  )
+}
 
 /* ── Skill icons via devicons CDN ── */
 const skillIcons: Record<string, string> = {
@@ -56,6 +75,7 @@ function useScrollReveal() {
 
 function Navbar() {
   const { t, lang, setLang } = useI18n()
+  const { theme, toggleTheme } = useTheme()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -91,9 +111,14 @@ function Navbar() {
             {lang.toUpperCase()}
           </button>
         </div>
-        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
-          <span /><span /><span />
-        </button>
+        <div className="navbar-right">
+          <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
+          <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+            <span /><span /><span />
+          </button>
+        </div>
         <ul className={`navbar-links ${menuOpen ? 'open' : ''}`}>
           {links.map((l) => (
             <li key={l.key}>
@@ -480,8 +505,10 @@ function Portfolio() {
 
 export default function App() {
   return (
-    <I18nProvider>
-      <Portfolio />
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <Portfolio />
+      </I18nProvider>
+    </ThemeProvider>
   )
 }

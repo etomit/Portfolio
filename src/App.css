@@ -4,9 +4,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 
 /* ─────────────────────────────────────────────
-   VARIABLES
+   DARK THEME (default)
 ───────────────────────────────────────────── */
-:root {
+:root, [data-theme="dark"] {
   --bg-deep: #050c1a;
   --bg-dark: #07112a;
   --bg-darker: #04091a;
@@ -26,6 +26,124 @@
   --radius: 14px;
   --radius-sm: 8px;
   --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --navbar-bg: rgba(5, 12, 26, 0.92);
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.35);
+  --orb1-color: rgba(79, 142, 247, 0.2);
+  --orb2-color: rgba(0, 212, 255, 0.12);
+  --grid-line: rgba(79, 142, 247, 0.04);
+  --edu-logo-bg: #fff;
+  --edu-logo-color: #162040;
+}
+
+/* ─────────────────────────────────────────────
+   LIGHT THEME
+───────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-deep: #f0f4ff;
+  --bg-dark: #e8eef8;
+  --bg-darker: #dde5f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f8ff;
+  --accent: #2563eb;
+  --accent-bright: #3b82f6;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+  --accent-2: #0ea5e9;
+  --text-primary: #0f172a;
+  --text-secondary: #334e80;
+  --text-muted: #64748b;
+  --border: rgba(37, 99, 235, 0.14);
+  --border-bright: rgba(37, 99, 235, 0.38);
+  --navbar-bg: rgba(240, 244, 255, 0.92);
+  --shadow-card: 0 4px 24px rgba(37, 99, 235, 0.1);
+  --orb1-color: rgba(37, 99, 235, 0.12);
+  --orb2-color: rgba(14, 165, 233, 0.08);
+  --grid-line: rgba(37, 99, 235, 0.05);
+  --edu-logo-bg: #1e3a8a;
+  --edu-logo-color: #fff;
+}
+
+[data-theme="light"] body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+}
+
+/* Light theme game overlay */
+[data-theme="light"] .game-modal {
+  background: #ffffff;
+  box-shadow: 0 24px 80px rgba(37,99,235,0.18), 0 0 0 1px var(--border);
+}
+[data-theme="light"] .game-modal-overlay {
+  background: rgba(15, 23, 42, 0.5);
+}
+[data-theme="light"] .g2048-grid {
+  background: rgba(37,99,235,0.06);
+}
+[data-theme="light"] .wl-cell {
+  background: #f1f5ff;
+  border-color: #c7d7f8;
+  color: var(--text-primary);
+}
+[data-theme="light"] .wl-key {
+  background: #dde8ff;
+  border-color: #c0d0f0;
+  color: var(--text-primary);
+}
+[data-theme="light"] .wl-key:hover {
+  background: rgba(37,99,235,0.15);
+  border-color: var(--accent);
+}
+[data-theme="light"] .g2048-score-box {
+  background: #e8eef8;
+}
+[data-theme="light"] .game-overlay-msg {
+  background: rgba(240,244,255,0.92);
+}
+[data-theme="light"] .game-overlay-msg p {
+  color: var(--text-primary);
+}
+[data-theme="light"] .exp-tag {
+  background: rgba(37,99,235,0.08);
+  color: var(--accent);
+  border-color: rgba(37,99,235,0.2);
+}
+[data-theme="light"] .contact-icon {
+  background: rgba(37,99,235,0.08);
+}
+[data-theme="light"] .about-card {
+  box-shadow: var(--shadow-card);
+}
+[data-theme="light"] .exp-card,
+[data-theme="light"] .edu-card,
+[data-theme="light"] .project-card {
+  box-shadow: var(--shadow-card);
+}
+[data-theme="light"] .lang-badge {
+  box-shadow: var(--shadow-card);
+}
+[data-theme="light"] .hero-orb.orb1 {
+  background: radial-gradient(circle, var(--orb1-color) 0%, transparent 70%);
+}
+[data-theme="light"] .hero-orb.orb2 {
+  background: radial-gradient(circle, var(--orb2-color) 0%, transparent 70%);
+}
+[data-theme="light"] .hero-grid {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+}
+[data-theme="light"] .skill-icon-wrap {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+[data-theme="light"] .avatar-inner {
+  background: #dde8ff;
+}
+[data-theme="light"] .about-avatar {
+  background: linear-gradient(135deg, #e8f0ff, #f5f8ff);
+}
+[data-theme="light"] .navbar--scrolled {
+  background: var(--navbar-bg);
+  box-shadow: 0 1px 0 var(--border), 0 4px 20px rgba(37,99,235,0.1);
 }
 
 /* ─────────────────────────────────────────────
@@ -41,6 +159,7 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background 0.35s ease, color 0.35s ease;
 }
 
 .app { min-height: 100vh }
@@ -115,7 +234,7 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
 }
 
 .navbar--scrolled {
-  background: rgba(5, 12, 26, 0.92);
+  background: var(--navbar-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 1px 0 var(--border), 0 8px 32px rgba(0,0,0,0.4);
@@ -185,6 +304,36 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
   background: rgba(79, 142, 247, 0.1);
 }
 
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(79, 142, 247, 0.1);
+  border: 1.5px solid var(--border-bright);
+  color: var(--accent);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: rotate(20deg) scale(1.08);
+}
+
 .hamburger {
   display: none;
   flex-direction: column;
@@ -207,7 +356,7 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
     position: absolute;
     top: 100%;
     left: 0; right: 0;
-    background: rgba(5, 12, 26, 0.97);
+    background: var(--navbar-bg);
     backdrop-filter: blur(20px);
     flex-direction: column;
     padding: 16px 24px;
@@ -422,7 +571,7 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
 /* ─────────────────────────────────────────────
    SECTIONS
 ───────────────────────────────────────────── */
-.section { padding: 100px 0 }
+.section { padding: 100px 0; transition: background 0.35s ease }
 .section--dark { background: var(--bg-dark) }
 .section--darker { background: var(--bg-darker) }
 
@@ -504,7 +653,7 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  transition: all var(--transition);
+  transition: all var(--transition), background 0.35s ease;
 }
 
 .about-card:hover {
@@ -794,16 +943,17 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
 .edu-logo {
   width: 56px; height: 56px;
   border-radius: 12px;
-  background: #fff;
+  background: var(--edu-logo-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.65rem;
   font-weight: 800;
-  color: #162040;
+  color: var(--edu-logo-color);
   flex-shrink: 0;
   letter-spacing: 0.05em;
   font-family: var(--font-mono);
+  transition: background 0.35s ease, color 0.35s ease;
 }
 
 .edu-info { flex: 1 }
