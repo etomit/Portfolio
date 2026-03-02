@@ -494,7 +494,7 @@ function ProjectsSection() {
         <h2 className="section-heading">{t.projects.title}</h2>
 
         <div className="proj-grid">
-          {projects.map((p, i) => (
+          {projects.map((p) => (
             <div className="proj-card" key={p.id} style={{ '--proj-accent': p.accent } as React.CSSProperties}>
               <div className="proj-card-inner">
                 <div className="proj-emoji">{p.emoji}</div>
