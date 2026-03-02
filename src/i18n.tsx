@@ -18,6 +18,10 @@ const translations = {
       description:
         "Développeur passionné par la création d'applications web performantes et évolutives. Du front-end intuitif au back-end robuste, je donne vie à vos idées grâce au code.",
       cta: 'Me Contacter',
+      available: 'Disponible',
+      yearsXp: "ans d'exp.",
+      missions: 'missions',
+      techs: 'technos',
     },
     about: {
       title: 'À PROPOS',
@@ -39,6 +43,7 @@ const translations = {
       current: 'POSTE ACTUEL',
       contractor: 'EN ALTERNANCE',
       internship: 'STAGE',
+      parttime: 'TEMPS PARTIEL',
       jobs: [
         {
           company: 'Daimler Buses France',
@@ -50,7 +55,7 @@ const translations = {
             "Développement d'un intranet Symfony/React pour 1200+ employés",
             "Module de gestion des Propositions d'Amélioration Continue (PAC) avec système de vote",
             "Module de gestion du magasin d'outillage (interface e-commerce)",
-            "Modules d'entreposage et de gestion des déplacements de véhicules",
+            "Module d'entreposage et de gestion des déplacements de véhicules",
           ],
           tags: ['Symfony', 'React', 'PHP', 'TypeScript'],
         },
@@ -68,7 +73,7 @@ const translations = {
         },
         {
           company: 'Kuehne + Nagel',
-          role: 'Développeur Stagiaire',
+          role: 'Développeur',
           period: 'Janv. 2023 — Févr. 2023',
           location: 'Limas',
           type: 'internship',
@@ -77,6 +82,31 @@ const translations = {
             'Cahier des charges et maquettes Front-End',
           ],
           tags: ['JavaScript', 'CSS', 'NGINX'],
+        },
+        {
+          company: 'Lidl France',
+          role: 'Opérateur logistique',
+          period: 'Août 2022 — Sept. 2025',
+          location: 'Gondreville',
+          type: 'parttime',
+          tasks: [
+            'Préparation de commandes dans les secteurs viandes, volailles, frais, masses, sec et autres',
+            'Préparation de commandes avec conservation dans des containers isothermes (rayon frais)',
+            'Transport de palettes sur des chariots élévateurs',
+          ],
+          tags: ['Logistique'],
+        },
+        {
+          company: 'Lycée Jean Prouvé',
+          role: 'Développeur web',
+          period: 'Mai 2022 — Juil. 2022',
+          location: 'Nancy',
+          type: 'internship',
+          tasks: [
+            "Développement d'un site web dynamique avec WordPress",
+            'Présentation devant tout le corps enseignant',
+          ],
+          tags: ['WordPress'],
         },
       ],
     },
@@ -93,7 +123,7 @@ const translations = {
       items: [
         {
           school: 'CESI, Nancy',
-          degree: 'Mastère Manager en Architecture & Applications SI',
+          degree: 'Master Manager en Architecture et Applications Logicielles des Systèmes d’Information (MAALSI)',
           period: '2025 — 2027',
           level: 'Bac +5',
           tasks: [
@@ -104,7 +134,7 @@ const translations = {
         },
         {
           school: 'CESI, Nancy',
-          degree: "Bachelor Concepteur Développeur d'Application",
+          degree: "Licence en Concepteur Développeur d’Applications (CDA) - Alternance",
           period: '2023 — 2025',
           level: 'Bac +3',
           tasks: [
@@ -115,7 +145,7 @@ const translations = {
         },
         {
           school: 'Lycée Frédéric Chopin, Nancy',
-          degree: 'BTS SIO SLAM',
+          degree: 'BTS Services Informatiques aux Organisations option Solutions Logicielles et Applications Métiers (SIO SLAM)',
           period: '2021 — 2023',
           level: 'Bac +2',
           tasks: [
@@ -125,7 +155,7 @@ const translations = {
         },
         {
           school: 'Lycée Jean Prouvé, Nancy',
-          degree: 'Bac Pro Systèmes Numériques RISC',
+          degree: 'Bac Pro Systèmes Numériques Option Réseaux informatiques et systèmes communicants (SN RISC)',
           period: '2018 — 2021',
           level: 'Bac',
           tasks: [
@@ -185,6 +215,10 @@ const translations = {
       description:
         'Passionate developer focused on building high-performance, scalable web applications. From intuitive front-ends to robust back-ends, I bring your ideas to life through code.',
       cta: 'Contact Me',
+      available: 'Available',
+      yearsXp: 'yrs exp.',
+      missions: 'missions',
+      techs: 'technologies',
     },
     about: {
       title: 'ABOUT',
@@ -206,6 +240,7 @@ const translations = {
       current: 'CURRENT',
       contractor: 'APPRENTICESHIP',
       internship: 'INTERNSHIP',
+      parttime: 'PART-TIME',
       jobs: [
         {
           company: 'Daimler Buses France',
@@ -244,6 +279,31 @@ const translations = {
             'Technical specifications and Front-End mockups',
           ],
           tags: ['JavaScript', 'CSS', 'NGINX'],
+        },
+        {
+          company: 'Lidl France',
+          role: 'Logistics Operator',
+          period: 'Aug. 2022 — Sept. 2025',
+          location: 'Gondreville',
+          type: 'parttime',
+          tasks: [
+            'Order preparation across meat, poultry, fresh, dry goods and other sectors',
+            'Order preparation with cold chain management in insulated containers (fresh aisle)',
+            'Pallet transport using forklift trucks',
+          ],
+          tags: ['Logistics'],
+        },
+        {
+          company: 'Lycée Jean Prouvé',
+          role: 'Web Developer',
+          period: 'May 2022 — Jul. 2022',
+          location: 'Nancy',
+          type: 'internship',
+          tasks: [
+            'Development of a dynamic website with WordPress',
+            'Presentation to the entire teaching staff',
+          ],
+          tags: ['WordPress'],
         },
       ],
     },
