@@ -981,3 +981,364 @@ button { background: none; border: none; cursor: pointer; font-family: inherit }
   background: var(--accent-bright);
   transform: translateY(-3px);
 }
+
+/* ─────────────────────────────────────────────
+   PROJECTS
+───────────────────────────────────────────── */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.project-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+}
+
+.project-card-header {
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.project-icon { font-size: 2.8rem }
+
+.project-card-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.project-card-body {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.project-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.project-tags { display: flex; gap: 8px; flex-wrap: wrap }
+
+.project-btn {
+  margin-top: auto;
+  align-self: flex-start;
+  font-size: 0.88rem;
+  padding: 10px 24px;
+}
+
+/* ─────────────────────────────────────────────
+   GAME MODAL
+───────────────────────────────────────────── */
+.game-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 5, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeUp 0.2s ease;
+}
+
+.game-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  border-radius: 20px;
+  padding: 28px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+  position: relative;
+}
+
+.game-modal--wordle { max-width: 500px }
+
+.game-header { margin-bottom: 20px }
+
+.game-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.game-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
+}
+
+.game-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.game-close:hover {
+  background: rgba(255,100,100,0.15);
+  border-color: rgba(255,100,100,0.4);
+  color: #ff6464;
+}
+
+.game-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+}
+
+.game-overlay-msg {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 12, 26, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.game-overlay-msg p {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* ─────────────────────────────────────────────
+   2048 GAME
+───────────────────────────────────────────── */
+.g2048-scores {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.g2048-score-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 70px;
+}
+
+.score-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.score-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+.g2048-new {
+  margin-left: auto;
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition);
+}
+
+.g2048-new:hover { background: var(--accent-bright) }
+
+.g2048-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 10px;
+  touch-action: none;
+  user-select: none;
+}
+
+.g2048-tile {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.g2048-tile--filled {
+  animation: tileAppear 0.1s ease;
+}
+
+@keyframes tileAppear {
+  from { transform: scale(0.7); opacity: 0.5 }
+  to   { transform: scale(1);   opacity: 1 }
+}
+
+/* ─────────────────────────────────────────────
+   WORDLE GAME
+───────────────────────────────────────────── */
+.wordle-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.wl-board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.wl-row {
+  display: flex;
+  gap: 6px;
+}
+
+.wl-cell {
+  width: 52px; height: 52px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  background: var(--bg-darker);
+  transition: border-color 0.1s ease, background 0.1s ease;
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.wl-active  { border-color: var(--accent) !important; background: rgba(79,142,247,0.08) !important }
+.wl-correct { background: #1a6b3c !important; border-color: #22a85a !important; color: white !important }
+.wl-present { background: #7a5c00 !important; border-color: #c49900 !important; color: white !important }
+.wl-absent  { background: #1e1e2e !important; border-color: #333 !important; color: #666 !important }
+
+@keyframes revealFlip {
+  0%   { transform: rotateX(0deg) }
+  50%  { transform: rotateX(-90deg) }
+  100% { transform: rotateX(0deg) }
+}
+
+.wl-reveal { animation: revealFlip 0.4s ease forwards }
+.wl-reveal--0 { animation-delay: 0ms }
+.wl-reveal--1 { animation-delay: 120ms }
+.wl-reveal--2 { animation-delay: 240ms }
+.wl-reveal--3 { animation-delay: 360ms }
+.wl-reveal--4 { animation-delay: 480ms }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0) }
+  20%, 60%  { transform: translateX(-6px) }
+  40%, 80%  { transform: translateX(6px) }
+}
+.wl-shake { animation: shake 0.4s ease }
+
+.wl-keyboard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+.wl-kb-row {
+  display: flex;
+  gap: 5px;
+}
+
+.wl-key {
+  height: 44px;
+  min-width: 32px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-transform: uppercase;
+}
+
+.wl-key--wide {
+  min-width: 52px;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+}
+
+.wl-key:hover { background: rgba(79,142,247,0.15); border-color: var(--accent) }
+
+.wl-key-correct { background: #1a6b3c !important; border-color: #22a85a !important; color: white !important }
+.wl-key-present { background: #7a5c00 !important; border-color: #c49900 !important; color: white !important }
+.wl-key-absent  { background: #111 !important; border-color: #222 !important; color: #444 !important }
+
+@media (max-width: 480px) {
+  .wl-cell { width: 44px; height: 44px; font-size: 1.1rem }
+  .wl-key  { height: 38px; min-width: 26px; font-size: 0.7rem }
+  .wl-key--wide { min-width: 44px }
+  .g2048-grid { gap: 6px; padding: 8px }
+}

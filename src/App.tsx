@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { I18nProvider, useI18n } from './i18n'
+import Game2048 from './Game2048'
+import WordleGame from './WordleGame'
 import './App.css'
 
 /* ── Skill icons via devicons CDN ── */
@@ -68,6 +70,7 @@ function Navbar() {
     { key: 'experience', label: t.nav.experience },
     { key: 'skills', label: t.nav.skills },
     { key: 'education', label: t.nav.education },
+    { key: 'projects', label: t.nav.projects },
     { key: 'contact', label: t.nav.contact },
   ]
 
@@ -378,6 +381,70 @@ function ContactSection() {
   )
 }
 
+function ProjectsSection() {
+  const { t } = useI18n()
+  const { ref, visible } = useScrollReveal()
+  const [openGame, setOpenGame] = useState<null | '2048' | 'wordle'>(null)
+
+  const projects = [
+    {
+      id: '2048' as const,
+      title: t.projects.game2048Title,
+      desc: t.projects.game2048Desc,
+      tags: ['React', 'TypeScript'],
+      icon: '🎮',
+      color: 'linear-gradient(135deg, #1a5fa8, #17b8c4)',
+    },
+    {
+      id: 'wordle' as const,
+      title: t.projects.wordleTitle,
+      desc: t.projects.wordleDesc,
+      tags: ['React', 'i18n', 'TypeScript'],
+      icon: '🔤',
+      color: 'linear-gradient(135deg, #4f8ef7, #6fa3ff)',
+    },
+  ]
+
+  return (
+    <section id="projects" className="section section--darker">
+      <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
+        <h2 className="section-title">{t.projects.title}</h2>
+        <div className="projects-grid">
+          {projects.map((p, i) => (
+            <div
+              className="project-card"
+              key={p.id}
+              style={{ animationDelay: `${i * 0.15}s` }}
+            >
+              <div className="project-card-header" style={{ background: p.color }}>
+                <span className="project-icon">{p.icon}</span>
+                <span className="project-card-title">{p.title}</span>
+              </div>
+              <div className="project-card-body">
+                <p className="project-desc">{p.desc}</p>
+                <div className="project-tags">
+                  {p.tags.map((tag) => (
+                    <span className="exp-tag" key={tag}>{tag}</span>
+                  ))}
+                </div>
+                <button
+                  className="btn-primary project-btn"
+                  onClick={() => setOpenGame(p.id)}
+                >
+                  {t.projects.playNow} ▶
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {openGame === '2048' && <Game2048 onClose={() => setOpenGame(null)} />}
+      {openGame === 'wordle' && <WordleGame onClose={() => setOpenGame(null)} />}
+    </section>
+  )
+}
+
 function ScrollToTop() {
   const [show, setShow] = useState(false)
   useEffect(() => {
@@ -402,6 +469,7 @@ function Portfolio() {
       <ExperienceSection />
       <SkillsSection />
       <EducationSection />
+      <ProjectsSection />
       <ContactSection />
       <ScrollToTop />
     </div>
