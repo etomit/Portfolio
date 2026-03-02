@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { I18nProvider, useI18n } from './i18n'
 import Game2048 from './Game2048'
-import WordleGame from './WordleGame'
+import WordleGame from './Wordlegame'
 import './App.css'
 
 /* ── Skill icons via devicons CDN ── */
@@ -213,8 +213,10 @@ function ExperienceSection() {
                   <span>{job.company[0]}</span>
                 </div>
                 <div className="exp-header-info">
-                  <div className="exp-type-badge">
-                    {job.type === 'contractor'
+                  <div className="exp-type-badge" style={job.type === 'current' ? {background:'rgba(34,168,90,0.15)', color:'#22a85a', borderColor:'rgba(34,168,90,0.4)'} : {}}>
+                    {job.type === 'current'
+                      ? t.experience.current
+                      : job.type === 'contractor'
                       ? t.experience.contractor
                       : t.experience.internship}
                   </div>

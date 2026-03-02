@@ -2,21 +2,91 @@ import { useCallback, useEffect, useState } from 'react'
 import { useI18n } from './i18n'
 
 const WORDS_FR = [
-  'arbre','balle','belle','blanc','bonne','boule','brume','bulle',
-  'cache','calme','carte','champ','chose','clair','crane','crabe',
-  'danse','doigt','droit','ecran','fable','faute','femme','fiche',
-  'fleur','foret','forme','foule','franc','glace','grace','homme',
-  'image','jambe','jeune','jolie','lapin','lampe','lance','large',
-  'livre','lundi','mardi','masse','merci','monde','nager','niche',
-  'norme','ongle','ordre','panne','pince','place','plage','plane',
-  'plume','point','pomme','porte','poule','rouge','route','ruche',
-  'sable','sauge','signe','somme','sorte','soupe','stade','style',
-  'sucre','suite','sujet','table','tache','tapis','tarte','taupe',
-  'tiret','titre','tombe','total','trace','train','trier','trois',
-  'valse','verre','veste','vitre','voile','votre','wagon','blond',
-  'creme','drame','eclat','epice','greve','hiver','hotel','jeudi',
-  'kiwis','linge','mince','noyau','ocean','paire','raphe','revue',
-  'salon','tenue','usine','valeur','vague','yeux','zeste',
+  // A
+  'abime','abord','abris','achat','acide','acier','adieu','adore',
+  'agile','agite','aigle','allee','alter','amant','ambre','amour',
+  'ample','ancre','anime','annee','apres','arbre','arche','arene',
+  'arret','assez','astre','atome','avale','avant','avare','avide',
+  'avion',
+  // B
+  'bague','balle','bande','barge','baron','barre','batir','baton',
+  'bazar','belle','berge','biche','bijou','bilan','bison','blanc',
+  'blond','boite','bombe','bonne','borne','bosse','botte','boule',
+  'bravo','bride','brise','brume','bulle','butin',
+  // C
+  'cable','cadet','calme','canon','carat','carpe','carre','carte',
+  'cause','ceder','celui','cerne','chair','chant','chaos','chaud',
+  'chene','chien','chose','cible','cidre','clair','clore','cobra',
+  'coeur','colle','colon','comte','conge','copie','coque','corde',
+  'corps','coude','coupe','court','crabe','crane','credo','creux',
+  'crime','crise','cruel',
+  // D
+  'dague','danse','debut','delta','dense','depot','dette','devin',
+  'digne','diode','disco','doigt','douce','doyen','drame','droit',
+  'duvet',
+  // E
+  'ebahi','ecart','eclat','ecrin','ecrou','egale','eleve','eloge',
+  'email','emise','emois','emule','encre','enfin','engin','ennui',
+  'entre','envie','epais','epice','epine','epoux','essor','etage',
+  'etape','etude','evade','eveil','exode','extra',
+  // F
+  'fable','faite','farce','fatal','faune','faute','femme','fente',
+  'ferme','fiche','figue','flair','fleau','fleur','folie','fonte',
+  'forge','forme','fosse','foule','franc','frein','frere','frire',
+  'front','fruit','fugue',
+  // G
+  'gagne','garde','geler','genre','geste','gilet','givre','glace',
+  'gland','gober','golfe','gorge','gosse','grace','grade','grain',
+  'grand','grave','greve','grise','guide','guise',
+  // H
+  'haine','halle','halte','hamac','harpe','heros','hetre','heure',
+  'hibou','hiver','homme','honte','hotel','houle','huile','hurle',
+  // I
+  'ideal','idole','image',
+  // J
+  'jabot','jambe','jauge','jeune','jolie','jouer','joute','joyau',
+  // L
+  'label','lapin','large','laser','lasse','leche','lecon','leger',
+  'liane','libre','liege','linge','lisse','litre','livre','logis',
+  'lotir','louer','louve','loyal','lueur','lutte',
+  // M
+  'magma','magie','maire','malin','manie','marge','masse','match',
+  'mauve','meche','melee','melon','merle','metis','meute','mixer',
+  'monde','monte','moule','multi','murer','myope',
+  // N
+  'nappe','nasse','natte','naval','neige','nette','noble','noces',
+  'noire','norme','noter','nuage','nuire','nulle',
+  // O
+  'offre','olive','ongle','opera','opter','ordre','orgue','otage',
+  'ouvre',
+  // P
+  'paire','palme','panda','panel','panne','paree','paroi','passe',
+  'pause','paver','perle','perdu','peser','phare','piece','pince',
+  'pixel','plage','plane','plier','plomb','pluie','point','pompe',
+  'porte','poste','poule','prise','probe','prude','pulse','purge',
+  // Q
+  'quete','queue',
+  // R
+  'raide','rampe','raser','ratio','ravin','recit','refus','regle',
+  'rejet','relax','repas','reste','revue','rider','rivet','robot',
+  'roman','ronde','rouge','roule','route','ruser',
+  // S
+  'sabot','sauce','scene','seche','seize','selon','senat','siege',
+  'sigle','signe','sobre','socle','soeur','solde','sonde','songe',
+  'sorte','sotte','soude','soupe','sourd','stade','stage','stand',
+  'style','sueur','suite','sujet','super',
+  // T
+  'tabac','tache','talon','taupe','tenue','terme','tiare','tirer',
+  'tiret','titre','tombe','tondu','tordu','totem','trace','train',
+  'trait','treve','trier','tripe','troue','trous','tuile','tyran',
+  // U
+  'ultra','usage','usine','usure',
+  // V
+  'vague','vaine','valve','vaste','venal','verge','verse','veste',
+  'vibre','video','vigne','ville','vingt','viole','vitre','voile',
+  'voter','vouer','voulu',
+  // Z
+  'zeste',
 ]
 
 const WORDS_EN = [
