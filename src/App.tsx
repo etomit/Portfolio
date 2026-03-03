@@ -249,46 +249,73 @@ function ExperienceSection() {
   const { t } = useI18n()
   const { ref, visible } = useScrollReveal()
 
-  const badgeStyle: Record<string, React.CSSProperties> = {
-    current:  { background: 'rgba(34,197,94,.12)',  color: '#16a34a', border: '1px solid rgba(34,197,94,.35)' },
-    parttime: { background: 'rgba(249,115,22,.1)',  color: '#ea580c', border: '1px solid rgba(249,115,22,.3)' },
-    internship:{ background: 'rgba(99,102,241,.1)', color: '#6366f1', border: '1px solid rgba(99,102,241,.3)' },
-  }
-
   return (
     <section id="experience" className="section section--tinted">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
         <h2 className="section-heading">{t.experience.title}</h2>
 
-        <div className="xp-list">
-          {t.experience.jobs.map((job, i) => (
-            <div className="xp-item" key={i} style={{ animationDelay: `${i * 0.1}s` }}>
-              <div className="xp-aside">
-                <CompanyLogo company={job.company} />
-                <div className="xp-line" />
-              </div>
-              <div className="xp-body">
-                <div className="xp-top">
-                  <div className="xp-meta">
-                    <h3 className="xp-role">{job.role}</h3>
-                    <span className="xp-company">{job.company}</span>
-                    <span className="xp-period">{job.period} · {job.location}</span>
-                  </div>
-                  {(job.type === 'current' || job.type === 'parttime' || job.type === 'internship') && (
-                    <span className="xp-badge" style={badgeStyle[job.type]}>
-                      {job.type === 'current' ? t.experience.current : job.type === 'parttime' ? t.experience.parttime : t.experience.internship}
-                    </span>
+        {/* Timeline — inspired by the layout in your screenshot (center line + alternating blocks) */}
+        <div className="tl">
+          {t.experience.jobs.map((job, i) => {
+            const side = i % 2 === 0 ? 'left' : 'right'
+            return (
+              <div
+                className={`tl-item tl-item--${side}`}
+                key={i}
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                <div className="tl-col tl-col--left">
+                  {side === 'left' && (
+                    <div className="tl-content">
+                      <div className="tl-date">{job.period}</div>
+                      <div className="tl-title">{job.role}</div>
+                      <div className="tl-sub">{job.company} · {job.location}</div>
+
+                      {Array.isArray(job.tasks) && job.tasks.length > 0 && (
+                        <ul className="tl-bullets">
+                          {job.tasks.map((task, j) => <li key={j}>{task}</li>)}
+                        </ul>
+                      )}
+
+                      {Array.isArray(job.tags) && job.tags.length > 0 && (
+                        <div className="tl-tags">
+                          {job.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
-                <ul className="xp-tasks">
-                  {job.tasks.map((task, j) => <li key={j}>{task}</li>)}
-                </ul>
-                <div className="xp-tags">
-                  {job.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
+
+                <div className="tl-marker" aria-hidden="true">
+                  <div className="tl-circle">
+                    <CompanyLogo company={job.company} />
+                  </div>
+                </div>
+
+                <div className="tl-col tl-col--right">
+                  {side === 'right' && (
+                    <div className="tl-content">
+                      <div className="tl-date">{job.period}</div>
+                      <div className="tl-title">{job.role}</div>
+                      <div className="tl-sub">{job.company} · {job.location}</div>
+
+                      {Array.isArray(job.tasks) && job.tasks.length > 0 && (
+                        <ul className="tl-bullets">
+                          {job.tasks.map((task, j) => <li key={j}>{task}</li>)}
+                        </ul>
+                      )}
+
+                      {Array.isArray(job.tags) && job.tags.length > 0 && (
+                        <div className="tl-tags">
+                          {job.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

@@ -728,6 +728,153 @@ img { max-width: 100%; display: block }
   .clogo { width: 40px; height: 40px }
   .xp-top { flex-direction: column; gap: 8px }
 }
+/* ── Timeline layout (center line + alternating blocks) ── */
+.tl {
+  position: relative;
+  padding: 10px 0;
+}
+.tl::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-0.5px);
+  background: var(--border-med);
+}
+
+.tl-item {
+  display: grid;
+  grid-template-columns: 1fr 92px 1fr;
+  align-items: center;
+  gap: 0;
+  padding: 22px 0;
+  animation: fadeUp 0.55s ease both;
+}
+
+.tl-col { min-width: 0; }
+
+.tl-item--left .tl-col--right { opacity: 0; pointer-events: none; }
+.tl-item--right .tl-col--left { opacity: 0; pointer-events: none; }
+
+.tl-content { max-width: 440px; }
+.tl-item--left .tl-content { margin-left: auto; padding-right: 22px; text-align: right; }
+.tl-item--right .tl-content { margin-right: auto; padding-left: 22px; text-align: left; }
+
+.tl-date {
+  font-family: var(--mono);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.tl-title {
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.tl-sub {
+  margin-top: 8px;
+  color: var(--ink-3);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.tl-bullets {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+.tl-bullets li {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  position: relative;
+}
+.tl-item--left .tl-bullets li { padding-right: 16px; }
+.tl-item--right .tl-bullets li { padding-left: 16px; }
+
+.tl-item--left .tl-bullets li::before {
+  content: '—';
+  position: absolute;
+  right: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+.tl-item--right .tl-bullets li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.tl-tags { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; }
+.tl-item--left .tl-tags { justify-content: flex-end; }
+
+.tl-marker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tl-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border-med);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  place-items: center;
+}
+
+/* Make the existing CompanyLogo fit nicely inside the circle */
+.tl-circle .clogo {
+  width: 86px;
+  height: 86px;
+  border-radius: 999px;
+  border: 0;
+}
+.tl-circle .clogo--img { padding: 8px; }
+
+@media (max-width: 900px) {
+  .tl-item { grid-template-columns: 1fr 84px 1fr; }
+  .tl-content { max-width: 360px; }
+}
+
+/* Mobile: single column, line on the left like a classic timeline */
+@media (max-width: 720px) {
+  .tl { padding-left: 16px; }
+  .tl::before { left: 30px; }
+
+  .tl-item {
+    grid-template-columns: 60px 1fr;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 0;
+  }
+
+  .tl-col--left,
+  .tl-col--right { opacity: 1 !important; pointer-events: auto; }
+
+  .tl-item--left .tl-content,
+  .tl-item--right .tl-content {
+    margin: 0;
+    max-width: 100%;
+    padding: 0;
+    text-align: left;
+  }
+
+  .tl-marker { grid-column: 1; justify-content: flex-start; }
+  .tl-circle { width: 60px; height: 60px; }
+  .tl-circle .clogo { width: 44px; height: 44px; }
+}
 
 /* ═══════════════════════════════════════════
    SKILLS
@@ -741,7 +888,7 @@ img { max-width: 100%; display: block }
 .sk-group {}
 .sk-cat {
   font-family: var(--mono);
-  font-size: 0.65rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -763,7 +910,7 @@ img { max-width: 100%; display: block }
   border: 1px solid var(--border);
   cursor: default;
   transition: all var(--t);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--ink);
   box-shadow: var(--shadow-sm);
