@@ -53,96 +53,24 @@ function CompanyLogo({ company }: { company: string }) {
 
 /* ── Skill data ── */
 const ALL_SKILLS = [
-  // Frontend
-  { name: 'HTML5',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',                 cat: 'Frontend' },
-  { name: 'CSS3',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg',                   cat: 'Frontend' },
-  { name: 'JavaScript',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',        cat: 'Frontend' },
-  { name: 'TypeScript',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',        cat: 'Frontend' },
-  { name: 'React.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',                  cat: 'Frontend' },
-  { name: 'Vue.js',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',                  cat: 'Frontend' },
-  { name: 'Next.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',                cat: 'Frontend' }, // (devicon existe, souvent noir)
-  { name: 'Nuxt.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg',                cat: 'Frontend' },
-  { name: 'Bootstrap',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg',          cat: 'Frontend' },
-  { name: 'Material UI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/materialui/materialui-original.svg',        cat: 'Frontend' },
-  { name: 'WordPress',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg',             cat: 'Frontend' },
-
-  // Backend
-  { name: 'PHP',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',                      cat: 'Backend' },
-  { name: 'Laravel',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',              cat: 'Backend' },
-  { name: 'Symfony',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg',              cat: 'Backend' }, // (souvent noir)
-  { name: 'Node.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',                cat: 'Backend' },
-  { name: 'Python',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',                cat: 'Backend' },
-  { name: 'C#',          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',                cat: 'Backend' },
-  { name: '.NET',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dot-net/dot-net-original.svg',              cat: 'Backend' },
-  { name: 'Java',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',                    cat: 'Backend' },
-
-  // Data
-  { name: 'SQL',                  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',                         cat: 'Data' },
-  { name: 'MySQL',                icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',                         cat: 'Data' },
-  { name: 'PostgreSQL',           icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',               cat: 'Data' },
-  { name: 'SQLite',               icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg',                       cat: 'Data' },
-  { name: 'Microsoft SQL Server', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg',  cat: 'Data' },
-
-  // DevOps & Tools
-  { name: 'Git',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',                 cat: 'DevOps' },
-  { name: 'GitHub',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',           cat: 'DevOps' },
-  { name: 'GitLab',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg',           cat: 'DevOps' },
-  { name: 'Docker',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',           cat: 'DevOps' },
-  { name: 'NGINX',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg',             cat: 'DevOps' },
-  { name: 'Postman',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg',         cat: 'DevOps' },
-  { name: 'APIs',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/openapi/openapi-original.svg',         cat: 'DevOps' }, // OpenAPI = bon proxy visuel pour “APIs”
-  { name: 'JSON',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg',               cat: 'DevOps' }, // parfois dispo, sinon à remplacer
-
-  // Mobile
-  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',         cat: 'Mobile' },
-  { name: 'Flutter',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',     cat: 'Mobile' },
-
-  // Languages (misc / low-level)
-  { name: 'C',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg',                     cat: 'Languages' },
-  { name: 'VB',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualbasic/visualbasic-original.svg', cat: 'Languages' },
-  { name: 'VBA',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualbasic/visualbasic-original.svg', cat: 'Languages' },
-
+  { name: 'React',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',           cat: 'Frontend'  },
+  { name: 'Next.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',         cat: 'Frontend'  },
+  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', cat: 'Frontend'  },
+  { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg', cat: 'Frontend'  },
+  { name: 'Symfony',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg',       cat: 'Backend'   },
+  { name: 'Node.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',         cat: 'Backend'   },
+  { name: 'C#',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',         cat: 'Backend'   },
+  { name: '.NET',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dotnetcore/dotnetcore-original.svg', cat: 'Backend'   },
+  { name: 'Laravel',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',       cat: 'Backend'   },
+  { name: 'PHP',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',               cat: 'Backend'   },
+  { name: 'Python',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',         cat: 'Backend'   },
+  { name: 'SQL',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',           cat: 'Data'      },
+  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', cat: 'Data'      },
+  { name: 'Docker',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',         cat: 'DevOps'    },
+  { name: 'Git',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',               cat: 'DevOps'    },
+  { name: 'NGINX',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg',           cat: 'DevOps'    },
+  { name: 'Flutter',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',       cat: 'Mobile'    },
 ]
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   SOFT SKILLS (brief)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-function SoftSkillsSection() {
-  const { lang } = useI18n()
-  const { ref, visible } = useScrollReveal()
-
-  const title = lang === 'fr' ? 'Soft Skills' : 'Soft skills'
-  const items = (lang === 'fr')
-    ? [
-        'Communication claire',
-        'Organisation & priorisation',
-        'Orientation client',
-        'Autonomie',
-        'Résolution de problèmes',
-        'Vision architecture',
-      ]
-    : [
-        'Clear communication',
-        'Organization & prioritization',
-        'Client mindset',
-        'Autonomy',
-        'Problem solving',
-        'Architecture mindset',
-      ]
-
-  return (
-    <section id="softskills" className="section">
-      <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <p className="section-label">{title}</p>
-        <h2 className="section-heading">{title}</h2>
-
-        <div className="soft-badges">
-          {items.map((it) => <span className="soft-badge" key={it}>{it}</span>)}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    NAVBAR
@@ -188,8 +116,19 @@ function Navbar() {
           <button className="nav-lang" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}>
             {lang === 'fr' ? '🇬🇧' : '🇫🇷'}
           </button>
-          <button className="nav-theme" onClick={toggleTheme}>
-            {theme === 'dark' ? '○' : '●'}
+          <button className="nav-theme" onClick={toggleTheme} title={theme === 'dark' ? 'Thème clair' : 'Thème sombre'}>
+            {theme === 'dark' ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            )}
           </button>
           <button className={`nav-burger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)}>
             <span /><span /><span />
@@ -227,7 +166,7 @@ function HeroSection() {
 
       {/* photo — right side blending into bg */}
       <div className="hero-photo-wrap">
-        <img src="/profile2.png" alt="Timothée Maire" className="hero-photo" />
+        <img src="/profile.jpg" alt="Timothée Maire" className="hero-photo" />
         <div className="hero-photo-fade" />
         <div className="hero-photo-fade-b" />
         <div className="hero-photo-fade-t" />
@@ -261,6 +200,11 @@ function HeroSection() {
           <div className="hero-stat">
             <span className="hero-stat-n">3+</span>
             <span className="hero-stat-l">{t.hero.yearsXp ?? 'ans d\'exp.'}</span>
+          </div>
+          <div className="hero-stat-div" />
+          <div className="hero-stat">
+            <span className="hero-stat-n">5</span>
+            <span className="hero-stat-l">{t.hero.missions ?? 'missions'}</span>
           </div>
           <div className="hero-stat-div" />
           <div className="hero-stat">
@@ -298,7 +242,7 @@ function AboutSection() {
           <div className="about-right">
             <div className="about-avatar">
               <img
-                src="/profile.png"
+                src="/profile.jpg"
                 alt="Timothée Maire"
                 className="about-photo"
                 onError={(e) => { e.currentTarget.style.display='none' }}
@@ -332,7 +276,6 @@ function ExperienceSection() {
   return (
     <section id="experience" className="section section--tinted">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <p className="section-label">{t.experience.title}</p>
         <h2 className="section-heading">{t.experience.title}</h2>
 
         <div className="xp-list">
@@ -382,7 +325,6 @@ function SkillsSection() {
   return (
     <section id="skills" className="section">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <p className="section-label">{t.skills.title}</p>
         <h2 className="section-heading">{t.skills.title}</h2>
 
         <div className="sk-layout">
@@ -407,8 +349,8 @@ function SkillsSection() {
             <div className="sk-lang-item">
               <span className="sk-lang-flag">🇫🇷</span>
               <div className="sk-lang-info">
-                <span className="sk-lang-name">Français</span>
-                <span className="sk-lang-level">Natif</span>
+                <span className="sk-lang-name">{t.skills.langFrName}</span>
+                <span className="sk-lang-level">{t.skills.langFrLevel}</span>
               </div>
               <div className="sk-dots">
                 {[1,2,3,4,5].map(n => <span key={n} className="sk-dot sk-dot--on" />)}
@@ -417,8 +359,8 @@ function SkillsSection() {
             <div className="sk-lang-item">
               <span className="sk-lang-flag">🇬🇧</span>
               <div className="sk-lang-info">
-                <span className="sk-lang-name">Anglais</span>
-                <span className="sk-lang-level">Intermédiaire</span>
+                <span className="sk-lang-name">{t.skills.langEnName}</span>
+                <span className="sk-lang-level">{t.skills.langEnLevel}</span>
               </div>
               <div className="sk-dots">
                 {[1,2,3,4].map(n => <span key={n} className="sk-dot sk-dot--on" />)}
@@ -449,7 +391,6 @@ function EducationSection() {
   return (
     <section id="education" className="section section--tinted">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <p className="section-label">{t.education.title}</p>
         <h2 className="section-heading">{t.education.title}</h2>
 
         <div className="edu-grid">
@@ -457,7 +398,7 @@ function EducationSection() {
             <div className="edu-card" key={i} style={{ animationDelay: `${i * 0.1}s` }}>
               <div className="edu-card-top">
                 <div className="edu-logo-badge">
-                  {schoolMap[item.school] ?? item.school.slice(0, 5)}
+                  {schoolMap[item.school] ?? item.school.slice(0, 4)}
                 </div>
                 <div className="edu-level-badge">{item.level}</div>
               </div>
@@ -490,11 +431,10 @@ function ProjectsSection() {
   return (
     <section id="projects" className="section">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <p className="section-label">{t.projects.title}</p>
         <h2 className="section-heading">{t.projects.title}</h2>
 
         <div className="proj-grid">
-          {projects.map((p) => (
+          {projects.map((p, i) => (
             <div className="proj-card" key={p.id} style={{ '--proj-accent': p.accent } as React.CSSProperties}>
               <div className="proj-card-inner">
                 <div className="proj-emoji">{p.emoji}</div>
@@ -538,9 +478,9 @@ function ContactSection() {
               <span className="contact-line-label">{t.contact.email}</span>
               <span className="contact-line-val">timothee.maire54300@gmail.com ↗</span>
             </a>
-            <a href="tel:+33649284368" className="contact-line">
-              <span className="contact-line-label">{t.contact.phone}</span>
-              <span className="contact-line-val">+33 6 49 28 43 68</span>
+            <a href="https://www.linkedin.com/in/timoth%C3%A9e-maire-476bb8194/" target="_blank" rel="noopener noreferrer" className="contact-line contact-line--linkedin">
+              <span className="contact-line-label">{t.contact.linkedin}</span>
+              <span className="contact-line-val">linkedin.com/in/timothée-maire ↗</span>
             </a>
             <div className="contact-line">
               <span className="contact-line-label">{t.contact.location}</span>
@@ -560,7 +500,8 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <span>© 2026 Timothée Maire</span>
+        <span>© 2025 Timothée Maire</span>
+        <span>Fait avec React + Vite</span>
       </div>
     </footer>
   )
@@ -589,7 +530,6 @@ function Portfolio() {
       <AboutSection />
       <ExperienceSection />
       <SkillsSection />
-      <SoftSkillsSection />
       <EducationSection />
       <ProjectsSection />
       <ContactSection />

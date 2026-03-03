@@ -55,7 +55,7 @@ const translations = {
             "Développement d'un intranet Symfony/React pour 1200+ employés",
             "Module de gestion des Propositions d'Amélioration Continue (PAC) avec système de vote",
             "Module de gestion du magasin d'outillage (interface e-commerce)",
-            "Module d'entreposage et de gestion des déplacements de véhicules",
+            "Modules d'entreposage et de gestion des déplacements de véhicules",
           ],
           tags: ['Symfony', 'React', 'PHP', 'TypeScript'],
         },
@@ -73,10 +73,10 @@ const translations = {
         },
         {
           company: 'Kuehne + Nagel',
-          role: 'Développeur',
+          role: 'Développeur Stagiaire',
           period: 'Janv. 2023 — Févr. 2023',
           location: 'Limas',
-          type: 'contractor',
+          type: 'internship',
           tasks: [
             'Portail développeurs JavaScript/CSS avec déploiement NGINX',
             'Cahier des charges et maquettes Front-End',
@@ -101,7 +101,7 @@ const translations = {
           role: 'Développeur web',
           period: 'Mai 2022 — Juil. 2022',
           location: 'Nancy',
-          type: 'contractor',
+          type: 'internship',
           tasks: [
             "Développement d'un site web dynamique avec WordPress",
             'Présentation devant tout le corps enseignant',
@@ -117,13 +117,17 @@ const translations = {
       databases: 'BASES DE DONNÉES',
       tools: 'OUTILS & DEVOPS',
       languages: 'LANGUES PARLÉES',
+      langFrName: 'Français',
+      langFrLevel: 'Natif',
+      langEnName: 'Anglais',
+      langEnLevel: 'Intermédiaire',
     },
     education: {
       title: 'ÉDUCATION',
       items: [
         {
           school: 'CESI, Nancy',
-          degree: 'Master Manager en Architecture et Applications Logicielles des Systèmes d’Information (MAALSI)',
+          degree: 'Mastère Manager en Architecture & Applications SI',
           period: '2025 — 2027',
           level: 'Bac +5',
           tasks: [
@@ -134,7 +138,7 @@ const translations = {
         },
         {
           school: 'CESI, Nancy',
-          degree: "Licence en Concepteur Développeur d’Applications (CDA) - Alternance",
+          degree: 'Bachelor Concepteur Développeur d'Application',
           period: '2023 — 2025',
           level: 'Bac +3',
           tasks: [
@@ -145,7 +149,7 @@ const translations = {
         },
         {
           school: 'Lycée Frédéric Chopin, Nancy',
-          degree: 'BTS Services Informatiques aux Organisations option Solutions Logicielles et Applications Métiers (SIO SLAM)',
+          degree: 'BTS SIO SLAM',
           period: '2021 — 2023',
           level: 'Bac +2',
           tasks: [
@@ -155,7 +159,7 @@ const translations = {
         },
         {
           school: 'Lycée Jean Prouvé, Nancy',
-          degree: 'Bac Pro Systèmes Numériques Option Réseaux informatiques et systèmes communicants (SN RISC)',
+          degree: 'Bac Pro Systèmes Numériques RISC',
           period: '2018 — 2021',
           level: 'Bac',
           tasks: [
@@ -171,7 +175,7 @@ const translations = {
       description:
         "Vous avez un projet en tête ? N'hésitez pas à me contacter, je serai ravi d'échanger.",
       email: 'Email',
-      phone: 'Téléphone',
+      linkedin: 'LinkedIn',
       location: 'Localisation',
       locationValue: 'Grand Est, France',
     },
@@ -273,7 +277,7 @@ const translations = {
           role: 'Intern Developer',
           period: 'Jan. 2023 — Feb. 2023',
           location: 'Limas',
-          type: 'contractor',
+          type: 'internship',
           tasks: [
             'Developer portal in JavaScript/CSS with NGINX deployment',
             'Technical specifications and Front-End mockups',
@@ -298,7 +302,7 @@ const translations = {
           role: 'Web Developer',
           period: 'May 2022 — Jul. 2022',
           location: 'Nancy',
-          type: 'contractor',
+          type: 'internship',
           tasks: [
             'Development of a dynamic website with WordPress',
             'Presentation to the entire teaching staff',
@@ -314,6 +318,10 @@ const translations = {
       databases: 'DATABASES',
       tools: 'TOOLS & DEVOPS',
       languages: 'SPOKEN LANGUAGES',
+      langFrName: 'French',
+      langFrLevel: 'Native',
+      langEnName: 'English',
+      langEnLevel: 'Intermediate',
     },
     education: {
       title: 'EDUCATION',
@@ -368,7 +376,7 @@ const translations = {
       description:
         "Have a project in mind? Feel free to reach out — I'd love to discuss it.",
       email: 'Email',
-      phone: 'Phone',
+      linkedin: 'LinkedIn',
       location: 'Location',
       locationValue: 'Grand Est, France',
     },

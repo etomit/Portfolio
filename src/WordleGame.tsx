@@ -230,6 +230,8 @@ export default function WordleGame({ onClose }: Props) {
     setCurrentCol(col)
   }, [currentRow, currentCol])
 
+  const [invalidWord, setInvalidWord] = useState(false)
+
   const submitRow = useCallback(() => {
     if (currentCol !== COLS) {
       setShake(true)
@@ -238,6 +240,13 @@ export default function WordleGame({ onClose }: Props) {
     }
 
     const guess = board[currentRow].map((c) => c.letter).join('')
+    // validate word exists in list
+    if (!wordList.includes(guess.toLowerCase())) {
+      setShake(true)
+      setInvalidWord(true)
+      setTimeout(() => { setShake(false); setInvalidWord(false) }, 1000)
+      return
+    }
     const targetArr = target.split('')
     const result: LetterState[] = Array(COLS).fill('absent')
     const used = Array(COLS).fill(false)
@@ -345,6 +354,13 @@ export default function WordleGame({ onClose }: Props) {
           <div className="game-overlay-msg">
             <p>{status === 'won' ? t.games.won : `${t.games.lost} — ${target}`}</p>
             <button className="btn-primary" onClick={restart}>{t.games.retry}</button>
+          </div>
+        )}
+
+        {/* Invalid word toast */}
+        {invalidWord && (
+          <div className="wl-toast">
+            {lang === 'fr' ? 'Mot introuvable !' : 'Not in word list!'}
           </div>
         )}
 

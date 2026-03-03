@@ -121,9 +121,19 @@ export default function Game2048({ onClose }: Props) {
   const { t } = useI18n()
   const [grid, setGrid] = useState<Grid>(initGrid)
   const [score, setScore] = useState(0)
-  const [best, setBest] = useState(0)
+  const [best, setBest] = useState(() => {
+    try { return parseInt(localStorage.getItem('2048-best') ?? '0', 10) } catch { return 0 }
+  })
   const [status, setStatus] = useState<'playing' | 'won' | 'lost'>('playing')
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null)
+
+  const updateBest = (newScore: number) => {
+    setBest(prev => {
+      const next = Math.max(prev, newScore)
+      try { localStorage.setItem('2048-best', String(next)) } catch {}
+      return next
+    })
+  }
 
   const restart = () => {
     setGrid(initGrid())
@@ -139,7 +149,7 @@ export default function Game2048({ onClose }: Props) {
         if (!moved) return prev
         setScore((sc) => {
           const next = sc + s
-          setBest((b) => Math.max(b, next))
+          updateBest(next)
           return next
         })
         const withNew = addRandom(ng)
