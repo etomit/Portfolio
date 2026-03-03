@@ -15,8 +15,7 @@ const translations = {
     hero: {
       greeting: 'Salut, je suis',
       title: 'Développeur Web FullStack',
-      description:
-        "Développeur passionné par la création d'applications web performantes et évolutives. Du front-end intuitif au back-end robuste, je donne vie à vos idées grâce au code.",
+      description:"Développeur front-end spécialisé React avec solide base back-end. Expert en conception d'applications web performantes et scalables. Expérience en développement d'outils métiers et systèmes d'information en environnement agile.",
       cta: 'Me Contacter',
       available: 'Disponible',
       yearsXp: "ans d'exp.",
@@ -216,8 +215,7 @@ const translations = {
     hero: {
       greeting: 'Hi, I am',
       title: 'FullStack Web Developer',
-      description:
-        'Passionate developer focused on building high-performance, scalable web applications. From intuitive front-ends to robust back-ends, I bring your ideas to life through code.',
+      description:"Front-end developer specialized in React with a strong back-end foundation. Expert in designing high-performance, scalable web applications. Experienced in developing business tools and information systems within agile environments.",
       cta: 'Contact Me',
       available: 'Available',
       yearsXp: 'yrs exp.',
