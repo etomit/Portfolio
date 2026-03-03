@@ -53,23 +53,54 @@ function CompanyLogo({ company }: { company: string }) {
 
 /* ── Skill data ── */
 const ALL_SKILLS = [
-  { name: 'React',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',           cat: 'Frontend'  },
-  { name: 'Next.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',         cat: 'Frontend'  },
-  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', cat: 'Frontend'  },
-  { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg', cat: 'Frontend'  },
-  { name: 'Symfony',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg',       cat: 'Backend'   },
-  { name: 'Node.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',         cat: 'Backend'   },
-  { name: 'C#',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',         cat: 'Backend'   },
-  { name: '.NET',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dotnetcore/dotnetcore-original.svg', cat: 'Backend'   },
-  { name: 'Laravel',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',       cat: 'Backend'   },
-  { name: 'PHP',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',               cat: 'Backend'   },
-  { name: 'Python',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',         cat: 'Backend'   },
-  { name: 'SQL',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',           cat: 'Data'      },
-  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', cat: 'Data'      },
-  { name: 'Docker',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',         cat: 'DevOps'    },
-  { name: 'Git',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',               cat: 'DevOps'    },
-  { name: 'NGINX',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg',           cat: 'DevOps'    },
-  { name: 'Flutter',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',       cat: 'Mobile'    },
+  // Frontend
+  { name: 'HTML5',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',                 cat: 'Frontend' },
+  { name: 'CSS3',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg',                   cat: 'Frontend' },
+  { name: 'JavaScript',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',        cat: 'Frontend' },
+  { name: 'TypeScript',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',        cat: 'Frontend' },
+  { name: 'React.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',                  cat: 'Frontend' },
+  { name: 'Vue.js',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',                  cat: 'Frontend' },
+  { name: 'Next.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',                cat: 'Frontend' }, // (devicon existe, souvent noir)
+  { name: 'Nuxt.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg',                cat: 'Frontend' },
+  { name: 'Bootstrap',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg',          cat: 'Frontend' },
+  { name: 'Material UI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/materialui/materialui-original.svg',        cat: 'Frontend' },
+  { name: 'WordPress',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg',             cat: 'Frontend' },
+
+  // Backend
+  { name: 'PHP',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',                      cat: 'Backend' },
+  { name: 'Laravel',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',              cat: 'Backend' },
+  { name: 'Symfony',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg',              cat: 'Backend' }, // (souvent noir)
+  { name: 'Node.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',                cat: 'Backend' },
+  { name: 'Python',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',                cat: 'Backend' },
+  { name: 'C#',          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',                cat: 'Backend' },
+  { name: '.NET',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dot-net/dot-net-original.svg',              cat: 'Backend' },
+  { name: 'Java',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',                    cat: 'Backend' },
+
+  // Data
+  { name: 'SQL',                  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',                         cat: 'Data' },
+  { name: 'MySQL',                icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',                         cat: 'Data' },
+  { name: 'PostgreSQL',           icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',               cat: 'Data' },
+  { name: 'SQLite',               icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg',                       cat: 'Data' },
+  { name: 'Microsoft SQL Server', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg',  cat: 'Data' },
+
+  // DevOps & Tools
+  { name: 'Git',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',                 cat: 'DevOps' },
+  { name: 'GitHub',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',           cat: 'DevOps' },
+  { name: 'GitLab',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg',           cat: 'DevOps' },
+  { name: 'Docker',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',           cat: 'DevOps' },
+  { name: 'NGINX',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg',             cat: 'DevOps' },
+  { name: 'Postman',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg',         cat: 'DevOps' },
+  { name: 'APIs',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/openapi/openapi-original.svg',         cat: 'DevOps' }, // OpenAPI = bon proxy visuel pour “APIs”
+  { name: 'JSON',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg',               cat: 'DevOps' }, // parfois dispo, sinon à remplacer
+
+  // Mobile
+  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',         cat: 'Mobile' },
+  { name: 'Flutter',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',     cat: 'Mobile' },
+
+  // Languages (misc / low-level)
+  { name: 'C',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg',                     cat: 'Languages' },
+  { name: 'VB',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualbasic/visualbasic-original.svg', cat: 'Languages' },
+  { name: 'VBA',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualbasic/visualbasic-original.svg', cat: 'Languages' },
 ]
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -374,7 +405,7 @@ function EducationSection() {
             <div className="edu-card" key={i} style={{ animationDelay: `${i * 0.1}s` }}>
               <div className="edu-card-top">
                 <div className="edu-logo-badge">
-                  {schoolMap[item.school] ?? item.school.slice(0, 4)}
+                  {schoolMap[item.school] ?? item.school.slice(0, 5)}
                 </div>
                 <div className="edu-level-badge">{item.level}</div>
               </div>
