@@ -73,17 +73,17 @@ const translations = {
         },
         {
           company: 'Kuehne + Nagel',
-          role: 'Développeur Stagiaire',
+          role: 'Développeur',
           period: 'Janv. 2023 — Févr. 2023',
           location: 'Limas',
-          type: 'internship',
+          type: 'contractor',
           tasks: [
             'Portail développeurs JavaScript/CSS avec déploiement NGINX',
             'Cahier des charges et maquettes Front-End',
           ],
           tags: ['JavaScript', 'CSS', 'NGINX'],
         },
-        {
+        { 
           company: 'Lidl France',
           role: 'Opérateur logistique',
           period: 'Août 2022 — Sept. 2025',
@@ -101,7 +101,7 @@ const translations = {
           role: 'Développeur web',
           period: 'Mai 2022 — Juil. 2022',
           location: 'Nancy',
-          type: 'internship',
+          type: 'contractor',
           tasks: [
             "Développement d'un site web dynamique avec WordPress",
             'Présentation devant tout le corps enseignant',
@@ -120,14 +120,14 @@ const translations = {
       langFrName: 'Français',
       langFrLevel: 'Natif',
       langEnName: 'Anglais',
-      langEnLevel: 'Intermédiaire',
+      langEnLevel: 'Profesionnel',
     },
     education: {
       title: 'ÉDUCATION',
       items: [
         {
           school: 'CESI, Nancy',
-          degree: 'Mastère Manager en Architecture & Applications SI',
+          degree: 'Master Manager en Architecture et Applications Logicielles des Systèmes d’Information (MAALSI)',
           period: '2025 — 2027',
           level: 'Bac +5',
           tasks: [
@@ -138,7 +138,7 @@ const translations = {
         },
         {
           school: 'CESI, Nancy',
-          degree: 'Bachelor Concepteur Développeur d'Application',
+          degree: "Licence en Concepteur Développeur d’Applications (CDA)",
           period: '2023 — 2025',
           level: 'Bac +3',
           tasks: [
@@ -149,7 +149,7 @@ const translations = {
         },
         {
           school: 'Lycée Frédéric Chopin, Nancy',
-          degree: 'BTS SIO SLAM',
+          degree: 'BTS Services Informatiques aux Organisations option Solutions Logicielles et Applications Métiers (SIO SLAM)',
           period: '2021 — 2023',
           level: 'Bac +2',
           tasks: [
@@ -277,7 +277,7 @@ const translations = {
           role: 'Intern Developer',
           period: 'Jan. 2023 — Feb. 2023',
           location: 'Limas',
-          type: 'internship',
+          type: 'contractor',
           tasks: [
             'Developer portal in JavaScript/CSS with NGINX deployment',
             'Technical specifications and Front-End mockups',
@@ -302,7 +302,7 @@ const translations = {
           role: 'Web Developer',
           period: 'May 2022 — Jul. 2022',
           location: 'Nancy',
-          type: 'internship',
+          type: 'contractor',
           tasks: [
             'Development of a dynamic website with WordPress',
             'Presentation to the entire teaching staff',
@@ -321,7 +321,7 @@ const translations = {
       langFrName: 'French',
       langFrLevel: 'Native',
       langEnName: 'English',
-      langEnLevel: 'Intermediate',
+      langEnLevel: 'Professional',
     },
     education: {
       title: 'EDUCATION',

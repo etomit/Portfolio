@@ -166,7 +166,7 @@ function HeroSection() {
 
       {/* photo — right side blending into bg */}
       <div className="hero-photo-wrap">
-        <img src="/profile.jpg" alt="Timothée Maire" className="hero-photo" />
+        <img src="/profile2.png" alt="Timothée Maire" className="hero-photo" />
         <div className="hero-photo-fade" />
         <div className="hero-photo-fade-b" />
         <div className="hero-photo-fade-t" />
@@ -242,7 +242,7 @@ function AboutSection() {
           <div className="about-right">
             <div className="about-avatar">
               <img
-                src="/profile.jpg"
+                src="/profile.png"
                 alt="Timothée Maire"
                 className="about-photo"
                 onError={(e) => { e.currentTarget.style.display='none' }}
@@ -363,11 +363,36 @@ function SkillsSection() {
                 <span className="sk-lang-level">{t.skills.langEnLevel}</span>
               </div>
               <div className="sk-dots">
-                {[1,2,3,4].map(n => <span key={n} className="sk-dot sk-dot--on" />)}
+                {[1,2,3].map(n => <span key={n} className="sk-dot sk-dot--on" />)}
+                <span className="sk-dot" />
                 <span className="sk-dot" />
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   SOFT SKILLS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function SoftSkillsSection() {
+  const { lang } = useI18n()
+  const { ref, visible } = useScrollReveal()
+
+  const title = lang === 'fr' ? 'Soft Skills' : 'Soft Skills'
+  const items = lang === 'fr'
+    ? ['Communication claire', 'Organisation & priorisation', 'Orientation client', 'Autonomie', 'Résolution de problèmes', 'Vision architecture']
+    : ['Clear communication', 'Organization & prioritization', 'Client mindset', 'Autonomy', 'Problem solving', 'Architecture mindset']
+
+  return (
+    <section id="softskills" className="section section">
+      <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
+        <h2 className="section-heading">{title}</h2>
+        <div className="soft-badges">
+          {items.map(it => <span className="soft-badge" key={it}>{it}</span>)}
         </div>
       </div>
     </section>
@@ -500,8 +525,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <span>© 2025 Timothée Maire</span>
-        <span>Fait avec React + Vite</span>
+        <span>© 2026 Timothée Maire</span>
       </div>
     </footer>
   )
@@ -530,6 +554,7 @@ function Portfolio() {
       <AboutSection />
       <ExperienceSection />
       <SkillsSection />
+      <SoftSkillsSection />
       <EducationSection />
       <ProjectsSection />
       <ContactSection />
