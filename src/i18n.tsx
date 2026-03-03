@@ -126,9 +126,9 @@ const translations = {
       items: [
         {
           school: 'CESI, Nancy',
-          degree: 'Master Manager en Architecture et Applications Logicielles des Systèmes d’Information (MAALSI)',
+          degree: 'Manager en Architecture et Applications Logicielles des Systèmes d’Information (MAALSI)',
           period: '2025 — 2027',
-          level: 'Bac +5',
+          level: 'Master',
           tasks: [
             "Stratégie d'entreprise et pilotage de projets",
             'Communication professionnelle',
@@ -137,9 +137,9 @@ const translations = {
         },
         {
           school: 'CESI, Nancy',
-          degree: "Licence en Concepteur Développeur d’Applications (CDA)",
+          degree: "Concepteur Développeur d’Applications (CDA)",
           period: '2023 — 2025',
-          level: 'Bac +3',
+          level: 'Licence',
           tasks: [
             'Développement logiciel et bases de données',
             'Méthodologies agiles',
@@ -148,9 +148,9 @@ const translations = {
         },
         {
           school: 'Lycée Frédéric Chopin, Nancy',
-          degree: 'BTS Services Informatiques aux Organisations option Solutions Logicielles et Applications Métiers (SIO SLAM)',
+          degree: 'Services Informatiques aux Organisations option Solutions Logicielles et Applications Métiers (SIO SLAM)',
           period: '2021 — 2023',
-          level: 'Bac +2',
+          level: 'BTS',
           tasks: [
             'Applications C#, Python, PHP, JavaScript',
             'Bases de données relationnelles',
@@ -326,9 +326,9 @@ const translations = {
       items: [
         {
           school: 'CESI, Nancy',
-          degree: "Master's in IS Architecture & Applications",
+          degree: "IS Architecture & Applications",
           period: '2025 — 2027',
-          level: 'Bac +5',
+          level: 'Master',
           tasks: [
             'Business strategy and project management',
             'Professional communication',
@@ -337,9 +337,9 @@ const translations = {
         },
         {
           school: 'CESI, Nancy',
-          degree: 'Bachelor in Application Design & Development',
+          degree: 'Application Design & Development',
           period: '2023 — 2025',
-          level: 'Bac +3',
+          level: 'Bachelor',
           tasks: [
             'Software development and databases',
             'Agile methodologies',
@@ -350,7 +350,7 @@ const translations = {
           school: 'Lycée Frédéric Chopin, Nancy',
           degree: 'BTS SIO SLAM',
           period: '2021 — 2023',
-          level: 'Bac +2',
+          level: 'BTS',
           tasks: [
             'C#, Python, PHP, JavaScript applications',
             'Relational databases',
