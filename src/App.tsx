@@ -202,11 +202,6 @@ function HeroSection() {
           </div>
           <div className="hero-stat-div" />
           <div className="hero-stat">
-            <span className="hero-stat-n">5</span>
-            <span className="hero-stat-l">{t.hero.missions ?? 'missions'}</span>
-          </div>
-          <div className="hero-stat-div" />
-          <div className="hero-stat">
             <span className="hero-stat-n">17+</span>
             <span className="hero-stat-l">{t.hero.techs ?? 'technos'}</span>
           </div>
