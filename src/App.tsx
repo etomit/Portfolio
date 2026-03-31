@@ -89,7 +89,6 @@ function Navbar() {
   }, [])
 
   const links = [
-    { key: 'about',      label: t.nav.about },
     { key: 'experience', label: t.nav.experience },
     { key: 'skills',     label: t.nav.skills },
     { key: 'education',  label: t.nav.education },
