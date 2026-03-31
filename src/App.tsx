@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, createContext, useContext } from 'react'
 import { I18nProvider, useI18n } from './i18n'
 import Game2048 from './Game2048'
 import WordleGame from './WordleGame'
+import EducationSection from './EducationSection'
 import './App.css'
 
 /* ── Theme ── */
@@ -53,54 +54,23 @@ function CompanyLogo({ company }: { company: string }) {
 
 /* ── Skill data ── */
 const ALL_SKILLS = [
-  // Frontend
-  { name: 'HTML5',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg',                 cat: 'Frontend' },
-  { name: 'CSS3',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg',                   cat: 'Frontend' },
-  { name: 'JavaScript',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg',        cat: 'Frontend' },
-  { name: 'TypeScript',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg',        cat: 'Frontend' },
-  { name: 'React.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',                  cat: 'Frontend' },
-  { name: 'Vue.js',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg',                  cat: 'Frontend' },
-  { name: 'Next.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',                cat: 'Frontend' }, // (devicon existe, souvent noir)
-  { name: 'Nuxt.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nuxtjs/nuxtjs-original.svg',                cat: 'Frontend' },
-  { name: 'Bootstrap',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg',          cat: 'Frontend' },
-  { name: 'Material UI', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/materialui/materialui-original.svg',        cat: 'Frontend' },
-  { name: 'WordPress',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/wordpress/wordpress-plain.svg',             cat: 'Frontend' },
-
-  // Backend
-  { name: 'PHP',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',                      cat: 'Backend' },
-  { name: 'Laravel',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',              cat: 'Backend' },
-  { name: 'Symfony',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg',              cat: 'Backend' }, // (souvent noir)
-  { name: 'Node.js',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',                cat: 'Backend' },
-  { name: 'Python',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',                cat: 'Backend' },
-  { name: 'C#',          icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',                cat: 'Backend' },
-  { name: '.NET',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dot-net/dot-net-original.svg',              cat: 'Backend' },
-  { name: 'Java',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg',                    cat: 'Backend' },
-
-  // Data
-  { name: 'SQL',                  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',                         cat: 'Data' },
-  { name: 'MySQL',                icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',                         cat: 'Data' },
-  { name: 'PostgreSQL',           icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg',               cat: 'Data' },
-  { name: 'SQLite',               icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg',                       cat: 'Data' },
-  { name: 'Microsoft SQL Server', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg',  cat: 'Data' },
-
-  // DevOps & Tools
-  { name: 'Git',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',                 cat: 'DevOps' },
-  { name: 'GitHub',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg',           cat: 'DevOps' },
-  { name: 'GitLab',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg',           cat: 'DevOps' },
-  { name: 'Docker',   icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',           cat: 'DevOps' },
-  { name: 'NGINX',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg',             cat: 'DevOps' },
-  { name: 'Postman',  icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postman/postman-original.svg',         cat: 'DevOps' },
-  { name: 'APIs',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/openapi/openapi-original.svg',         cat: 'DevOps' }, // OpenAPI = bon proxy visuel pour “APIs”
-  { name: 'JSON',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg',               cat: 'DevOps' }, // parfois dispo, sinon à remplacer
-
-  // Mobile
-  { name: 'React Native', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',         cat: 'Mobile' },
-  { name: 'Flutter',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',     cat: 'Mobile' },
-
-  // Languages (misc / low-level)
-  { name: 'C',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg',                     cat: 'Languages' },
-  { name: 'VB',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualbasic/visualbasic-original.svg', cat: 'Languages' },
-  { name: 'VBA',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visualbasic/visualbasic-original.svg', cat: 'Languages' },
+  { name: 'React',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg',           cat: 'Frontend'  },
+  { name: 'Next.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg',         cat: 'Frontend'  },
+  { name: 'TypeScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg', cat: 'Frontend'  },
+  { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg', cat: 'Frontend'  },
+  { name: 'Symfony',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/symfony/symfony-original.svg',       cat: 'Backend'   },
+  { name: 'Node.js',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg',         cat: 'Backend'   },
+  { name: 'C#',         icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg',         cat: 'Backend'   },
+  { name: '.NET',       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dotnetcore/dotnetcore-original.svg', cat: 'Backend'   },
+  { name: 'Laravel',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-original.svg',       cat: 'Backend'   },
+  { name: 'PHP',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg',               cat: 'Backend'   },
+  { name: 'Python',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg',         cat: 'Backend'   },
+  { name: 'SQL',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg',           cat: 'Data'      },
+  { name: 'PostgreSQL', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg', cat: 'Data'      },
+  { name: 'Docker',     icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg',         cat: 'DevOps'    },
+  { name: 'Git',        icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg',               cat: 'DevOps'    },
+  { name: 'NGINX',      icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg',           cat: 'DevOps'    },
+  { name: 'Flutter',    icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg',       cat: 'Mobile'    },
 ]
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -119,6 +89,7 @@ function Navbar() {
   }, [])
 
   const links = [
+    { key: 'about',      label: t.nav.about },
     { key: 'experience', label: t.nav.experience },
     { key: 'skills',     label: t.nav.skills },
     { key: 'education',  label: t.nav.education },
@@ -196,7 +167,7 @@ function HeroSection() {
 
       {/* photo — right side blending into bg */}
       <div className="hero-photo-wrap">
-        <img src="/profile2.png" alt="Timothée Maire" className="hero-photo" />
+        <img src="/profile.png" alt="Timothée Maire" className="hero-photo" />
         <div className="hero-photo-fade" />
         <div className="hero-photo-fade-b" />
         <div className="hero-photo-fade-t" />
@@ -243,79 +214,95 @@ function HeroSection() {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ABOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function AboutSection() {
+  const { t } = useI18n()
+  const { ref, visible } = useScrollReveal()
+  const roles = [t.about.frontend.title, t.about.backend.title, t.about.uiux.title]
+
+  return (
+    <section id="about" className="section">
+      <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
+        <div className="about-layout">
+          <div className="about-left">
+            <p className="section-label">{t.about.title}</p>
+            <h2 className="about-headline">
+              {t.about.frontend.title}<br />
+              <span className="about-headline-accent">&amp; {t.about.backend.title}</span>
+            </h2>
+            <div className="about-roles">
+              {roles.map(r => <span className="role-tag" key={r}>{r}</span>)}
+            </div>
+          </div>
+          <div className="about-right">
+            <div className="about-avatar">
+              <img
+                src="/profile.jpg"
+                alt="Timothée Maire"
+                className="about-photo"
+                onError={(e) => { e.currentTarget.style.display='none' }}
+              />
+            </div>
+            <div className="about-text">
+              <p>{t.about.frontend.desc}</p>
+              <p>{t.about.backend.desc}</p>
+              <p>{t.about.uiux.desc}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    EXPERIENCE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function ExperienceSection() {
   const { t } = useI18n()
   const { ref, visible } = useScrollReveal()
 
+  const badgeStyle: Record<string, React.CSSProperties> = {
+    current:  { background: 'rgba(34,197,94,.12)',  color: '#16a34a', border: '1px solid rgba(34,197,94,.35)' },
+    parttime: { background: 'rgba(249,115,22,.1)',  color: '#ea580c', border: '1px solid rgba(249,115,22,.3)' },
+    internship:{ background: 'rgba(99,102,241,.1)', color: '#6366f1', border: '1px solid rgba(99,102,241,.3)' },
+  }
+
   return (
     <section id="experience" className="section section--tinted">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
         <h2 className="section-heading">{t.experience.title}</h2>
 
-        {/* Timeline — inspired by the layout in your screenshot (center line + alternating blocks) */}
-        <div className="tl">
-          {t.experience.jobs.map((job, i) => {
-            const side = i % 2 === 0 ? 'left' : 'right'
-            return (
-              <div
-                className={`tl-item tl-item--${side}`}
-                key={i}
-                style={{ animationDelay: `${i * 0.08}s` }}
-              >
-                <div className="tl-col tl-col--left">
-                  {side === 'left' && (
-                    <div className="tl-content">
-                      <div className="tl-date">{job.period}</div>
-                      <div className="tl-title">{job.role}</div>
-                      <div className="tl-sub">{job.company} · {job.location}</div>
-
-                      {Array.isArray(job.tasks) && job.tasks.length > 0 && (
-                        <ul className="tl-bullets">
-                          {job.tasks.map((task, j) => <li key={j}>{task}</li>)}
-                        </ul>
-                      )}
-
-                      {Array.isArray(job.tags) && job.tags.length > 0 && (
-                        <div className="tl-tags">
-                          {job.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="tl-marker" aria-hidden="true">
-                  <div className="tl-circle">
-                    <CompanyLogo company={job.company} />
+        <div className="xp-list">
+          {t.experience.jobs.map((job, i) => (
+            <div className="xp-item" key={i} style={{ animationDelay: `${i * 0.1}s` }}>
+              <div className="xp-aside">
+                <CompanyLogo company={job.company} />
+                <div className="xp-line" />
+              </div>
+              <div className="xp-body">
+                <div className="xp-top">
+                  <div className="xp-meta">
+                    <h3 className="xp-role">{job.role}</h3>
+                    <span className="xp-company">{job.company}</span>
+                    <span className="xp-period">{job.period} · {job.location}</span>
                   </div>
-                </div>
-
-                <div className="tl-col tl-col--right">
-                  {side === 'right' && (
-                    <div className="tl-content">
-                      <div className="tl-date">{job.period}</div>
-                      <div className="tl-title">{job.role}</div>
-                      <div className="tl-sub">{job.company} · {job.location}</div>
-
-                      {Array.isArray(job.tasks) && job.tasks.length > 0 && (
-                        <ul className="tl-bullets">
-                          {job.tasks.map((task, j) => <li key={j}>{task}</li>)}
-                        </ul>
-                      )}
-
-                      {Array.isArray(job.tags) && job.tags.length > 0 && (
-                        <div className="tl-tags">
-                          {job.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
-                        </div>
-                      )}
-                    </div>
+                  {(job.type === 'current' || job.type === 'parttime' || job.type === 'internship') && (
+                    <span className="xp-badge" style={badgeStyle[job.type]}>
+                      {job.type === 'current' ? t.experience.current : job.type === 'parttime' ? t.experience.parttime : t.experience.internship}
+                    </span>
                   )}
+                </div>
+                <ul className="xp-tasks">
+                  {job.tasks.map((task, j) => <li key={j}>{task}</li>)}
+                </ul>
+                <div className="xp-tags">
+                  {job.tags.map(tag => <span className="tag" key={tag}>{tag}</span>)}
                 </div>
               </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -372,8 +359,7 @@ function SkillsSection() {
                 <span className="sk-lang-level">{t.skills.langEnLevel}</span>
               </div>
               <div className="sk-dots">
-                {[1,2,3].map(n => <span key={n} className="sk-dot sk-dot--on" />)}
-                <span className="sk-dot" />
+                {[1,2,3,4].map(n => <span key={n} className="sk-dot sk-dot--on" />)}
                 <span className="sk-dot" />
               </div>
             </div>
@@ -397,52 +383,12 @@ function SoftSkillsSection() {
     : ['Clear communication', 'Organization & prioritization', 'Client mindset', 'Autonomy', 'Problem solving', 'Architecture mindset']
 
   return (
-    <section id="softskills" className="section section">
+    <section id="softskills" className="section section--tinted">
       <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
+        <p className="section-label">{title}</p>
         <h2 className="section-heading">{title}</h2>
         <div className="soft-badges">
           {items.map(it => <span className="soft-badge" key={it}>{it}</span>)}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   EDUCATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-function EducationSection() {
-  const { t } = useI18n()
-  const { ref, visible } = useScrollReveal()
-
-  const schoolMap: Record<string, string> = {
-    'CESI, Nancy': 'CESI',
-    'Lycée Frédéric Chopin, Nancy': 'Chopin',
-    'Lycée Frédéric Chopin': 'Chopin',
-    'Lycée Charles de Gaulle, Nancy': 'CdG',
-  }
-
-  return (
-    <section id="education" className="section section--tinted">
-      <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <h2 className="section-heading">{t.education.title}</h2>
-
-        <div className="edu-grid">
-          {t.education.items.map((item, i) => (
-            <div className="edu-card" key={i} style={{ animationDelay: `${i * 0.1}s` }}>
-              <div className="edu-card-top">
-                <div className="edu-logo-badge">
-                  {schoolMap[item.school] ?? item.school.slice(0, 5)}
-                </div>
-                <div className="edu-level-badge">{item.level}</div>
-              </div>
-              <h3 className="edu-degree">{item.degree}</h3>
-              <p className="edu-meta">{item.school} · {item.period}</p>
-              <ul className="edu-tasks">
-                {item.tasks.map((task, j) => <li key={j}>{task}</li>)}
-              </ul>
-            </div>
-          ))}
         </div>
       </div>
     </section>
@@ -468,7 +414,7 @@ function ProjectsSection() {
         <h2 className="section-heading">{t.projects.title}</h2>
 
         <div className="proj-grid">
-          {projects.map((p) => (
+          {projects.map((p, i) => (
             <div className="proj-card" key={p.id} style={{ '--proj-accent': p.accent } as React.CSSProperties}>
               <div className="proj-card-inner">
                 <div className="proj-emoji">{p.emoji}</div>
@@ -534,7 +480,8 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner">
-        <span>© 2026 Timothée Maire</span>
+        <span>© 2025 Timothée Maire</span>
+        <span>Fait avec React + Vite</span>
       </div>
     </footer>
   )
