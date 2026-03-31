@@ -214,49 +214,6 @@ function HeroSection() {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   ABOUT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-function AboutSection() {
-  const { t } = useI18n()
-  const { ref, visible } = useScrollReveal()
-  const roles = [t.about.frontend.title, t.about.backend.title, t.about.uiux.title]
-
-  return (
-    <section id="about" className="section">
-      <div ref={ref} className={`container reveal ${visible ? 'revealed' : ''}`}>
-        <div className="about-layout">
-          <div className="about-left">
-            <p className="section-label">{t.about.title}</p>
-            <h2 className="about-headline">
-              {t.about.frontend.title}<br />
-              <span className="about-headline-accent">&amp; {t.about.backend.title}</span>
-            </h2>
-            <div className="about-roles">
-              {roles.map(r => <span className="role-tag" key={r}>{r}</span>)}
-            </div>
-          </div>
-          <div className="about-right">
-            <div className="about-avatar">
-              <img
-                src="/profile.jpg"
-                alt="Timothée Maire"
-                className="about-photo"
-                onError={(e) => { e.currentTarget.style.display='none' }}
-              />
-            </div>
-            <div className="about-text">
-              <p>{t.about.frontend.desc}</p>
-              <p>{t.about.backend.desc}</p>
-              <p>{t.about.uiux.desc}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    EXPERIENCE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 function ExperienceSection() {
