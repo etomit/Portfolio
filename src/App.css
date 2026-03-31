@@ -885,7 +885,6 @@ img { max-width: 100%; display: block }
   gap: 36px 48px;
   margin-bottom: 52px;
 }
-.sk-group {}
 .sk-cat {
   font-family: var(--mono);
   font-size: 0.8rem;

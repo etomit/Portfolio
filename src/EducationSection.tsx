@@ -78,17 +78,6 @@ export default function EducationSection() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [rotation, setRotation] = useState(0)
-  const [isVisible, setIsVisible] = useState(false)
-
-  // Detect section visibility
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => setIsVisible(e.isIntersecting),
-      { threshold: 0.1 }
-    )
-    if (sectionRef.current) obs.observe(sectionRef.current)
-    return () => obs.disconnect()
-  }, [])
 
   // Scroll handler — advance card every ~200px of scroll inside the section
   useEffect(() => {
