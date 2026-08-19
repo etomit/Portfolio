@@ -1,6 +1,6 @@
 # Portfolio — Timothée Maire
 
-Portfolio personnel construit avec React, TypeScript et Vite. L’interface est structurée pour les recruteurs et présente le profil, l’expérience, les compétences et quatre projets personnels lançables de Timothée Maire.
+Portfolio personnel construit avec React, TypeScript et Vite. L’interface présente l’approche produit, l’expérience, les compétences et quatre projets personnels lançables de Timothée Maire.
 
 ## Fonctionnalités
 

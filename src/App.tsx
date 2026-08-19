@@ -56,17 +56,17 @@ const BRAND_ICONS: Record<string, BrandIcon> = {
 
 const COPY = {
   fr: {
-    skip: 'Aller au contenu', nav: ['Profil', 'Expérience', 'Projets personnels', 'Formation', 'Contact'],
+    skip: 'Aller au contenu', nav: ['Approche', 'Expérience', 'Projets personnels', 'Formation', 'Contact'],
     theme: 'Changer de thème', language: 'Passer le site en anglais', menu: 'Ouvrir le menu', close: 'Fermer',
-    available: 'Ouvert aux opportunités CDI', eyebrow: 'Développeur full-stack · Grand Est, France',
+    available: 'Concevoir · Construire · Améliorer', eyebrow: 'Développeur full-stack · Grand Est, France',
     heroLead: 'Je transforme les besoins métier en logiciels', heroAccent: 'utiles et durables.',
     heroText: 'Développeur full-stack orienté produit, je relie les usages terrain, une interface claire et une architecture robuste pour livrer des applications réellement adoptées.',
-    viewWork: 'Découvrir mon profil', contactMe: 'Voir mon GitHub', scroll: 'Découvrir mon parcours',
-    codeTitle: 'next_opportunity.ts', codeComment: '// Prêt à rejoindre une équipe produit',
+    viewWork: 'Découvrir mon approche', contactMe: 'Voir mon GitHub', scroll: 'Découvrir mon parcours',
+    codeTitle: 'product_mindset.ts', codeComment: '// Construire des produits utiles',
     stats: [['3+', 'années de pratique'], ['1 200+', 'utilisateurs métier'], ['4', 'projets lançables']],
-    careerKicker: 'Objectif professionnel', careerTitle: 'Rejoindre une équipe en CDI et construire des produits qui comptent.',
-    careerText: 'Je recherche un poste de développeur full-stack ou front-end React où je peux contribuer au produit, échanger avec les métiers et faire progresser une base de code dans la durée.',
-    careerFacts: [['Contrat recherché', 'CDI'], ['Cœur de métier', 'Applications web & SI'], ['Mobilité', 'Grand Est · Hybride']], careerGithub: 'Explorer mon GitHub',
+    approachKicker: 'Ma façon de travailler', approachTitle: 'Comprendre le besoin, construire juste, améliorer dans la durée.',
+    approachText: 'J’aime partir du terrain, confronter les choix techniques aux usages réels et avancer par itérations. Le résultat attendu : un produit clair pour ses utilisateurs et sain pour l’équipe qui le fait évoluer.',
+    approachFacts: [['Point de départ', 'Usage & métier'], ['Terrain technique', 'Applications web & SI'], ['Méthode', 'Produit × Design × Tech']], approachGithub: 'Explorer mon GitHub',
     workKicker: 'Projets personnels · 03', workTitle: 'Quatre projets, quatre expériences à lancer.',
     workIntro: 'Aucun projet dormant dans cette sélection : chaque réalisation peut être ouverte ou jouée directement depuis cette page.',
     featured: 'Projet vedette · 2026',
@@ -82,7 +82,7 @@ const COPY = {
       game2048: ['2048 / React', 'Le classique revisité dans le design system du portfolio, jouable au clavier comme au tactile.', 'Playground · TypeScript'],
       wordle: ['Wordle bilingue', 'Un jeu de lettres français/anglais avec clavier virtuel, validation et animations de résultat.', 'Playground · React'],
     },
-    expertiseKicker: 'Profil & compétences · 01', expertiseTitle: 'Un développeur qui comprend le produit avant d’écrire le code.',
+    expertiseKicker: 'Approche & compétences · 01', expertiseTitle: 'Comprendre le produit avant d’écrire le code.',
     expertiseIntro: 'Mon terrain de jeu va de l’interface au modèle de données. Mon objectif reste constant : rendre le métier plus simple, le système plus fiable et le code plus facile à faire évoluer.',
     capabilities: [
       ['01', 'Interfaces produit', 'Design systems, accessibilité, responsive et micro-interactions utiles. Je cherche une interface lisible avant de chercher un effet.', ['React', 'TypeScript', 'UX engineering']],
@@ -98,23 +98,23 @@ const COPY = {
     current: 'Aujourd’hui', details: 'Missions clés',
     educationKicker: 'Formation · 04', educationTitle: 'Apprendre, consolider, transmettre.',
     educationIntro: 'Un parcours progressif du système et réseau vers l’architecture logicielle et le pilotage de projets.',
-    contactKicker: 'Contact · 05', contactTitle: 'Vous cherchez un développeur qui relie produit, métier et technique ?',
-    contactText: 'Je suis ouvert à un CDI au sein d’une équipe qui veut construire, apprendre et améliorer ses produits dans la durée. Échangeons directement par email ou LinkedIn.',
+    contactKicker: 'Contact · 05', contactTitle: 'Faisons avancer une idée, un produit ou un outil métier.',
+    contactText: 'Une idée, un besoin métier ou un défi technique mérite mieux qu’une solution générique. Échangeons directement par email ou LinkedIn.',
     email: 'Écrire un email', linkedin: 'LinkedIn', github: 'GitHub', location: 'Grand Est, France · Travail hybride',
     footer: 'Conçu et développé par Timothée Maire.', rights: 'Portfolio personnel · Aucun formulaire de connexion ni collecte de données.',
   },
   en: {
-    skip: 'Skip to content', nav: ['Profile', 'Experience', 'Personal projects', 'Education', 'Contact'],
+    skip: 'Skip to content', nav: ['Approach', 'Experience', 'Personal projects', 'Education', 'Contact'],
     theme: 'Switch theme', language: 'Switch the website to French', menu: 'Open menu', close: 'Close',
-    available: 'Open to permanent opportunities', eyebrow: 'Full-stack developer · Grand Est, France',
+    available: 'Design · Build · Improve', eyebrow: 'Full-stack developer · Grand Est, France',
     heroLead: 'I turn business needs into software that is', heroAccent: 'useful and built to last.',
     heroText: 'As a product-minded full-stack developer, I connect field use cases, clear interfaces and robust architecture to ship applications people actually adopt.',
-    viewWork: 'Discover my profile', contactMe: 'View my GitHub', scroll: 'Explore my journey',
-    codeTitle: 'next_opportunity.ts', codeComment: '// Ready to join a product team',
+    viewWork: 'Discover my approach', contactMe: 'View my GitHub', scroll: 'Explore my journey',
+    codeTitle: 'product_mindset.ts', codeComment: '// Build useful products',
     stats: [['3+', 'years of practice'], ['1,200+', 'business users'], ['4', 'launchable projects']],
-    careerKicker: 'Career objective', careerTitle: 'Join a team in a permanent role and build products that matter.',
-    careerText: 'I am looking for a full-stack or React front-end role where I can contribute to the product, work closely with business teams and improve a codebase over time.',
-    careerFacts: [['Target role', 'Permanent'], ['Core focus', 'Web apps & IS'], ['Location', 'Grand Est · Hybrid']], careerGithub: 'Explore my GitHub',
+    approachKicker: 'How I work', approachTitle: 'Understand the need, build the right thing, improve it over time.',
+    approachText: 'I like to start from real use cases, challenge technical choices against actual needs and move forward iteratively. The goal: a clear product for its users and a healthy codebase for the team evolving it.',
+    approachFacts: [['Starting point', 'Users & business'], ['Technical scope', 'Web apps & IS'], ['Method', 'Product × Design × Tech']], approachGithub: 'Explore my GitHub',
     workKicker: 'Personal projects · 03', workTitle: 'Four projects, four experiences ready to launch.',
     workIntro: 'No dormant repository in this selection: every project can be opened or played directly from this page.',
     featured: 'Featured project · 2026',
@@ -130,7 +130,7 @@ const COPY = {
       game2048: ['2048 / React', 'The classic rebuilt in the portfolio design system, playable with a keyboard or touch gestures.', 'Playground · TypeScript'],
       wordle: ['Bilingual Wordle', 'A French/English word game with a virtual keyboard, validation and result animations.', 'Playground · React'],
     },
-    expertiseKicker: 'Profile & skills · 01', expertiseTitle: 'A developer who understands the product before writing code.',
+    expertiseKicker: 'Approach & skills · 01', expertiseTitle: 'Understand the product before writing code.',
     expertiseIntro: 'My scope runs from the interface to the data model. The goal stays the same: simplify the business, strengthen the system and make the code easier to evolve.',
     capabilities: [
       ['01', 'Product interfaces', 'Design systems, accessibility, responsive layouts and purposeful micro-interactions. Clarity always comes before effects.', ['React', 'TypeScript', 'UX engineering']],
@@ -146,8 +146,8 @@ const COPY = {
     current: 'Today', details: 'Key work',
     educationKicker: 'Education · 04', educationTitle: 'Learn, consolidate, share.',
     educationIntro: 'A progressive journey from systems and networks to software architecture and project leadership.',
-    contactKicker: 'Contact · 05', contactTitle: 'Looking for a developer who connects product, business and technology?',
-    contactText: 'I am open to a permanent role in a team that wants to build, learn and improve its products over time. Let’s talk directly by email or LinkedIn.',
+    contactKicker: 'Contact · 05', contactTitle: 'Let’s move an idea, a product or a business tool forward.',
+    contactText: 'An idea, a business need or a technical challenge deserves more than a generic solution. Let’s talk directly by email or LinkedIn.',
     email: 'Write an email', linkedin: 'LinkedIn', github: 'GitHub', location: 'Grand Est, France · Hybrid work',
     footer: 'Designed and developed by Timothée Maire.', rights: 'Personal portfolio · No login form and no data collection.',
   },
@@ -290,12 +290,12 @@ function Hero() {
   </main>
 }
 
-function CareerBrief() {
+function ApproachBrief() {
   const { lang } = useI18n(); const c = COPY[lang]
-  return <section className="career-brief" aria-labelledby="career-title"><div className="page-shell">
-    <Reveal className="career-brief-grid">
-      <div className="career-brief-copy"><p className="section-kicker">{c.careerKicker}</p><h2 id="career-title">{c.careerTitle}</h2><p>{c.careerText}</p><a href="https://github.com/etomit" target="_blank" rel="noopener noreferrer"><GithubIcon />{c.careerGithub}<ArrowIcon /></a></div>
-      <div className="career-facts">{c.careerFacts.map(([label, value], index) => <div key={label}><span>0{index + 1}</span><p>{label}</p><strong>{value}</strong></div>)}</div>
+  return <section className="approach-brief" aria-labelledby="approach-title"><div className="page-shell">
+    <Reveal className="approach-brief-grid">
+      <div className="approach-brief-copy"><p className="section-kicker">{c.approachKicker}</p><h2 id="approach-title">{c.approachTitle}</h2><p>{c.approachText}</p><a href="https://github.com/etomit" target="_blank" rel="noopener noreferrer"><GithubIcon />{c.approachGithub}<ArrowIcon /></a></div>
+      <div className="approach-facts">{c.approachFacts.map(([label, value], index) => <div key={label}><span>0{index + 1}</span><p>{label}</p><strong>{value}</strong></div>)}</div>
     </Reveal>
   </div></section>
 }
@@ -386,12 +386,41 @@ function ExpertiseSection() {
 }
 
 function ExperienceSection() {
-  const { lang, t } = useI18n(); const c = COPY[lang]; const [active, setActive] = useState(0); const jobs = t.experience.jobs
+  const { lang, t } = useI18n(); const c = COPY[lang]; const [active, setActive] = useState(0); const [direction, setDirection] = useState<'forward' | 'backward'>('forward'); const [wheelTurn, setWheelTurn] = useState(0); const jobs = t.experience.jobs
+  const getWheelOffset = (index: number) => {
+    const half = Math.floor(jobs.length / 2)
+    return ((index - active + half + jobs.length) % jobs.length) - half
+  }
+  const selectJob = (index: number) => {
+    const offset = getWheelOffset(index)
+    if (offset === 0) return
+    setDirection(offset > 0 ? 'forward' : 'backward')
+    setWheelTurn((turn) => turn + offset)
+    setActive(index)
+  }
   return <section id="experience" className="section experience-section page-shell">
     <SectionIntro kicker={c.experienceKicker} title={c.experienceTitle} intro={c.experienceIntro} />
     <Reveal className="experience-layout" delay={90}>
-      <div className="experience-list" role="tablist" aria-label={c.experienceTitle}>{jobs.map((job, index) => <button key={`${job.company}-${job.period}`} role="tab" aria-selected={index === active} className={index === active ? 'is-active' : ''} onClick={() => setActive(index)}><span className="experience-index">0{index + 1}</span><span><strong>{job.company}</strong><small>{job.period}</small></span><i><ArrowIcon /></i></button>)}</div>
-      <article className="experience-detail" key={`${lang}-${active}`}><div className="detail-head"><span className="company-monogram">{jobs[active].company.split(' ').map((word) => word[0]).slice(0, 2).join('')}</span><div><p>{active === 0 ? c.current : jobs[active].location}</p><h3>{jobs[active].role}</h3><span>{jobs[active].company} · {jobs[active].period}</span></div></div><div className="detail-body"><p>{c.details}</p><ul>{jobs[active].tasks.map((task) => <li key={task}>{task}</li>)}</ul></div><div className="detail-tags">{jobs[active].tags.map((tag) => <TechLabel name={tag} key={tag} />)}</div></article>
+      <div className="experience-wheel" role="tablist" aria-label={c.experienceTitle} style={{ '--wheel-turn': wheelTurn } as CSSProperties}>
+        <div className="experience-wheel-ring" aria-hidden="true" />
+        <div className="experience-wheel-hub" aria-hidden="true"><strong>0{active + 1}</strong><span>/ 0{jobs.length}</span></div>
+        {jobs.map((job, index) => {
+          const offset = getWheelOffset(index)
+          return <div className="experience-wheel-spoke" key={`${job.company}-${job.period}`} style={{ '--wheel-offset': offset, '--wheel-depth': Math.abs(offset), zIndex: 10 - Math.abs(offset) } as CSSProperties}>
+            <button id={`experience-tab-${index}`} role="tab" aria-controls="experience-detail" aria-selected={index === active} tabIndex={index === active ? 0 : -1} className={index === active ? 'is-active' : ''} onClick={() => selectJob(index)} onKeyDown={(event) => {
+              if (!['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'].includes(event.key)) return
+              event.preventDefault()
+              const step = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? 1 : -1
+              const nextIndex = (active + step + jobs.length) % jobs.length
+              selectJob(nextIndex)
+              requestAnimationFrame(() => document.getElementById(`experience-tab-${nextIndex}`)?.focus())
+            }}>
+              <span className="experience-index">0{index + 1}</span><span className="experience-job-copy"><strong>{job.company}</strong><small>{job.period}</small></span><i><ArrowIcon /></i>
+            </button>
+          </div>
+        })}
+      </div>
+      <article id="experience-detail" role="tabpanel" aria-labelledby={`experience-tab-${active}`} className={`experience-detail is-${direction}`} key={`${lang}-${active}`}><div className="detail-head"><span className="company-monogram">{jobs[active].company.split(' ').map((word) => word[0]).slice(0, 2).join('')}</span><div><p>{active === 0 ? c.current : jobs[active].location}</p><h3>{jobs[active].role}</h3><span>{jobs[active].company} · {jobs[active].period}</span></div></div><div className="detail-body"><p>{c.details}</p><ul>{jobs[active].tasks.map((task, index) => <li key={task} style={{ '--task-index': index } as CSSProperties}>{task}</li>)}</ul></div><div className="detail-tags">{jobs[active].tags.map((tag) => <TechLabel name={tag} key={tag} className="detail-tech" />)}</div></article>
     </Reveal>
   </section>
 }
@@ -426,7 +455,7 @@ function Portfolio() {
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     return () => { cancelAnimationFrame(frame); window.removeEventListener('pointermove', onPointerMove) }
   }, [])
-  return <div className="app"><a className="skip-link" href="#main-content">{COPY[lang].skip}</a><div className="pointer-glow" aria-hidden="true" /><Header theme={theme} setTheme={setTheme} /><Hero /><CareerBrief /><ExpertiseSection /><ExperienceSection /><WorkSection /><EducationSection /><ContactSection /></div>
+  return <div className="app"><a className="skip-link" href="#main-content">{COPY[lang].skip}</a><div className="pointer-glow" aria-hidden="true" /><Header theme={theme} setTheme={setTheme} /><Hero /><ApproachBrief /><ExpertiseSection /><ExperienceSection /><WorkSection /><EducationSection /><ContactSection /></div>
 }
 
 export default function App() { return <I18nProvider><Portfolio /></I18nProvider> }
