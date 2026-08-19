@@ -1,6 +1,6 @@
 # Portfolio — Timothée Maire
 
-Portfolio personnel construit avec React, TypeScript et Vite. L’interface présente le parcours, les compétences et les projets de Timothée Maire, notamment PokéLine et Mon CommerceRapide.
+Portfolio personnel construit avec React, TypeScript et Vite. L’interface est structurée pour les recruteurs et présente le profil, l’expérience, les compétences et quatre projets personnels lançables de Timothée Maire.
 
 ## Fonctionnalités
 
@@ -8,7 +8,9 @@ Portfolio personnel construit avec React, TypeScript et Vite. L’interface pré
 - contenu français/anglais selon la langue du navigateur ;
 - navigation active et progression de lecture ;
 - animations d’entrée, cartes en perspective et mode réduit respecté ;
-- projets filtrables et mini-jeux 2048/Wordle intégrés ;
+- PokéLine et MonCommerce Rapide accessibles en ligne ;
+- mini-jeux 2048 et Wordle intégrés directement au portfolio ;
+- logos locaux pour les technologies et présentation des usages de Claude Code, Codex et Gemini ;
 - mise en avant de PokéLine avec capture réelle et liens explicites ;
 - aucun formulaire de connexion, tracker ou chargement d’image tiers.
 

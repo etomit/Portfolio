@@ -10,7 +10,7 @@ const translations = {
       experience: 'Expérience',
       skills: 'Compétences',
       education: 'Éducation',
-      projects: 'Projets',
+      projects: 'Projets personnels',
       contact: 'Contact',
     },
     hero: {
@@ -54,6 +54,7 @@ const translations = {
           tasks: [
             "Développement d'un intranet Symfony/React pour 1200+ employés",
             "Module de gestion des Propositions d'Amélioration Continue (PAC) avec système de vote",
+            "Conception de questionnaires qualité dynamiques adaptés au client, au type de véhicule et au contexte de contrôle",
             "Module de gestion du magasin d'outillage (interface e-commerce)",
             "Modules d'entreposage et de gestion des déplacements de véhicules",
           ],
@@ -180,7 +181,7 @@ const translations = {
       locationValue: 'Grand Est, France',
     },
     projects: {
-      title: 'PROJETS',
+      title: 'PROJETS PERSONNELS',
       playNow: 'Jouer',
       techLabel: 'Technologies',
       game2048Title: '2048',
@@ -210,7 +211,7 @@ const translations = {
       experience: 'Experience',
       skills: 'Skills',
       education: 'Education',
-      projects: 'Projects',
+      projects: 'Personal projects',
       contact: 'Contact',
     },
     hero: {
@@ -254,6 +255,7 @@ const translations = {
           tasks: [
             'Development of an intranet with Symfony/React for 1200+ employees',
             'Continuous Improvement Proposals (PAC) management module with voting system',
+            'Design of dynamic quality questionnaires adapted to each customer, vehicle type and inspection context',
             'Tool store management module (e-commerce interface)',
             'Vehicle storage and movement management modules',
           ],
@@ -380,7 +382,7 @@ const translations = {
       locationValue: 'Grand Est, France',
     },
     projects: {
-      title: 'PROJECTS',
+      title: 'PERSONAL PROJECTS',
       playNow: 'Play',
       techLabel: 'Technologies',
       game2048Title: '2048',

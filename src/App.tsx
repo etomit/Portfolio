@@ -1,4 +1,24 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import {
+  siClaudecode,
+  siCss,
+  siDocker,
+  siDotnet,
+  siFlutter,
+  siGit,
+  siGooglegemini,
+  siJavascript,
+  siLaravel,
+  siNginx,
+  siNodedotjs,
+  siPhp,
+  siPostgresql,
+  siPython,
+  siReact,
+  siSymfony,
+  siTypescript,
+  siWordpress,
+} from 'simple-icons/icons'
 import { I18nProvider, useI18n } from './i18n'
 import Game2048 from './Game2048'
 import WordleGame from './WordleGame'
@@ -6,95 +26,128 @@ import './App.css'
 
 type Theme = 'dark' | 'light'
 type GameKind = '2048' | 'wordle'
-type ProjectFilter = 'all' | 'web' | 'mobile' | 'api' | 'play'
 
-const NAV_IDS = ['work', 'expertise', 'experience', 'education', 'contact'] as const
+const NAV_IDS = ['expertise', 'experience', 'work', 'education', 'contact'] as const
 const SKILLS = ['React', 'TypeScript', 'Symfony', 'Laravel', '.NET', 'Node.js', 'PostgreSQL', 'Docker', 'Git', 'Flutter', 'Python', 'Architecture SI']
+const AI_TOOLS = ['Claude Code', 'Codex', 'Gemini']
+
+type BrandIcon = { title: string; path: string; hex: string }
+
+const BRAND_ICONS: Record<string, BrandIcon> = {
+  React: siReact,
+  TypeScript: siTypescript,
+  Symfony: siSymfony,
+  Laravel: siLaravel,
+  '.NET': siDotnet,
+  'Node.js': siNodedotjs,
+  PostgreSQL: siPostgresql,
+  Docker: siDocker,
+  Git: siGit,
+  Flutter: siFlutter,
+  Python: siPython,
+  PHP: siPhp,
+  JavaScript: siJavascript,
+  CSS: siCss,
+  NGINX: siNginx,
+  WordPress: siWordpress,
+  'Claude Code': siClaudecode,
+  Gemini: siGooglegemini,
+}
 
 const COPY = {
   fr: {
-    skip: 'Aller au contenu', nav: ['Projets', 'Expertise', 'Parcours', 'Formation', 'Contact'],
+    skip: 'Aller au contenu', nav: ['Profil', 'Expérience', 'Projets personnels', 'Formation', 'Contact'],
     theme: 'Changer de thème', language: 'Passer le site en anglais', menu: 'Ouvrir le menu', close: 'Fermer',
-    available: 'Disponible pour de nouveaux projets', eyebrow: 'Développeur full-stack · Grand Est, France',
-    heroLead: 'Je transforme des besoins métier complexes en', heroAccent: 'expériences simples.',
-    heroText: 'Du cadrage à la mise en production, je conçois des interfaces vivantes et des architectures robustes — avec le même niveau d’exigence des deux côtés de la stack.',
-    viewWork: 'Explorer mes projets', contactMe: 'Me contacter', scroll: 'Défiler pour découvrir',
-    codeTitle: 'currently_building.ts', codeComment: '// Une idée devient un produit',
-    stats: [['3+', 'années de pratique'], ['1 200+', 'utilisateurs métier'], ['17+', 'technologies']],
-    workKicker: 'Selected work · 01', workTitle: 'Des projets qui ne restent pas au stade du prototype.',
-    workIntro: 'Une sélection de produits, d’expériences interactives et d’explorations techniques. Chaque lien ouvre une destination clairement identifiée.',
+    available: 'Ouvert aux opportunités CDI', eyebrow: 'Développeur full-stack · Grand Est, France',
+    heroLead: 'Je transforme les besoins métier en logiciels', heroAccent: 'utiles et durables.',
+    heroText: 'Développeur full-stack orienté produit, je relie les usages terrain, une interface claire et une architecture robuste pour livrer des applications réellement adoptées.',
+    viewWork: 'Découvrir mon profil', contactMe: 'Voir mon GitHub', scroll: 'Découvrir mon parcours',
+    codeTitle: 'next_opportunity.ts', codeComment: '// Prêt à rejoindre une équipe produit',
+    stats: [['3+', 'années de pratique'], ['1 200+', 'utilisateurs métier'], ['4', 'projets lançables']],
+    careerKicker: 'Objectif professionnel', careerTitle: 'Rejoindre une équipe en CDI et construire des produits qui comptent.',
+    careerText: 'Je recherche un poste de développeur full-stack ou front-end React où je peux contribuer au produit, échanger avec les métiers et faire progresser une base de code dans la durée.',
+    careerFacts: [['Contrat recherché', 'CDI'], ['Cœur de métier', 'Applications web & SI'], ['Mobilité', 'Grand Est · Hybride']], careerGithub: 'Explorer mon GitHub',
+    workKicker: 'Projets personnels · 03', workTitle: 'Quatre projets, quatre expériences à lancer.',
+    workIntro: 'Aucun projet dormant dans cette sélection : chaque réalisation peut être ouverte ou jouée directement depuis cette page.',
     featured: 'Projet vedette · 2026',
     pokelineDesc: 'Un jeu de combat multijoueur complet : hub 2D, moteur tactique côté serveur, modes solo/local/en ligne et synchronisation temps réel.',
     playProject: 'Jouer à PokéLine', source: 'Voir le code source', newTab: 'nouvel onglet',
     pokelineFacts: [['3', 'modes de jeu'], ['18', 'types gérés'], ['WebSocket', 'temps réel']],
-    commerceLabel: 'Produit mis en avant', commerceTitle: 'Mon CommerceRapide',
-    commerceDesc: 'Une expérience web orientée commerce, pensée comme un vrai produit : parcours lisibles, opérations rapides et logique applicative structurée.',
-    commerceNote: 'Étude de cas produit', commerceAction: 'Présentation complète bientôt disponible',
-    filters: ['Tout', 'Web', 'Mobile', 'API', 'Playground'], archive: 'Projet archive', openGithub: 'Ouvrir sur GitHub', launch: 'Lancer',
+    commerceLabel: 'Projet personnel · Produit SaaS', commerceTitle: 'MonCommerce Rapide',
+    commerceDesc: 'Une solution de vitrine digitale et de click & collect pensée pour les commerces indépendants : catalogue, commandes, créneaux de retrait et expérience client unifiée.',
+    commerceRoadmap: 'Roadmap transparente : cartes de fidélité dans Apple Wallet et Google Wallet — fonctionnalité prévue, pas encore disponible.',
+    commerceNote: 'Maquette accessible', commerceAction: 'Tester la maquette',
+    playgroundLabel: 'Jouables ici', playgroundTitle: 'Deux expériences intégrées au portfolio.', launch: 'Jouer ici',
     projects: {
-      pokemon: ['Pokémon Battle', 'Application Flutter avec Pokédex, création d’équipe et moteur de combat basé sur les statistiques.', 'Mobile · Flutter'],
-      api: ['Python REST API', 'API Python et client desktop Tkinter : une exploration complète du flux données → service → interface.', 'API · Python'],
       game2048: ['2048 / React', 'Le classique revisité dans le design system du portfolio, jouable au clavier comme au tactile.', 'Playground · TypeScript'],
       wordle: ['Wordle bilingue', 'Un jeu de lettres français/anglais avec clavier virtuel, validation et animations de résultat.', 'Playground · React'],
     },
-    expertiseKicker: 'Expertise · 02', expertiseTitle: 'Une vision produit, du pixel à la donnée.',
-    expertiseIntro: 'Je ne traite pas le front et le back comme deux mondes séparés. Je conçois le parcours entier : usage, modèle, sécurité, performance et maintenabilité.',
+    expertiseKicker: 'Profil & compétences · 01', expertiseTitle: 'Un développeur qui comprend le produit avant d’écrire le code.',
+    expertiseIntro: 'Mon terrain de jeu va de l’interface au modèle de données. Mon objectif reste constant : rendre le métier plus simple, le système plus fiable et le code plus facile à faire évoluer.',
     capabilities: [
       ['01', 'Interfaces produit', 'Design systems, accessibilité, responsive et micro-interactions utiles. Je cherche une interface lisible avant de chercher un effet.', ['React', 'TypeScript', 'UX engineering']],
       ['02', 'Applications métier', 'Des workflows fiables pour des utilisateurs réels : droits, validation, traçabilité et intégration au système d’information.', ['Symfony', '.NET', 'SQL']],
       ['03', 'Architecture & delivery', 'API, modélisation, conteneurisation et déploiement. Une base technique pensée pour évoluer sans ralentir l’équipe.', ['REST', 'PostgreSQL', 'Docker']],
     ],
     stackLabel: 'Stack & outils', stackText: 'Une boîte à outils volontairement large, utilisée selon le problème — jamais pour cocher des cases.',
-    experienceKicker: 'Parcours · 03', experienceTitle: 'Construire dans le monde réel.',
+    aiLabel: 'IA de développement', aiTitle: 'Claude Code, Codex & Gemini',
+    aiText: 'Je les utilise pour explorer une base de code, prototyper, refactorer, tester et documenter plus vite. Les choix d’architecture, la revue et la validation finale restent sous contrôle humain.',
+    aiNote: 'Outils maîtrisés · décisions vérifiées',
+    experienceKicker: 'Expérience · 02', experienceTitle: 'Construire dans le monde réel.',
     experienceIntro: 'Des environnements industriels, logistiques et numériques qui m’ont appris à relier contraintes terrain et décisions techniques.',
     current: 'Aujourd’hui', details: 'Missions clés',
     educationKicker: 'Formation · 04', educationTitle: 'Apprendre, consolider, transmettre.',
     educationIntro: 'Un parcours progressif du système et réseau vers l’architecture logicielle et le pilotage de projets.',
-    contactKicker: 'Contact · 05', contactTitle: 'Un produit à rendre plus clair, plus rapide, plus vivant ?',
-    contactText: 'Parlons de votre contexte et de ce que le logiciel peut réellement améliorer. Pas de formulaire opaque : vous choisissez directement le canal.',
+    contactKicker: 'Contact · 05', contactTitle: 'Vous cherchez un développeur qui relie produit, métier et technique ?',
+    contactText: 'Je suis ouvert à un CDI au sein d’une équipe qui veut construire, apprendre et améliorer ses produits dans la durée. Échangeons directement par email ou LinkedIn.',
     email: 'Écrire un email', linkedin: 'LinkedIn', github: 'GitHub', location: 'Grand Est, France · Travail hybride',
     footer: 'Conçu et développé par Timothée Maire.', rights: 'Portfolio personnel · Aucun formulaire de connexion ni collecte de données.',
   },
   en: {
-    skip: 'Skip to content', nav: ['Work', 'Expertise', 'Journey', 'Education', 'Contact'],
+    skip: 'Skip to content', nav: ['Profile', 'Experience', 'Personal projects', 'Education', 'Contact'],
     theme: 'Switch theme', language: 'Switch the website to French', menu: 'Open menu', close: 'Close',
-    available: 'Available for new projects', eyebrow: 'Full-stack developer · Grand Est, France',
-    heroLead: 'I turn complex business needs into', heroAccent: 'simple experiences.',
-    heroText: 'From framing to production, I craft lively interfaces and robust architectures — with the same level of care on both sides of the stack.',
-    viewWork: 'Explore my work', contactMe: 'Get in touch', scroll: 'Scroll to explore',
-    codeTitle: 'currently_building.ts', codeComment: '// An idea becomes a product',
-    stats: [['3+', 'years of practice'], ['1,200+', 'business users'], ['17+', 'technologies']],
-    workKicker: 'Selected work · 01', workTitle: 'Projects that go beyond the prototype stage.',
-    workIntro: 'A selection of products, interactive experiences and technical explorations. Every link opens a clearly identified destination.',
+    available: 'Open to permanent opportunities', eyebrow: 'Full-stack developer · Grand Est, France',
+    heroLead: 'I turn business needs into software that is', heroAccent: 'useful and built to last.',
+    heroText: 'As a product-minded full-stack developer, I connect field use cases, clear interfaces and robust architecture to ship applications people actually adopt.',
+    viewWork: 'Discover my profile', contactMe: 'View my GitHub', scroll: 'Explore my journey',
+    codeTitle: 'next_opportunity.ts', codeComment: '// Ready to join a product team',
+    stats: [['3+', 'years of practice'], ['1,200+', 'business users'], ['4', 'launchable projects']],
+    careerKicker: 'Career objective', careerTitle: 'Join a team in a permanent role and build products that matter.',
+    careerText: 'I am looking for a full-stack or React front-end role where I can contribute to the product, work closely with business teams and improve a codebase over time.',
+    careerFacts: [['Target role', 'Permanent'], ['Core focus', 'Web apps & IS'], ['Location', 'Grand Est · Hybrid']], careerGithub: 'Explore my GitHub',
+    workKicker: 'Personal projects · 03', workTitle: 'Four projects, four experiences ready to launch.',
+    workIntro: 'No dormant repository in this selection: every project can be opened or played directly from this page.',
     featured: 'Featured project · 2026',
     pokelineDesc: 'A complete multiplayer battle game: 2D hub, server-side tactical engine, solo/local/online modes and real-time sync.',
     playProject: 'Play PokéLine', source: 'View source code', newTab: 'new tab',
     pokelineFacts: [['3', 'game modes'], ['18', 'managed types'], ['WebSocket', 'real time']],
-    commerceLabel: 'Product spotlight', commerceTitle: 'Mon CommerceRapide',
-    commerceDesc: 'A commerce-focused web experience designed as a real product: clear journeys, fast operations and structured application logic.',
-    commerceNote: 'Product case study', commerceAction: 'Full presentation coming soon',
-    filters: ['All', 'Web', 'Mobile', 'API', 'Playground'], archive: 'Archive project', openGithub: 'Open on GitHub', launch: 'Launch',
+    commerceLabel: 'Personal project · SaaS product', commerceTitle: 'MonCommerce Rapide',
+    commerceDesc: 'A digital storefront and click-and-collect solution for independent businesses: catalogue, orders, pickup slots and one consistent customer journey.',
+    commerceRoadmap: 'Transparent roadmap: loyalty cards in Apple Wallet and Google Wallet — planned, not yet available.',
+    commerceNote: 'Live prototype', commerceAction: 'Try the prototype',
+    playgroundLabel: 'Play here', playgroundTitle: 'Two experiences embedded in the portfolio.', launch: 'Play here',
     projects: {
-      pokemon: ['Pokémon Battle', 'A Flutter app with a Pokédex, team building and a battle engine based on Pokémon statistics.', 'Mobile · Flutter'],
-      api: ['Python REST API', 'A Python API and Tkinter desktop client: an end-to-end exploration from data to service to interface.', 'API · Python'],
       game2048: ['2048 / React', 'The classic rebuilt in the portfolio design system, playable with a keyboard or touch gestures.', 'Playground · TypeScript'],
       wordle: ['Bilingual Wordle', 'A French/English word game with a virtual keyboard, validation and result animations.', 'Playground · React'],
     },
-    expertiseKicker: 'Expertise · 02', expertiseTitle: 'A product mindset, from pixels to data.',
-    expertiseIntro: 'I do not treat front end and back end as separate worlds. I design the full journey: usage, model, security, performance and maintainability.',
+    expertiseKicker: 'Profile & skills · 01', expertiseTitle: 'A developer who understands the product before writing code.',
+    expertiseIntro: 'My scope runs from the interface to the data model. The goal stays the same: simplify the business, strengthen the system and make the code easier to evolve.',
     capabilities: [
       ['01', 'Product interfaces', 'Design systems, accessibility, responsive layouts and purposeful micro-interactions. Clarity always comes before effects.', ['React', 'TypeScript', 'UX engineering']],
       ['02', 'Business applications', 'Reliable workflows for real users: permissions, validation, traceability and information-system integration.', ['Symfony', '.NET', 'SQL']],
       ['03', 'Architecture & delivery', 'APIs, data modelling, containers and deployment. A technical foundation designed to evolve without slowing the team down.', ['REST', 'PostgreSQL', 'Docker']],
     ],
     stackLabel: 'Stack & tools', stackText: 'A deliberately broad toolkit, selected for the problem at hand — never to tick boxes.',
-    experienceKicker: 'Journey · 03', experienceTitle: 'Building in the real world.',
+    aiLabel: 'AI development tools', aiTitle: 'Claude Code, Codex & Gemini',
+    aiText: 'I use them to explore codebases, prototype, refactor, test and document faster. Architecture choices, reviews and final validation remain under human control.',
+    aiNote: 'Tools mastered · decisions verified',
+    experienceKicker: 'Experience · 02', experienceTitle: 'Building in the real world.',
     experienceIntro: 'Industrial, logistics and digital environments taught me how to connect field constraints with technical decisions.',
     current: 'Today', details: 'Key work',
     educationKicker: 'Education · 04', educationTitle: 'Learn, consolidate, share.',
     educationIntro: 'A progressive journey from systems and networks to software architecture and project leadership.',
-    contactKicker: 'Contact · 05', contactTitle: 'A product to make clearer, faster, more alive?',
-    contactText: 'Let’s discuss your context and what software can truly improve. No opaque form: choose your preferred channel directly.',
+    contactKicker: 'Contact · 05', contactTitle: 'Looking for a developer who connects product, business and technology?',
+    contactText: 'I am open to a permanent role in a team that wants to build, learn and improve its products over time. Let’s talk directly by email or LinkedIn.',
     email: 'Write an email', linkedin: 'LinkedIn', github: 'GitHub', location: 'Grand Est, France · Hybrid work',
     footer: 'Designed and developed by Timothée Maire.', rights: 'Personal portfolio · No login form and no data collection.',
   },
@@ -113,6 +166,30 @@ function GithubIcon() {
 function MailIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18v12H3zM3.5 7l8.5 7 8.5-7" /></svg> }
 function LinkedinIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.2 9v9M6.2 6.2v.1M10.2 18v-9m0 4c0-2.2 1.4-4.1 3.7-4.1 2.7 0 3.9 1.8 3.9 4.7V18" /></svg> }
 function CodeIcon() { return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5M14 4l-4 16" /></svg> }
+
+function GenericTechGlyph({ name }: { name: string }) {
+  if (name === 'Codex') return <svg viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="3" /><path d="m7 10 2.5 2L7 14M12.5 15H17" /></svg>
+  if (name === 'Architecture SI') return <svg viewBox="0 0 24 24"><rect x="9" y="2.5" width="6" height="5" rx="1" /><rect x="2.5" y="16.5" width="6" height="5" rx="1" /><rect x="15.5" y="16.5" width="6" height="5" rx="1" /><path d="M12 7.5v4.5M5.5 16.5V12h13v4.5" /></svg>
+  if (name === 'SQL') return <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="3" /><path d="M4.5 5.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6M4.5 11.5v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6" /></svg>
+  if (name === 'PokeAPI') return <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h6M15 12h6" /><circle cx="12" cy="12" r="3" /></svg>
+  if (name === 'Reverb') return <svg viewBox="0 0 24 24"><path d="M5 9v6M9 6v12M13 9v6M17 4v16M21 8v8" /></svg>
+  if (name === 'REST') return <svg viewBox="0 0 24 24"><path d="M8 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M8 9l-3 3 3 3M16 9l3 3-3 3" /></svg>
+  if (name === 'UX engineering' || name === 'Expérience client') return <svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="14" rx="2" /><path d="M3 8h18M8 21l4-3.5 4 3.5" /></svg>
+  if (name === 'Logistique') return <svg viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4-8-4ZM4 7v10l8 4 8-4V7M12 11v10" /></svg>
+  if (name === 'Click & collect') return <svg viewBox="0 0 24 24"><path d="M5 8h14l-1 13H6L5 8ZM9 9V6a3 3 0 0 1 6 0v3M9 15l2 2 4-4" /></svg>
+  return <CodeIcon />
+}
+
+function TechIcon({ name }: { name: string }) {
+  const normalized = name.replace(/\s+12$/, '')
+  const icon = BRAND_ICONS[normalized] ?? (normalized === 'C#' ? siDotnet : undefined)
+  if (!icon) return <span className="tech-logo tech-logo-generic" aria-hidden="true"><GenericTechGlyph name={normalized} /></span>
+  return <span className="tech-logo tech-logo-brand" style={{ '--logo-color': `#${icon.hex}` } as CSSProperties} aria-hidden="true"><svg viewBox="0 0 24 24"><path d={icon.path} /></svg></span>
+}
+
+function TechLabel({ name, className = '' }: { name: string; className?: string }) {
+  return <span className={`tech-label ${className}`}><TechIcon name={name} /><span>{name}</span></span>
+}
 
 function ThemeIcon({ theme }: { theme: Theme }) {
   return theme === 'dark'
@@ -134,14 +211,14 @@ function Reveal({ children, className = '', delay = 0 }: { children: ReactNode; 
   return <div ref={ref} className={`reveal ${visible ? 'is-visible' : ''} ${className}`} style={{ '--reveal-delay': `${delay}ms` } as CSSProperties}>{children}</div>
 }
 
-function SectionIntro({ kicker, title, intro }: { kicker: string; title: string; intro: string }) {
-  return <Reveal className="section-intro"><p className="section-kicker">{kicker}</p><div className="section-intro-grid"><h2>{title}</h2><p>{intro}</p></div></Reveal>
+function SectionIntro({ kicker, title, intro, headingId }: { kicker: string; title: string; intro: string; headingId?: string }) {
+  return <Reveal className="section-intro"><p className="section-kicker">{kicker}</p><div className="section-intro-grid"><h2 id={headingId}>{title}</h2><p>{intro}</p></div></Reveal>
 }
 
 function Header({ theme, setTheme }: { theme: Theme; setTheme: (theme: Theme) => void }) {
   const { lang, setLang } = useI18n()
   const c = COPY[lang]
-  const [active, setActive] = useState('work')
+  const [active, setActive] = useState('expertise')
   const [menuOpen, setMenuOpen] = useState(false)
   const [progress, setProgress] = useState(0)
 
@@ -173,6 +250,7 @@ function Header({ theme, setTheme }: { theme: Theme; setTheme: (theme: Theme) =>
         {NAV_IDS.map((id, index) => <button key={id} className={active === id ? 'is-active' : ''} onClick={() => goTo(id)}><span>0{index + 1}</span>{c.nav[index]}</button>)}
       </nav>
       <div className="header-actions">
+        <a className="icon-button github-button" href="https://github.com/etomit" target="_blank" rel="noopener noreferrer" aria-label={`${c.github} — ${c.newTab}`}><GithubIcon /></a>
         <button className="icon-button language-button" onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')} aria-label={c.language}>{lang === 'fr' ? 'EN' : 'FR'}</button>
         <button className="icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={c.theme}><ThemeIcon theme={theme} /></button>
         <button className={`menu-button ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen((value) => !value)} aria-label={menuOpen ? c.close : c.menu} aria-expanded={menuOpen}><span /><span /></button>
@@ -193,28 +271,38 @@ function Hero() {
           <h1 id="hero-title" className="hero-enter" style={{ '--enter-delay': '220ms' } as CSSProperties}>{c.heroLead}<br /><em>{c.heroAccent}</em></h1>
           <p className="hero-description hero-enter" style={{ '--enter-delay': '310ms' } as CSSProperties}>{c.heroText}</p>
           <div className="hero-actions hero-enter" style={{ '--enter-delay': '390ms' } as CSSProperties}>
-            <button className="primary-button" onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}>{c.viewWork}<ArrowIcon direction="down" /></button>
-            <a className="text-link" href="mailto:timothee.maire54300@gmail.com">{c.contactMe}<ArrowIcon /></a>
+            <button className="primary-button" onClick={() => document.getElementById('expertise')?.scrollIntoView({ behavior: 'smooth' })}>{c.viewWork}<ArrowIcon direction="down" /></button>
+            <a className="text-link" href="https://github.com/etomit" target="_blank" rel="noopener noreferrer">{c.contactMe}<GithubIcon /></a>
           </div>
         </div>
         <div className="hero-visual hero-enter" style={{ '--enter-delay': '260ms' } as CSSProperties} aria-label="Portrait et aperçu technique de Timothée Maire">
           <div className="portrait-rail"><span>FULL-STACK</span><span>2026</span></div>
           <div className="portrait-frame"><div className="portrait-glow" /><img src="/profile-optimized.png" alt="Timothée Maire" width="1080" height="1440" fetchPriority="high" /><div className="portrait-caption"><p>Timothée Maire</p><span>Developer / Builder</span></div></div>
           <div className="floating-card floating-card-code"><div className="floating-card-head"><i /><i /><i /><span>{c.codeTitle}</span></div><pre><span className="code-muted">{c.codeComment}</span>{'\n'}<span className="code-purple">const</span> product = {'{'}{'\n'}  interface: <span className="code-green">'fluide'</span>,{'\n'}  architecture: <span className="code-green">'solide'</span>{'\n'}{'}'}</pre></div>
-          <div className="floating-card floating-card-stack"><span className="pulse-dot" /><div><strong>React × Symfony</strong><small>production ready</small></div></div>
+          <div className="floating-card floating-card-stack"><span className="floating-tech-icons"><TechIcon name="React" /><TechIcon name="Symfony" /></span><div><strong>React × Symfony</strong><small>production ready</small></div></div>
         </div>
         <div className="hero-footer hero-enter" style={{ '--enter-delay': '480ms' } as CSSProperties}>
           <div className="hero-stats">{c.stats.map(([number, label]) => <div key={label}><strong>{number}</strong><span>{label}</span></div>)}</div>
-          <button className="scroll-cue" onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}><span>{c.scroll}</span><i><ArrowIcon direction="down" /></i></button>
+          <button className="scroll-cue" onClick={() => document.getElementById('expertise')?.scrollIntoView({ behavior: 'smooth' })}><span>{c.scroll}</span><i><ArrowIcon direction="down" /></i></button>
         </div>
       </div>
     </section><KineticStrip />
   </main>
 }
 
+function CareerBrief() {
+  const { lang } = useI18n(); const c = COPY[lang]
+  return <section className="career-brief" aria-labelledby="career-title"><div className="page-shell">
+    <Reveal className="career-brief-grid">
+      <div className="career-brief-copy"><p className="section-kicker">{c.careerKicker}</p><h2 id="career-title">{c.careerTitle}</h2><p>{c.careerText}</p><a href="https://github.com/etomit" target="_blank" rel="noopener noreferrer"><GithubIcon />{c.careerGithub}<ArrowIcon /></a></div>
+      <div className="career-facts">{c.careerFacts.map(([label, value], index) => <div key={label}><span>0{index + 1}</span><p>{label}</p><strong>{value}</strong></div>)}</div>
+    </Reveal>
+  </div></section>
+}
+
 function KineticStrip() {
   const items = [...SKILLS.slice(0, 8), ...SKILLS.slice(0, 8)]
-  return <div className="kinetic-strip" aria-hidden="true"><div className="kinetic-track">{items.map((skill, index) => <span key={`${skill}-${index}`}>{skill}<i>✦</i></span>)}</div></div>
+  return <div className="kinetic-strip" aria-hidden="true"><div className="kinetic-track">{items.map((skill, index) => <span key={`${skill}-${index}`}><TechIcon name={skill} /><b>{skill}</b><i>✦</i></span>)}</div></div>
 }
 
 function TiltCard({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -234,41 +322,36 @@ function CommerceSpotlight() {
   return <Reveal className="commerce-spotlight" delay={120}>
     <div className="commerce-copy">
       <p className="section-kicker">{c.commerceLabel}</p><h3>{c.commerceTitle}</h3><p>{c.commerceDesc}</p>
-      <div><span>Product design</span><span>Web app</span><span>Business logic</span></div>
-      <button type="button" disabled aria-disabled="true">{c.commerceAction}</button>
+      <div><TechLabel name="Click & collect" /><TechLabel name="React" /><TechLabel name="Expérience client" /></div>
+      <p className="commerce-roadmap"><span>→</span>{c.commerceRoadmap}</p>
+      <a className="primary-button" href="https://moncommercerapide-production.up.railway.app/" target="_blank" rel="noopener noreferrer">{c.commerceAction}<ArrowIcon /><small>{c.newTab}</small></a>
     </div>
-    <div className="commerce-visual" aria-label="Aperçu abstrait d’un tableau de bord commerce">
-      <div className="commerce-window"><div className="commerce-window-head"><i /><i /><i /><span>Mon CommerceRapide</span></div>
-        <div className="commerce-dashboard"><aside><b>MC</b><i /><i /><i /><i /></aside><div className="commerce-main"><header><span /><span /></header><div className="commerce-metrics"><i /><i /><i /></div><div className="commerce-chart"><span /><span /><span /><span /><span /><span /><span /></div><div className="commerce-rows"><i /><i /><i /></div></div></div>
-      </div><span className="commerce-note">{c.commerceNote} · 02</span>
+    <div className="commerce-visual">
+      <div className="commerce-window"><div className="browser-chrome"><i /><i /><i /><span>moncommercerapide-production.up.railway.app</span><b>↗</b></div><img src="/mon-commerce-rapide-brand.png" alt="Page d’accueil MonCommerce Rapide présentant une vitrine digitale pour commerçants" width="1677" height="938" loading="lazy" /></div>
+      <span className="commerce-note"><i />{c.commerceNote} · 02</span>
     </div>
   </Reveal>
 }
 
 function WorkSection() {
   const { lang } = useI18n(); const c = COPY[lang]
-  const [filter, setFilter] = useState<ProjectFilter>('all'); const [openGame, setOpenGame] = useState<GameKind | null>(null)
-  const filters: ProjectFilter[] = ['all', 'web', 'mobile', 'api', 'play']
+  const [openGame, setOpenGame] = useState<GameKind | null>(null)
   const projects = [
-    { id: 'pokemon', filter: 'mobile' as const, year: '2025', color: 'violet', github: 'https://github.com/etomit/Pokemon_battle', content: c.projects.pokemon, mark: 'PK' },
-    { id: 'api', filter: 'api' as const, year: '2025', color: 'blue', github: 'https://github.com/etomit/python_api_rest', content: c.projects.api, mark: 'API' },
-    { id: '2048', filter: 'play' as const, year: 'LAB', color: 'lime', game: '2048' as const, content: c.projects.game2048, mark: '20' },
-    { id: 'wordle', filter: 'play' as const, year: 'LAB', color: 'orange', game: 'wordle' as const, content: c.projects.wordle, mark: 'W' },
+    { id: '2048', year: 'PLAY', color: 'aqua', game: '2048' as const, content: c.projects.game2048, mark: '20', tech: 'TypeScript' },
+    { id: 'wordle', year: 'PLAY', color: 'orange', game: 'wordle' as const, content: c.projects.wordle, mark: 'W', tech: 'React' },
   ]
   useEffect(() => {
     if (!openGame) return
     const previous = document.body.style.overflow; document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = previous }
   }, [openGame])
-  const shown = filter === 'all' || filter === 'web' ? projects : projects.filter((project) => project.filter === filter)
-
   return <section id="work" className="section work-section page-shell" aria-labelledby="work-heading">
-    <SectionIntro kicker={c.workKicker} title={c.workTitle} intro={c.workIntro} />
+    <SectionIntro kicker={c.workKicker} title={c.workTitle} intro={c.workIntro} headingId="work-heading" />
     <Reveal className="featured-wrap" delay={80}><TiltCard className="featured-project">
       <div className="featured-copy">
         <div className="project-meta"><span className="live-badge"><i />Live</span><span>{c.featured}</span></div>
-        <div><p className="project-index">PROJECT / 001</p><h3>Poké<span>Line</span></h3><p className="featured-description">{c.pokelineDesc}</p></div>
-        <div className="tech-pills"><span>Laravel 12</span><span>Reverb</span><span>PostgreSQL</span><span>PokeAPI</span></div>
+        <div><p className="project-index">PERSONAL / 001</p><h3>Poké<span>Line</span></h3><p className="featured-description">{c.pokelineDesc}</p></div>
+        <div className="tech-pills"><TechLabel name="Laravel 12" /><TechLabel name="Reverb" /><TechLabel name="PostgreSQL" /><TechLabel name="PokeAPI" /></div>
         <div className="project-actions">
           <a className="primary-button" href="https://pokeline-production.up.railway.app/" target="_blank" rel="noopener noreferrer">{c.playProject}<ArrowIcon /><small>{c.newTab}</small></a>
           <a className="secondary-button" href="https://github.com/etomit/PokeLine" target="_blank" rel="noopener noreferrer"><GithubIcon />{c.source}<span className="sr-only"> — {c.newTab}</span></a>
@@ -282,11 +365,11 @@ function WorkSection() {
     </TiltCard></Reveal>
     <CommerceSpotlight />
     <Reveal className="project-browser" delay={100}>
-      <div className="project-filter" role="tablist" aria-label="Filtrer les projets">{filters.map((item, index) => <button key={item} role="tab" aria-selected={filter === item} className={filter === item ? 'is-active' : ''} onClick={() => setFilter(item)}>{c.filters[index]}</button>)}</div>
-      <div className="project-grid">{shown.map((project, index) => <article className={`project-card project-card-${project.color}`} key={project.id} style={{ '--card-delay': `${index * 70}ms` } as CSSProperties}>
-        <div className="project-card-top"><span>{project.year}</span><span>{project.filter}</span></div><div className="project-mark" aria-hidden="true"><span>{project.mark}</span><i /><i /></div>
-        <div className="project-card-copy"><p>{c.archive}</p><h3>{project.content[0]}</h3><span>{project.content[2]}</span><p>{project.content[1]}</p></div>
-        {project.github ? <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label={`${c.openGithub} — ${project.content[0]} — ${c.newTab}`}>{c.openGithub}<ArrowIcon /></a> : <button onClick={() => setOpenGame(project.game ?? null)}>{c.launch}<ArrowIcon /></button>}
+      <div className="playground-heading"><div><p className="section-kicker">{c.playgroundLabel}</p><h3>{c.playgroundTitle}</h3></div><span>03—04</span></div>
+      <div className="project-grid project-grid-playable">{projects.map((project, index) => <article className={`project-card project-card-${project.color}`} key={project.id} style={{ '--card-delay': `${index * 70}ms` } as CSSProperties}>
+        <div className="project-card-top"><span>{project.year}</span><span>0{index + 3}</span></div><div className="project-mark" aria-hidden="true"><span>{project.mark}</span><i /><i /></div>
+        <div className="project-card-copy"><p>{c.playgroundLabel}</p><h3>{project.content[0]}</h3><TechLabel name={project.tech} /><p>{project.content[1]}</p></div>
+        <button onClick={() => setOpenGame(project.game)}>{c.launch}<ArrowIcon /></button>
       </article>)}</div>
     </Reveal>
     {openGame === '2048' && <Game2048 onClose={() => setOpenGame(null)} />}{openGame === 'wordle' && <WordleGame onClose={() => setOpenGame(null)} />}
@@ -297,8 +380,8 @@ function ExpertiseSection() {
   const { lang } = useI18n(); const c = COPY[lang]
   return <section id="expertise" className="section expertise-section"><div className="page-shell">
     <SectionIntro kicker={c.expertiseKicker} title={c.expertiseTitle} intro={c.expertiseIntro} />
-    <div className="capability-grid">{c.capabilities.map(([index, title, description, tags], itemIndex) => <Reveal key={index} delay={itemIndex * 90}><article className="capability-card"><div className="capability-number"><span>{index}</span><CodeIcon /></div><h3>{title}</h3><p>{description}</p><div>{tags.map((tag) => <span key={tag}>{tag}</span>)}</div></article></Reveal>)}</div>
-    <Reveal className="stack-panel" delay={120}><div className="stack-copy"><p>{c.stackLabel}</p><h3>{c.stackText}</h3></div><div className="stack-cloud">{SKILLS.map((skill, index) => <span key={skill} style={{ '--skill-index': index } as CSSProperties}>{skill}</span>)}</div></Reveal>
+    <div className="capability-grid">{c.capabilities.map(([index, title, description, tags], itemIndex) => <Reveal key={index} delay={itemIndex * 90}><article className="capability-card"><div className="capability-number"><span>{index}</span><CodeIcon /></div><h3>{title}</h3><p>{description}</p><div>{tags.map((tag) => <TechLabel name={tag} key={tag} />)}</div></article></Reveal>)}</div>
+    <Reveal className="stack-panel" delay={120}><div className="stack-copy"><p>{c.stackLabel}</p><h3>{c.stackText}</h3></div><div className="stack-groups"><div className="stack-cloud">{SKILLS.map((skill) => <TechLabel name={skill} key={skill} className="stack-tech" />)}</div><div className="ai-practice"><div className="ai-practice-copy"><p>{c.aiLabel}</p><h4>{c.aiTitle}</h4><span>{c.aiText}</span><small>{c.aiNote}</small></div><div className="ai-tools">{AI_TOOLS.map((tool) => <TechLabel name={tool} key={tool} className="ai-tool" />)}</div></div></div></Reveal>
   </div></section>
 }
 
@@ -308,7 +391,7 @@ function ExperienceSection() {
     <SectionIntro kicker={c.experienceKicker} title={c.experienceTitle} intro={c.experienceIntro} />
     <Reveal className="experience-layout" delay={90}>
       <div className="experience-list" role="tablist" aria-label={c.experienceTitle}>{jobs.map((job, index) => <button key={`${job.company}-${job.period}`} role="tab" aria-selected={index === active} className={index === active ? 'is-active' : ''} onClick={() => setActive(index)}><span className="experience-index">0{index + 1}</span><span><strong>{job.company}</strong><small>{job.period}</small></span><i><ArrowIcon /></i></button>)}</div>
-      <article className="experience-detail" key={`${lang}-${active}`}><div className="detail-head"><span className="company-monogram">{jobs[active].company.split(' ').map((word) => word[0]).slice(0, 2).join('')}</span><div><p>{active === 0 ? c.current : jobs[active].location}</p><h3>{jobs[active].role}</h3><span>{jobs[active].company} · {jobs[active].period}</span></div></div><div className="detail-body"><p>{c.details}</p><ul>{jobs[active].tasks.map((task) => <li key={task}>{task}</li>)}</ul></div><div className="detail-tags">{jobs[active].tags.map((tag) => <span key={tag}>{tag}</span>)}</div></article>
+      <article className="experience-detail" key={`${lang}-${active}`}><div className="detail-head"><span className="company-monogram">{jobs[active].company.split(' ').map((word) => word[0]).slice(0, 2).join('')}</span><div><p>{active === 0 ? c.current : jobs[active].location}</p><h3>{jobs[active].role}</h3><span>{jobs[active].company} · {jobs[active].period}</span></div></div><div className="detail-body"><p>{c.details}</p><ul>{jobs[active].tasks.map((task) => <li key={task}>{task}</li>)}</ul></div><div className="detail-tags">{jobs[active].tags.map((tag) => <TechLabel name={tag} key={tag} />)}</div></article>
     </Reveal>
   </section>
 }
@@ -343,7 +426,7 @@ function Portfolio() {
     window.addEventListener('pointermove', onPointerMove, { passive: true })
     return () => { cancelAnimationFrame(frame); window.removeEventListener('pointermove', onPointerMove) }
   }, [])
-  return <div className="app"><a className="skip-link" href="#main-content">{COPY[lang].skip}</a><div className="pointer-glow" aria-hidden="true" /><Header theme={theme} setTheme={setTheme} /><Hero /><WorkSection /><ExpertiseSection /><ExperienceSection /><EducationSection /><ContactSection /></div>
+  return <div className="app"><a className="skip-link" href="#main-content">{COPY[lang].skip}</a><div className="pointer-glow" aria-hidden="true" /><Header theme={theme} setTheme={setTheme} /><Hero /><CareerBrief /><ExpertiseSection /><ExperienceSection /><WorkSection /><EducationSection /><ContactSection /></div>
 }
 
 export default function App() { return <I18nProvider><Portfolio /></I18nProvider> }
