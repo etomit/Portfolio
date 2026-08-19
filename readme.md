@@ -1,41 +1,32 @@
----
-title: Vite + React
-description: The default Vite + React starter, utilizing `Caddy` to serve the built app
-tags:
-  - node
-  - vite
-  - react
----
+# Portfolio — Timothée Maire
 
-# Vite + React + Caddy
+Portfolio personnel construit avec React, TypeScript et Vite. L’interface présente le parcours, les compétences et les projets de Timothée Maire, notamment PokéLine et Mon CommerceRapide.
 
-This is a [Vite + React](https://vitejs.dev/guide/#trying-vite-online) starter that uses [Caddy](https://caddyserver.com/).
+## Fonctionnalités
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/NeiLty?referralCode=ySCnWl)
+- thème clair/sombre mémorisé localement ;
+- contenu français/anglais selon la langue du navigateur ;
+- navigation active et progression de lecture ;
+- animations d’entrée, cartes en perspective et mode réduit respecté ;
+- projets filtrables et mini-jeux 2048/Wordle intégrés ;
+- mise en avant de PokéLine avec capture réelle et liens explicites ;
+- aucun formulaire de connexion, tracker ou chargement d’image tiers.
 
-## ✨ Features
+## Développement
 
-- Vite + React
-- [Caddy](https://caddyserver.com/)
+```bash
+npm install
+npm run dev
+```
 
-## 💁‍♀️ How to use
+Contrôles avant déploiement :
 
-- Install required dependencies with `npm install`
-- Start the server for local development `npm run dev`
+```bash
+npm run lint
+npm run build
+npm run preview
+```
 
-## ❓ Why use `Caddy` when deploying to Railway?
+## Sécurité et confiance
 
-Caddy is a powerful, enterprise-ready, open source web server, and therefore Caddy is far better suited to serve websites than Vite is, using Caddy will result in much less memory and cpu usage compared to serving with Vite (much lower running costs too)
-
-To see how this is achieved with nixpacks, check out the fully documented nixpacks.toml file in this repository
-
-The configuration for Caddy is called a Caddyfile, and you can edit that file to further suite your needs, by default it comes configured to serve a single page app for React, and to also gzip the responses
-
-**Relevant Caddy documentation:**
-
-- [The Caddyfile](https://caddyserver.com/docs/caddyfile)
-- [Caddyfile Directives](https://caddyserver.com/docs/caddyfile/directives)
-- [root](https://caddyserver.com/docs/caddyfile/directives/root)
-- [encode](https://caddyserver.com/docs/caddyfile/directives/encode)
-- [file_server](https://caddyserver.com/docs/caddyfile/directives/file_server)
-- [try_files](https://caddyserver.com/docs/caddyfile/directives/try_files)
+Le site applique une politique CSP, refuse l’intégration dans une iframe, limite les permissions navigateur et décrit explicitement toutes les destinations externes. Les en-têtes sont configurés dans `vite.config.ts` pour les serveurs Vite de développement et de prévisualisation. En production, ils doivent aussi être conservés par la couche d’hébergement ou le reverse proxy.

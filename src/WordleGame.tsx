@@ -207,7 +207,7 @@ export default function WordleGame({ onClose }: Props) {
   }, [wordList])
 
   // restart when language changes
-  useEffect(() => { restart() }, [lang])
+  useEffect(() => { restart() }, [lang, restart])
 
   const addLetter = useCallback((letter: string) => {
     if (status !== 'playing' || currentCol >= COLS) return
@@ -304,7 +304,7 @@ export default function WordleGame({ onClose }: Props) {
         setCurrentCol(0)
       }
     }, delay)
-  }, [board, currentRow, currentCol, target])
+  }, [board, currentRow, currentCol, target, wordList])
 
   const handleKey = useCallback((key: string) => {
     if (key === 'ENTER') { submitRow(); return }

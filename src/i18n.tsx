@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+/* eslint-disable react-refresh/only-export-components -- provider and typed hook intentionally share this module */
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 
 type Lang = 'fr' | 'en'
 
@@ -420,7 +421,17 @@ const I18nContext = createContext<I18nContextType>({
 })
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>('fr')
+  const [lang, setLang] = useState<Lang>(() => {
+    const saved = localStorage.getItem('portfolio-language')
+    if (saved === 'fr' || saved === 'en') return saved
+    return navigator.language.toLowerCase().startsWith('fr') ? 'fr' : 'en'
+  })
+
+  useEffect(() => {
+    localStorage.setItem('portfolio-language', lang)
+    document.documentElement.lang = lang
+  }, [lang])
+
   return (
     <I18nContext.Provider value={{ lang, t: translations[lang], setLang }}>
       {children}

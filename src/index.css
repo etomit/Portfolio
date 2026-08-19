@@ -1,23 +1,42 @@
 *, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+}
+
+html, body, #root {
+  min-height: 100%;
 }
 
 html {
-  scroll-behavior: smooth;
+  background: #09090b;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: #050c1a;
-  color: #e8f0fe;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  min-width: 320px;
   overflow-x: hidden;
-  min-height: 100vh;
 }
 
-#root {
-  min-height: 100vh;
+body, h1, h2, h3, p, ul, pre {
+  margin: 0;
+}
+
+button, input, select, textarea {
+  font: inherit;
+}
+
+img, svg {
+  max-width: 100%;
+}
+
+button:focus-visible, a:focus-visible {
+  outline: 2px solid #c8ff45;
+  outline-offset: 4px;
+}
+
+::selection {
+  background: #c8ff45;
+  color: #101400;
 }

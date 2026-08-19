@@ -130,7 +130,11 @@ export default function Game2048({ onClose }: Props) {
   const updateBest = (newScore: number) => {
     setBest(prev => {
       const next = Math.max(prev, newScore)
-      try { localStorage.setItem('2048-best', String(next)) } catch {}
+      try {
+        localStorage.setItem('2048-best', String(next))
+      } catch {
+        return next
+      }
       return next
     })
   }
