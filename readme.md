@@ -1,41 +1,52 @@
----
-title: Vite + React
-description: The default Vite + React starter, utilizing `Caddy` to serve the built app
-tags:
-  - node
-  - vite
-  - react
----
+# Portfolio — Timothée Maire
 
-# Vite + React + Caddy
+Portfolio personnel en React, TypeScript et Vite, bilingue français / anglais.
 
-This is a [Vite + React](https://vitejs.dev/guide/#trying-vite-online) starter that uses [Caddy](https://caddyserver.com/).
+## L'idée
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/NeiLty?referralCode=ySCnWl)
+Une ligne longe toute la page, comme un plan de ligne de bus : chaque section est un arrêt, un petit bus reste à hauteur du regard pendant le défilement, et le bloc de contact est le terminus. C'est un clin d'œil à Daimler Buses, et c'est ce qui remplace les habituels repères numérotés.
 
-## ✨ Features
+Les textes suivent une ligne éditoriale simple : « je », des phrases courtes, des noms propres et des dates plutôt que des adjectifs. Pas de slogan, pas de liste de qualités.
 
-- Vite + React
-- [Caddy](https://caddyserver.com/)
+## Ce qu'on y trouve
 
-## 💁‍♀️ How to use
+- le parcours, sous forme d'accordéon (le poste actuel est ouvert par défaut) ;
+- PokéLine et MonCommerce Rapide, avec capture et lien vers la version en ligne ;
+- une section IA : les projets menés avec des équipes d'agents et les techniques utilisées (agent à agent, contrats gelés, revue croisée…) ;
+- une section « Côté humain » : le savoir-être, appuyé sur des faits du parcours ;
+- une ville procédurale en Three.js, chargée seulement quand elle approche de l'écran ;
+- deux mini-jeux (2048 et Wordle), chargés seulement quand on les ouvre ;
+- thème clair / sombre et langue mémorisés localement ;
+- aucun traceur, aucune requête vers un service tiers : les polices sont servies par le site.
 
-- Install required dependencies with `npm install`
-- Start the server for local development `npm run dev`
+## Où modifier quoi
 
-## ❓ Why use `Caddy` when deploying to Railway?
+| Je veux changer… | Fichier |
+| --- | --- |
+| un texte, un poste, un diplôme, un lien | `src/content.ts` |
+| les couleurs, les polices | `src/styles/tokens.css` |
+| la ligne de bus et les arrêts | `src/styles/base.css` (bloc « La ligne ») |
+| une section | `src/components/` et la feuille du même nom dans `src/styles/` |
+| la scène 3D | `src/three/cityScene.ts` |
+| les mini-jeux | `src/games/` |
 
-Caddy is a powerful, enterprise-ready, open source web server, and therefore Caddy is far better suited to serve websites than Vite is, using Caddy will result in much less memory and cpu usage compared to serving with Vite (much lower running costs too)
+Les images affichées sont des WebP générés à partir des originaux rangés dans `assets-source/` (hors du site publié). Pour les régénérer : installer `sharp`, puis `node assets-source/convert-images.mjs assets-source public`.
 
-To see how this is achieved with nixpacks, check out the fully documented nixpacks.toml file in this repository
+## Développement
 
-The configuration for Caddy is called a Caddyfile, and you can edit that file to further suite your needs, by default it comes configured to serve a single page app for React, and to also gzip the responses
+```bash
+npm install
+npm run dev
+```
 
-**Relevant Caddy documentation:**
+Avant de déployer :
 
-- [The Caddyfile](https://caddyserver.com/docs/caddyfile)
-- [Caddyfile Directives](https://caddyserver.com/docs/caddyfile/directives)
-- [root](https://caddyserver.com/docs/caddyfile/directives/root)
-- [encode](https://caddyserver.com/docs/caddyfile/directives/encode)
-- [file_server](https://caddyserver.com/docs/caddyfile/directives/file_server)
-- [try_files](https://caddyserver.com/docs/caddyfile/directives/try_files)
+```bash
+npm run lint
+npm run build
+npm run preview
+```
+
+## Sécurité
+
+Le site applique une politique CSP stricte (aucune source externe), refuse l'intégration en iframe et limite les permissions navigateur. Les en-têtes sont définis dans `vite.config.ts` pour les serveurs Vite de développement et de prévisualisation ; en production, ils doivent être repris par l'hébergeur ou le reverse proxy.

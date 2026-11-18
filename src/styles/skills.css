@@ -1,0 +1,137 @@
+/* Outils : une liste lisible, rangée par contexte d'usage. Pas de logos, pas de jauges. */
+
+.tools {
+  margin: 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.tools > div {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 8px 24px;
+  align-items: baseline;
+  padding: 24px 0;
+  border-top: 1px solid var(--line-strong);
+}
+
+.tools dt {
+  color: var(--muted);
+}
+
+.tools dd {
+  margin: 0;
+  font: 600 clamp(1.25rem, 2.4vw, 1.9rem) / 1.25 var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+.tools dd p {
+  max-width: 60ch;
+  margin-top: 12px;
+  color: var(--ink-soft);
+  font: 400 1rem/1.6 var(--font-body);
+  letter-spacing: 0;
+}
+
+/* ---------- IA et Côté humain : un intitulé à gauche, une phrase à droite ---------- */
+
+.rows {
+  margin: 0;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.rows > div {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 8px 24px;
+  align-items: baseline;
+  padding: 22px 0;
+  border-top: 1px solid var(--line-strong);
+}
+
+.rows dt {
+  font: 600 clamp(1.15rem, 1.8vw, 1.4rem) / 1.2 var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.rows dt small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font: 500 0.72rem/1.4 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rows dd {
+  max-width: 66ch;
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.subhead {
+  margin: clamp(40px, 5vw, 64px) 0 20px;
+  font-size: clamp(1.3rem, 2.2vw, 1.7rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.section-head + .reveal > .subhead {
+  margin-top: 0;
+}
+
+.techniques {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px clamp(24px, 5vw, 72px);
+  margin: 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--line-strong);
+  list-style: none;
+}
+
+.techniques h4 {
+  position: relative;
+  margin-bottom: 6px;
+  padding-left: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.techniques h4::before {
+  content: '';
+  position: absolute;
+  top: 0.45em;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+}
+
+.techniques p {
+  padding-left: 20px;
+  color: var(--ink-soft);
+}
+
+.aside-note {
+  max-width: 72ch;
+  margin-top: clamp(32px, 4vw, 48px);
+  padding: 14px 18px;
+  border-left: 3px solid var(--accent);
+  background: var(--paper-2);
+  color: var(--ink-soft);
+}
+
+@media (max-width: 760px) {
+  .tools > div,
+  .rows > div {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 20px 0;
+  }
+
+  .techniques {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
