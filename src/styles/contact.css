@@ -1,0 +1,172 @@
+/* Le bloc final est un aplat vermillon : le texte y garde la même encre dans les deux thèmes. */
+.contact {
+  --rule: rgb(23 22 16 / 0.38);
+  padding-top: clamp(72px, 10vw, 136px);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.contact :focus-visible {
+  outline-color: var(--on-accent);
+}
+
+.contact ::selection {
+  background: var(--on-accent);
+  color: var(--accent);
+}
+
+/* Terminus : la ligne entre dans l'aplat et s'arrête sur son dernier point. */
+.contact {
+  position: relative;
+}
+
+.contact .stop-dot {
+  border-color: var(--on-accent);
+  background: var(--on-accent);
+  box-shadow: 0 0 0 3px var(--accent), 0 0 0 5px var(--on-accent);
+}
+
+@media (min-width: 1100px) {
+  .contact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(max(var(--gutter), (100% - var(--shell)) / 2) - 28px);
+    width: 2px;
+    height: calc(clamp(72px, 10vw, 136px) + 10px);
+    background: var(--rule);
+  }
+}
+
+.contact h2 {
+  max-width: 17ch;
+  margin-top: 20px;
+  font-size: clamp(2.4rem, 6.4vw, 5.6rem);
+  line-height: 0.98;
+  letter-spacing: -0.042em;
+}
+
+.contact-text {
+  max-width: 44ch;
+  margin-top: 24px;
+  font-size: 1.15rem;
+}
+
+.contact-email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: clamp(32px, 5vw, 56px);
+  padding-block: 24px;
+  border-block: 1px solid var(--rule);
+}
+
+.contact-email a {
+  font: 600 clamp(1.2rem, 3.6vw, 2.6rem) / 1.15 var(--font-display);
+  letter-spacing: -0.025em;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.contact-email a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.14em;
+}
+
+.copy-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--on-accent);
+  color: #f4f1ea;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.copy-button .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contact-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+
+.contact-links a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.contact-links .icon:last-of-type {
+  width: 15px;
+  height: 15px;
+}
+
+.contact-location {
+  margin-left: auto;
+  font: 500 0.75rem var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin-top: clamp(56px, 8vw, 104px);
+  padding-block: 20px;
+  border-top: 1px solid var(--rule);
+  font-size: 0.85rem;
+}
+
+.site-footer p:nth-of-type(2) {
+  margin-left: auto;
+}
+
+.site-footer a {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.site-footer a:hover {
+  background: var(--on-accent);
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .contact-location,
+  .site-footer p:nth-of-type(2) {
+    margin-left: 0;
+  }
+
+  .contact-location {
+    flex-basis: 100%;
+  }
+}

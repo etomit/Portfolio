@@ -1,0 +1,53 @@
+/*
+ * Identité visuelle : papier chaud, encre presque noire, un seul accent vermillon.
+ * Le thème est posé sur <html data-theme="…"> par le script en ligne de index.html.
+ */
+:root {
+  color-scheme: light;
+
+  --paper: #f4f1ea;
+  --paper-2: #ebe7dc;
+  --surface: #fbfaf6;
+  --ink: #171610;
+  --ink-soft: #46443b;
+  --muted: #6e6b5f;
+  --line: rgb(23 22 16 / 0.14);
+  --line-strong: rgb(23 22 16 / 0.34);
+
+  --accent: #e2421b;
+  /* Variante plus sombre de l'accent, réservée au petit texte (contraste AA sur le papier). */
+  --accent-text: #c23410;
+  /* Couleur du texte posé sur un aplat d'accent : identique dans les deux thèmes. */
+  --on-accent: #171610;
+  --portrait: #ddd4c0;
+
+  --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Geist Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'Cascadia Code', Consolas, monospace;
+
+  --shell: 1240px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --header-height: 64px;
+  /* Marge haute du hero : la ligne de bus démarre à la hauteur de son premier arrêt. */
+  --hero-top: clamp(40px, 6vw, 88px);
+  --radius: 6px;
+  --radius-lg: 10px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: #0f0f0d;
+  --paper-2: #191916;
+  --surface: #1d1d19;
+  --ink: #f0ede5;
+  --ink-soft: #cdc9be;
+  --muted: #9c988c;
+  --line: rgb(240 237 229 / 0.13);
+  --line-strong: rgb(240 237 229 / 0.32);
+
+  --accent: #ff6b3d;
+  --accent-text: #ff7a50;
+  --portrait: #d6ccb7;
+}

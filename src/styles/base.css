@@ -1,0 +1,456 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 8px);
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1rem/1.6 var(--font-body);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------- Utilitaires ---------- */
+
+.shell {
+  width: min(var(--shell), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 200;
+  padding: 10px 16px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+.icon {
+  display: block;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Sections ---------- */
+
+.section {
+  padding-block: clamp(72px, 10vw, 136px);
+  border-top: 1px solid var(--line);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 20px 24px;
+  align-items: end;
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+
+.section-head {
+  align-items: start;
+}
+
+.section-head h2 {
+  grid-column: 1 / span 4;
+}
+
+/* Le paragraphe d'introduction porte la voix : il est plus grand que le texte courant. */
+.section-intro {
+  grid-column: 5 / -1;
+  max-width: 58ch;
+  padding-top: 0.35em;
+  color: var(--ink-soft);
+  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  line-height: 1.55;
+}
+
+h2 {
+  font-size: clamp(2rem, 4.6vw, 3.9rem);
+  font-weight: 620;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+/* Petites étiquettes en chasse fixe : dates, catégories, technologies. */
+.label {
+  font: 500 0.75rem/1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/*
+ * La ligne : un trait longe la page, chaque section y est un arrêt et un petit bus
+ * reste à hauteur du regard pendant que la page défile. Le bloc contact est le terminus.
+ */
+.journey {
+  position: relative;
+}
+
+.route-line,
+.route {
+  display: none;
+}
+
+.stop,
+.stop-title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Petit libellé d'arrêt (départ et terminus) ; les sections utilisent leur titre. */
+.stop {
+  --stop-line: 0.7em;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.stop-title {
+  --stop-line: 0.51em;
+}
+
+.stop-dot {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.stop-terminus .stop-dot {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
+}
+
+@media (min-width: 1100px) {
+  .route-line,
+  .route {
+    --route-x: calc(max(var(--gutter), (100% - var(--shell)) / 2) - 28px);
+    position: absolute;
+    top: calc(var(--hero-top) + 10px);
+    bottom: 0;
+    left: var(--route-x);
+    display: block;
+    width: 2px;
+    pointer-events: none;
+  }
+
+  .route-line {
+    background: var(--line-strong);
+  }
+
+  /* Calque séparé au-dessus des arrêts : le bus passe devant eux. */
+  .route {
+    z-index: 2;
+  }
+
+  .route-bus {
+    position: sticky;
+    top: 46vh;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 22px;
+    margin-left: -14px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+
+  .route-bus .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Sur grand écran, le point de l'arrêt quitte le texte pour se poser sur la ligne. */
+  .stop-dot {
+    position: absolute;
+    top: var(--stop-line);
+    left: -34px;
+    margin-top: -7px;
+  }
+
+  .stop,
+  .stop-title {
+    display: block;
+  }
+
+  /* Postes et diplômes : arrêts intermédiaires, plus discrets. */
+  .xp-item,
+  .edu-item {
+    position: relative;
+  }
+
+  .xp-item::before,
+  .edu-item::before {
+    content: '';
+    position: absolute;
+    top: 38px;
+    left: -31px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ink);
+    box-shadow: 0 0 0 3px var(--paper);
+  }
+
+  .edu-item::before {
+    top: 36px;
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tags li {
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font: 500 0.72rem/1.5 var(--font-mono);
+  color: var(--ink-soft);
+}
+
+/* Liste à puces carrées, la signature graphique du site. */
+.xp-tasks,
+.project-highlights {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-soft);
+}
+
+.xp-tasks li,
+.project-highlights li {
+  position: relative;
+  padding-left: 22px;
+}
+
+.xp-tasks li::before,
+.project-highlights li::before {
+  content: '';
+  position: absolute;
+  top: 0.58em;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  background: var(--accent);
+}
+
+/* ---------- Boutons ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: 600 0.95rem/1 var(--font-body);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.button-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.button-primary:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.button-ghost {
+  border-color: var(--line-strong);
+  background: transparent;
+  color: var(--ink);
+}
+
+.button-ghost:hover {
+  border-color: var(--ink);
+  background: var(--paper-2);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.tool-button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.tool-button:hover {
+  border-color: var(--ink);
+}
+
+/* ---------- Apparitions ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.7s var(--ease) var(--reveal-delay, 0ms),
+    transform 0.7s var(--ease) var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.enter {
+  animation: enter 0.8s var(--ease) var(--enter-delay, 0ms) both;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .section-head h2,
+  .section-intro {
+    grid-column: 1 / -1;
+  }
+
+  .section-intro {
+    padding-top: 0;
+  }
+}
+
+/* Mouvement réduit : tout est affiché tout de suite, sans transition. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

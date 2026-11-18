@@ -3,24 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#071116" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#f4f1ea" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="Timothée Maire" />
-    <meta name="description" content="Portfolio de Timothée Maire, développeur full-stack orienté produit. Découvrez son approche, son expérience et ses projets personnels : PokéLine, MonCommerce Rapide, 2048 et Wordle." />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' ws: wss:; form-action 'self' mailto:; upgrade-insecure-requests" />
+    <meta name="description" content="Portfolio de Timothée Maire, développeur full-stack. Intranet Symfony / React chez Daimler Buses France et projets personnels en ligne : PokéLine, MonCommerce Rapide, une scène Three.js et deux mini-jeux." />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; form-action 'self' mailto:; upgrade-insecure-requests" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_GB" />
     <meta property="og:title" content="Timothée Maire — Développeur full-stack" />
-    <meta property="og:description" content="Développeur full-stack orienté produit. Une approche métier, des interfaces vivantes et quatre projets personnels lançables." />
-    <meta property="og:image" content="/pokeline-preview.png" />
+    <meta property="og:description" content="Des outils métier que les équipes utilisent vraiment : intranet Symfony / React chez Daimler Buses France, et des projets personnels à ouvrir ou à jouer." />
+    <meta property="og:image" content="/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Aperçu du projet PokéLine développé par Timothée Maire" />
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Timothée Maire — Développeur full-stack</title>
+
+    <!-- Applique le thème avant le premier affichage pour éviter tout flash clair/sombre. -->
+    <script>
+      (function () {
+        var theme
+        try { theme = localStorage.getItem('portfolio-theme') } catch (error) { /* stockage indisponible */ }
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+        document.documentElement.dataset.theme = theme
+      })()
+    </script>
 
     <script type="application/ld+json">
       {
@@ -28,7 +43,9 @@
         "@type": "Person",
         "name": "Timothée Maire",
         "jobTitle": "Développeur full-stack",
+        "worksFor": { "@type": "Organization", "name": "Daimler Buses France" },
         "address": { "@type": "PostalAddress", "addressRegion": "Grand Est", "addressCountry": "FR" },
+        "knowsAbout": ["React", "TypeScript", "Symfony", "Laravel", ".NET", "PostgreSQL", "Docker"],
         "sameAs": [
           "https://github.com/etomit",
           "https://www.linkedin.com/in/timoth%C3%A9e-maire-476bb8194/"
@@ -38,6 +55,12 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <p style="max-width: 40rem; margin: 4rem auto; padding: 0 1.5rem; font-family: system-ui, sans-serif">
+        Timothée Maire — développeur full-stack. Ce portfolio nécessite JavaScript pour s’afficher.
+        Contact : timothee.maire54300@gmail.com
+      </p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
