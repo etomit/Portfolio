@@ -21,7 +21,8 @@ Les repères de section ne sont jamais numérotés : crochets, barres obliques e
 - une section IA (le trajet d'une mission confiée à des agents, les techniques utilisées) et une nomenclature des compétences ;
 - une ville procédurale en Three.js et deux mini-jeux (2048, Wordle) ;
 - une nappe filaire qui ondule derrière le contact ;
-- thème et langue mémorisés localement, aucun traceur, aucune ressource externe (polices servies par le site).
+- thème et langue mémorisés localement, aucun traceur, aucune ressource externe (polices servies par le site) ;
+- une version imprimable : à l'impression, le site passe en « tirage papier » et affiche tout son contenu.
 
 Les scènes Three.js ne sont téléchargées qu'à l'approche de l'écran, mises en pause hors écran, et remplacées par un dessin SVG si WebGL manque.
 
@@ -38,6 +39,7 @@ Les scènes Three.js ne sont téléchargées qu'à l'approche de l'écran, mises
 | les vignettes des projets | `src/components/Sketch.tsx` |
 | l'intro du hero | `src/components/HeroName.tsx`, `Hero.tsx` et la fin de `src/styles/hero.css` |
 | les mini-jeux | `src/games/` |
+| l'image de partage (LinkedIn, etc.) | `public/og-image.jpg`, régénérée par `node scripts/og-image.mjs` |
 
 Les images affichées sont des WebP générés à partir des originaux rangés dans `assets-source/` : `node assets-source/convert-images.mjs assets-source public` (avec `sharp` installé).
 
@@ -62,7 +64,9 @@ npx playwright install chromium
 node scripts/captures.mjs http://localhost:5173
 ```
 
-Le brief et la maquette de cette refonte sont dans `docs/refonte-blueprint/`.
+Image de partage (1 200 × 630, tirée du hero) : `node scripts/og-image.mjs http://localhost:5173`.
+
+Le brief et la maquette de cette refonte sont dans `docs/refonte-blueprint/`. Avant le build, la refonte a été relue par un second agent (Fable 5.2) : ses propositions ont été débattues point par point, retenues, amendées ou refusées, puis vérifiées sur le résultat.
 
 ## Sécurité
 

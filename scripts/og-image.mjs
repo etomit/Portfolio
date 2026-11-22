@@ -18,8 +18,11 @@ await page.evaluate(() => document.fonts.ready)
 // La scène 3D du bus est prête quand son conteneur reçoit la classe is-ready ; on laisse ensuite l'arrivée se tracer.
 await page.waitForSelector('.bus-view.is-ready', { timeout: 15000 }).catch(() => {})
 await page.waitForTimeout(2200)
-// L'en-tête et le chevron ne servent à rien dans une vignette de partage.
-await page.addStyleTag({ content: '.site-header, .scroll-cue, .intro-skip { display: none !important; }' })
+// Une vignette de partage montre le nom, le cartouche et le bus : l'en-tête, le paragraphe
+// (qui serait coupé au bord bas), les boutons, les commandes du bus et le chevron n’y ont pas leur place.
+await page.addStyleTag({
+  content: '.site-header, .scroll-cue, .intro-skip, .hero-lead, .hero-actions, .hero-facts, .bus-controls { display: none !important; }',
+})
 await page.screenshot({ path: 'public/og-image.jpg', type: 'jpeg', quality: 86 })
 await browser.close()
 console.log('public/og-image.jpg écrite.')

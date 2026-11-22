@@ -483,7 +483,16 @@ button {
     break-inside: avoid-page;
   }
 
-  /* Le dessin d'« À propos » s'imprime entier, quel que soit l'endroit où l'on avait défilé. */
+  /* Le dessin d'« À propos » s'imprime entier, quel que soit l'endroit où l'on avait défilé,
+     et sa légende est allumée en conséquence. */
+  .about-legend li {
+    color: var(--accent);
+  }
+
+  .about-legend li::before {
+    background: currentColor;
+  }
+
   .bus-sketch {
     --s1: 1 !important;
     --s2: 1 !important;

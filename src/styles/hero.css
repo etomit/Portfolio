@@ -336,7 +336,16 @@
 }
 
 .hero[data-intro='play'] .hero-text {
+  /* Glissement seul, sans fondu : un texte qui part d'une opacité nulle n'est compté comme
+     « contenu principal affiché » (LCP) qu'à la fin de l'intro, vers 4,2 s au lieu de 0,6 s. */
+  animation-name: rise-y;
   animation-delay: 0.25s;
+}
+
+@keyframes rise-y {
+  from {
+    transform: translateY(14px);
+  }
 }
 
 .hero[data-intro='play'] :is(.hero-actions, .hero-facts) {

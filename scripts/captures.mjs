@@ -62,16 +62,30 @@ async function checkOverflow(page, label) {
 const shot = (page, name, options = {}) =>
   page.screenshot({ path: path.join(outDir, name), type: name.endsWith('.png') ? 'png' : 'jpeg', quality: name.endsWith('.png') ? undefined : 78, ...options })
 
-// 1. Séquence d'intro (desktop, plan bleu). On n'attend pas le chargement complet :
-//    l'intro démarre dès le premier rendu, il faut la saisir en cours de route.
+// 1. Séquence d'intro (desktop, plan bleu). Une capture sous SwiftShader dure plus longtemps
+//    que l'écart entre deux instants : on fige donc les animations CSS et on les place
+//    nous-mêmes à chaque instant. La minuterie qui clôt l'intro est annulée pour qu'elle reste affichée.
 {
   const { context, page } = await open('desktop', { intro: true, waitUntil: 'commit' })
   await page.waitForSelector('.hero[data-intro="play"]')
-  const start = Date.now()
-  // 1. tracés de construction, 2. contour au trait, 3. hachures, 4. résultat final (instants depuis le début).
-  const moments = [300, 1100, 2200, 3600]
+  await page.evaluate(() => {
+    const last = window.setTimeout(() => {}, 0)
+    for (let id = 0; id <= last; id++) window.clearTimeout(id)
+    for (const animation of document.getAnimations()) animation.pause()
+  })
+  await page.evaluate(() => document.fonts.ready)
+  // 1. tracés de construction, 2. contour au trait, 3. hachures, 4. résultat final (ms depuis le début).
+  const moments = [500, 1400, 2300, 3500]
   for (const [index, moment] of moments.entries()) {
-    await page.waitForTimeout(Math.max(0, moment - (Date.now() - start)))
+    await page.evaluate((time) => {
+      for (const animation of document.getAnimations()) {
+        // Les animations en boucle (chevron) et celles de la scène 3D ne sont pas concernées.
+        if (animation instanceof CSSAnimation && animation.effect?.getTiming().iterations !== Infinity) {
+          animation.currentTime = time
+        }
+      }
+    }, moment)
+    await page.waitForTimeout(120)
     await shot(page, `intro-${index + 1}.png`, { clip: { x: 0, y: 64, width: 1440, height: 836 } })
   }
   await context.close()
