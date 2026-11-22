@@ -1,0 +1,301 @@
+/* ---------- Chronologie cotée : chaque période est une ligne de cote ---------- */
+
+.cote-chart {
+  margin: 0 0 clamp(36px, 5vw, 56px);
+}
+
+.cote-plot {
+  position: relative;
+  padding: 26px 0 10px;
+}
+
+.cote-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cote-grid span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px dashed var(--line-4);
+}
+
+.cote-grid .cote-today {
+  border-left: 1px solid var(--accent);
+}
+
+/* Le trait « aujourd'hui » est au bout de l'axe : l'étiquette se pose à sa gauche pour ne pas déborder. */
+.cote-today em {
+  position: absolute;
+  top: 0;
+  right: 6px;
+  font: italic 500 1.05rem/1 var(--font-hand);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.cote-rows {
+  position: relative;
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cote-row {
+  position: relative;
+  height: 58px;
+}
+
+.cote-text {
+  position: absolute;
+  top: 0;
+  left: var(--left);
+  display: grid;
+  padding-inline: 3px;
+  /* Un fond léger : le trait « aujourd'hui » ne barre pas le texte qu'il croise. */
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  font: 500 0.78rem/1.35 var(--font-mono);
+  white-space: nowrap;
+}
+
+.cote-text strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cote-text span {
+  color: var(--muted);
+}
+
+.is-anchored-end .cote-text {
+  right: calc(100% - var(--left) - var(--width));
+  left: auto;
+  text-align: right;
+}
+
+/* Traits d'attache aux deux bouts, ligne de cote au milieu, flèches ouvertes. */
+.cote-line {
+  position: absolute;
+  top: 38px;
+  left: var(--left);
+  width: max(var(--width), 4px);
+  height: 16px;
+  border-inline: 1px solid var(--line-2);
+  background: linear-gradient(var(--line), var(--line)) center / 100% 1px no-repeat;
+}
+
+.cote-line::before,
+.cote-line::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.cote-line::before {
+  left: 1px;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.cote-line::after {
+  right: 1px;
+  transform: translateY(-50%) rotate(-135deg);
+}
+
+.is-current .cote-line {
+  border-color: var(--accent);
+  background-image: linear-gradient(var(--accent), var(--accent));
+  filter: drop-shadow(0 0 5px var(--glow));
+}
+
+.is-current .cote-line::before,
+.is-current .cote-line::after {
+  border-color: var(--accent);
+}
+
+.is-current .cote-text strong {
+  color: var(--accent);
+}
+
+/* En cours : pas de trait d'attache à droite, la cote continue. */
+.is-open .cote-line {
+  border-right: 0;
+}
+
+/* Prévu : la ligne est pointillée. */
+.is-planned .cote-line {
+  background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px) center / 100% 1px no-repeat;
+}
+
+.cote-axis {
+  position: relative;
+  height: 26px;
+  border-top: 1px solid var(--line-3);
+}
+
+.cote-axis span {
+  position: absolute;
+  top: 0;
+  padding-top: 7px;
+  font: 500 0.72rem var(--font-mono);
+  color: var(--muted);
+  transform: translateX(-50%);
+}
+
+.cote-axis span::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  height: 8px;
+  border-left: 1px solid var(--line-2);
+}
+
+/* ---------- Postes ---------- */
+
+.jobs,
+.diplomas {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job,
+.diploma {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 10px 28px;
+  padding: 26px 0;
+  border-top: 1px solid var(--line-3);
+}
+
+.job.is-current {
+  position: relative;
+  padding: 26px clamp(18px, 3vw, 28px);
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--bg-raised) 55%, transparent);
+  box-shadow: 0 0 34px var(--glow);
+}
+
+.job.is-current + .job {
+  margin-top: 18px;
+}
+
+.job-period {
+  font: 500 0.82rem/1.4 var(--font-mono);
+  color: var(--ink);
+}
+
+.job-meta .label {
+  margin-top: 4px;
+}
+
+.job-body h3,
+.diploma-body h3 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.badge {
+  padding: 3px 8px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font: 500 0.72rem/1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.badge-quiet {
+  justify-self: start;
+  border-color: var(--line-3);
+  color: var(--ink-soft);
+}
+
+.job-role {
+  margin-top: 4px;
+  color: var(--muted);
+  font: 500 0.9rem var(--font-mono);
+}
+
+.job-summary {
+  max-width: 70ch;
+  margin-top: 12px;
+  color: var(--ink-soft);
+}
+
+.job-body .bullets {
+  margin-top: 12px;
+}
+
+.job-body .tags {
+  margin-top: 16px;
+}
+
+/* ---------- Diplômes ---------- */
+
+.diploma {
+  grid-template-columns: 210px minmax(0, 1fr) auto;
+}
+
+.diploma-body h3 {
+  max-width: 44ch;
+  font-size: clamp(1.1rem, 1.7vw, 1.35rem);
+}
+
+.diploma-school {
+  margin-top: 6px;
+  color: var(--ink-soft);
+}
+
+.diploma-note {
+  max-width: 64ch;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.diploma-level {
+  align-self: start;
+  padding: 4px 10px;
+  border: 1px solid var(--line-2);
+  font: 500 0.72rem/1.3 var(--font-mono);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .job,
+  .diploma {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px 0;
+  }
+
+  .job.is-current {
+    padding: 22px 16px;
+  }
+
+  .diploma {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .diploma-body {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+
+  .cote-text {
+    font-size: 0.72rem;
+  }
+}

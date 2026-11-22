@@ -6,20 +6,38 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-height) + 8px);
+  scroll-padding-top: calc(var(--header-height) + 12px);
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  background: var(--bg);
 }
 
+/* Pas de fond sur body : sinon il recouvrirait la couche quadrillée placée dessous (z-index -1). */
 body {
+  position: relative;
   margin: 0;
   min-width: 320px;
-  background: var(--paper);
+  overflow-x: hidden;
   color: var(--ink);
-  font: 400 1rem/1.6 var(--font-body);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font: 400 1rem/1.65 var(--font-body);
+}
+
+/* Le papier millimétré : petits carreaux, carreaux majeurs, vignettage. Une seule couche fixe. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 35%, transparent 45%, var(--vignette) 100%),
+    linear-gradient(var(--grid-major) 1px, transparent 1px) 0 0 / 80px 80px,
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px) 0 0 / 80px 80px,
+    linear-gradient(var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
+    var(--bg);
 }
 
 h1,
@@ -28,7 +46,7 @@ h3,
 h4 {
   margin: 0;
   font-family: var(--font-display);
-  font-optical-sizing: auto;
+  font-weight: 500;
   text-wrap: balance;
 }
 
@@ -57,12 +75,11 @@ button {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
 ::selection {
   background: var(--accent);
-  color: var(--on-accent);
+  color: var(--accent-ink);
 }
 
 /* ---------- Utilitaires ---------- */
@@ -90,10 +107,10 @@ button {
   left: 10px;
   z-index: 200;
   padding: 10px 16px;
-  background: var(--ink);
-  color: var(--paper);
-  border-radius: var(--radius);
-  font-weight: 600;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font: 500 0.85rem var(--font-mono);
   text-decoration: none;
   transform: translateY(-200%);
 }
@@ -109,178 +126,124 @@ button {
   height: 18px;
 }
 
-/* ---------- Sections ---------- */
-
-.section {
-  padding-block: clamp(72px, 10vw, 136px);
-  border-top: 1px solid var(--line);
+/* Annotations manuscrites, comme au crayon sur un plan. */
+.hand {
+  font-family: var(--font-hand);
+  font-weight: 500;
+  line-height: 1.05;
+  color: var(--line);
 }
 
-.section-head {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 20px 24px;
-  align-items: end;
-  margin-bottom: clamp(36px, 5vw, 64px);
-}
-
-.section-head {
-  align-items: start;
-}
-
-.section-head h2 {
-  grid-column: 1 / span 4;
-}
-
-/* Le paragraphe d'introduction porte la voix : il est plus grand que le texte courant. */
-.section-intro {
-  grid-column: 5 / -1;
-  max-width: 58ch;
-  padding-top: 0.35em;
-  color: var(--ink-soft);
-  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
-  line-height: 1.55;
-}
-
-h2 {
-  font-size: clamp(2rem, 4.6vw, 3.9rem);
-  font-weight: 620;
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-}
-
-/* Petites étiquettes en chasse fixe : dates, catégories, technologies. */
 .label {
-  font: 500 0.75rem/1.4 var(--font-mono);
+  font: 500 0.74rem/1.4 var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
-/*
- * La ligne : un trait longe la page, chaque section y est un arrêt et un petit bus
- * reste à hauteur du regard pendant que la page défile. Le bloc contact est le terminus.
- */
-.journey {
-  position: relative;
+/* ---------- Feuilles : un cadre fin avec une croix de repérage à chaque coin ---------- */
+
+.section {
+  padding-block: clamp(56px, 8vw, 104px);
 }
 
-.route-line,
-.route {
-  display: none;
+.sheet {
+  position: relative;
+  padding: clamp(24px, 4.5vw, 64px);
+  border: 1px solid var(--line-3);
+  background: color-mix(in srgb, var(--bg) 55%, transparent);
 }
 
-.stop,
-.stop-title {
-  position: relative;
+/* Double filet intérieur, discret, comme le cadre d'une feuille de dessin. */
+.sheet::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px solid var(--line-4);
+  pointer-events: none;
+}
+
+.crosses {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.cross {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  color: var(--line-2);
+}
+
+.cross-tl {
+  top: -13px;
+  left: -13px;
+}
+
+.cross-tr {
+  top: -13px;
+  right: -13px;
+}
+
+.cross-bl {
+  bottom: -13px;
+  left: -13px;
+}
+
+.cross-br {
+  right: -13px;
+  bottom: -13px;
+}
+
+/* ---------- En-têtes de section : « / Titre » puis une phrase à la première personne ---------- */
+
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 16px clamp(24px, 5vw, 72px);
+  align-items: start;
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+
+.section-head h2 {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: baseline;
+  gap: 0.35em;
+  font-size: clamp(2.1rem, 4.4vw, 3.6rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
 }
 
-/* Petit libellé d'arrêt (départ et terminus) ; les sections utilisent leur titre. */
-.stop {
-  --stop-line: 0.7em;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.4;
+.section-head h2 .slash {
+  font: 400 0.55em/1 var(--font-mono);
+  color: var(--line-2);
 }
 
-.stop-title {
-  --stop-line: 0.51em;
+.section-intro {
+  max-width: 60ch;
+  padding-top: 0.3em;
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
 }
 
-.stop-dot {
-  flex: none;
-  width: 14px;
-  height: 14px;
-  border: 3px solid var(--accent);
-  border-radius: 50%;
-  background: var(--paper);
+.subhead {
+  margin: clamp(40px, 5vw, 64px) 0 20px;
+  font: 500 0.8rem/1.4 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--line-2);
 }
 
-.stop-terminus .stop-dot {
-  background: var(--accent);
-  box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--accent);
+.subhead::before {
+  content: '— ';
+  content: '— ' / '';
+  color: var(--line-3);
 }
 
-@media (min-width: 1100px) {
-  .route-line,
-  .route {
-    --route-x: calc(max(var(--gutter), (100% - var(--shell)) / 2) - 28px);
-    position: absolute;
-    top: calc(var(--hero-top) + 10px);
-    bottom: 0;
-    left: var(--route-x);
-    display: block;
-    width: 2px;
-    pointer-events: none;
-  }
-
-  .route-line {
-    background: var(--line-strong);
-  }
-
-  /* Calque séparé au-dessus des arrêts : le bus passe devant eux. */
-  .route {
-    z-index: 2;
-  }
-
-  .route-bus {
-    position: sticky;
-    top: 46vh;
-    display: grid;
-    place-items: center;
-    width: 30px;
-    height: 22px;
-    margin-left: -14px;
-    border-radius: 6px;
-    background: var(--accent);
-    color: var(--on-accent);
-    box-shadow: 0 0 0 3px var(--paper);
-  }
-
-  .route-bus .icon {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Sur grand écran, le point de l'arrêt quitte le texte pour se poser sur la ligne. */
-  .stop-dot {
-    position: absolute;
-    top: var(--stop-line);
-    left: -34px;
-    margin-top: -7px;
-  }
-
-  .stop,
-  .stop-title {
-    display: block;
-  }
-
-  /* Postes et diplômes : arrêts intermédiaires, plus discrets. */
-  .xp-item,
-  .edu-item {
-    position: relative;
-  }
-
-  .xp-item::before,
-  .edu-item::before {
-    content: '';
-    position: absolute;
-    top: 38px;
-    left: -31px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--ink);
-    box-shadow: 0 0 0 3px var(--paper);
-  }
-
-  .edu-item::before {
-    top: 36px;
-  }
-}
+/* ---------- Étiquettes de technologies ---------- */
 
 .tags {
   display: flex;
@@ -292,16 +255,14 @@ h2 {
 }
 
 .tags li {
-  padding: 4px 10px;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  padding: 3px 9px;
+  border: 1px solid var(--line-3);
   font: 500 0.72rem/1.5 var(--font-mono);
   color: var(--ink-soft);
 }
 
-/* Liste à puces carrées, la signature graphique du site. */
-.xp-tasks,
-.project-highlights {
+/* Liste à repères en losange, la puce des plans. */
+.bullets {
   display: grid;
   gap: 10px;
   margin: 0;
@@ -310,63 +271,103 @@ h2 {
   color: var(--ink-soft);
 }
 
-.xp-tasks li,
-.project-highlights li {
+.bullets li {
   position: relative;
   padding-left: 22px;
 }
 
-.xp-tasks li::before,
-.project-highlights li::before {
+.bullets li::before {
   content: '';
   position: absolute;
-  top: 0.58em;
-  left: 0;
+  top: 0.62em;
+  left: 2px;
   width: 7px;
   height: 7px;
-  background: var(--accent);
+  border: 1px solid var(--accent);
+  transform: rotate(45deg);
 }
 
-/* ---------- Boutons ---------- */
+/* ---------- Boutons en crochets : [ Libellé ] → ---------- */
 
-.button {
+.bracket {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 0 20px;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  font: 600 0.95rem/1 var(--font-body);
+  gap: 12px;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font: 500 0.88rem/1 var(--font-mono);
+  letter-spacing: 0.02em;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  isolation: isolate;
+  transition: color 0.25s ease, box-shadow 0.3s ease, border-color 0.25s ease;
 }
 
-.button-primary {
-  background: var(--ink);
-  color: var(--paper);
+/* Crochets décoratifs : la seconde déclaration leur donne un texte de remplacement vide,
+   pour que les lecteurs d'écran annoncent « Découvrir mes projets » et non « [ Découvrir… ] ».
+   La première reste en repli pour les navigateurs qui ne la comprennent pas. */
+.bracket::before {
+  content: '[';
+  content: '[' / '';
+  color: var(--line-2);
 }
 
-.button-primary:hover {
-  background: var(--accent);
-  color: var(--on-accent);
+.bracket-label::after {
+  content: '\00a0]';
+  content: '\00a0]' / '';
+  color: var(--line-2);
 }
 
-.button-ghost {
-  border-color: var(--line-strong);
-  background: transparent;
-  color: var(--ink);
+/* Au survol, le bouton se remplit de hachures lumineuses. */
+.bracket::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: repeating-linear-gradient(-45deg, var(--hatch) 0 1px, transparent 1px 7px);
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transition: opacity 0.25s ease, clip-path 0.45s var(--ease);
 }
 
-.button-ghost:hover {
-  border-color: var(--ink);
-  background: var(--paper-2);
+.bracket:hover::after,
+.bracket:focus-visible::after {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
 }
 
-.button:disabled {
+.bracket:hover,
+.bracket:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--glow), 0 0 22px var(--glow);
+}
+
+.bracket .icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s var(--ease);
+}
+
+.bracket:hover .icon {
+  transform: translateX(3px);
+}
+
+.bracket-quiet {
+  border-color: var(--line-3);
+}
+
+.bracket-small {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 0.8rem;
+}
+
+.bracket:disabled {
   opacity: 0.45;
   cursor: default;
 }
@@ -375,27 +376,27 @@ h2 {
   display: grid;
   place-items: center;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border: 1px solid var(--line-3);
   background: transparent;
   color: var(--ink);
   text-decoration: none;
   cursor: pointer;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tool-button:hover {
-  border-color: var(--ink);
+  border-color: var(--line);
+  box-shadow: 0 0 14px var(--glow);
 }
 
 /* ---------- Apparitions ---------- */
 
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(18px);
   transition:
     opacity 0.7s var(--ease) var(--reveal-delay, 0ms),
     transform 0.7s var(--ease) var(--reveal-delay, 0ms);
@@ -406,17 +407,6 @@ h2 {
   transform: none;
 }
 
-.enter {
-  animation: enter 0.8s var(--ease) var(--enter-delay, 0ms) both;
-}
-
-@keyframes enter {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-}
-
 @keyframes fade-in {
   from {
     opacity: 0;
@@ -424,13 +414,90 @@ h2 {
 }
 
 @media (max-width: 900px) {
-  .section-head h2,
-  .section-intro {
-    grid-column: 1 / -1;
+  .section-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .sheet {
+    padding: 22px 18px;
   }
 
-  .section-intro {
-    padding-top: 0;
+  .cross {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cross-tl,
+  .cross-tr {
+    top: -10px;
+  }
+
+  .cross-bl,
+  .cross-br {
+    bottom: -10px;
+  }
+
+  .cross-tl,
+  .cross-bl {
+    left: -10px;
+  }
+
+  .cross-tr,
+  .cross-br {
+    right: -10px;
+  }
+}
+
+/* Impression : le thème passe en « tirage papier » (voir useTheme), tout le contenu est affiché,
+   et ce qui ne sert qu'à l'écran disparaît. */
+@media print {
+  body::before {
+    background: none;
+  }
+
+  .site-header,
+  .skip-link,
+  .scroll-cue,
+  .intro-skip,
+  .bus-controls,
+  .wave-bg,
+  .back-to-top,
+  canvas {
+    display: none !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  .about-drawing,
+  .about-drawing-inner {
+    position: static;
+  }
+
+  .sheet,
+  .project-card {
+    break-inside: avoid-page;
+  }
+
+  /* Le dessin d'« À propos » s'imprime entier, quel que soit l'endroit où l'on avait défilé. */
+  .bus-sketch {
+    --s1: 1 !important;
+    --s2: 1 !important;
+    --s3: 1 !important;
+    --s4: 1 !important;
+  }
+
+  /* Sans la scène 3D, le dessin technique du bus reprend sa place. */
+  .bus-view .bus-fallback {
+    opacity: 1 !important;
+  }
+
+  .bracket::after {
+    display: none;
   }
 }
 

@@ -3,37 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f1ea" />
-    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#0b2259" />
+    <meta name="color-scheme" content="dark light" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="author" content="Timothée Maire" />
-    <meta name="description" content="Portfolio de Timothée Maire, développeur full-stack. Intranet Symfony / React chez Daimler Buses France et projets personnels en ligne : PokéLine, MonCommerce Rapide, une scène Three.js et deux mini-jeux." />
+    <meta name="description" content="Timothée Maire, développeur full-stack chez Daimler Buses France : un intranet Symfony / React utilisé par plus de 1 200 salariés, des jeux, et des projets menés avec des équipes d’agents IA." />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws: wss:; form-action 'self' mailto:; upgrade-insecure-requests" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:locale:alternate" content="en_GB" />
     <meta property="og:title" content="Timothée Maire — Développeur full-stack" />
-    <meta property="og:description" content="Des outils métier que les équipes utilisent vraiment : intranet Symfony / React chez Daimler Buses France, et des projets personnels à ouvrir ou à jouer." />
+    <meta property="og:description" content="Développeur full-stack chez Daimler Buses France. Parcours, projets à ouvrir ou à jouer, et un bus en fil de fer." />
     <meta property="og:image" content="/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Aperçu du projet PokéLine développé par Timothée Maire" />
+    <meta property="og:image:alt" content="Le portfolio de Timothée Maire : son nom en lettres de plan et un bus en fil de fer, sur fond de plan bleu" />
     <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Timothée Maire — Développeur full-stack</title>
 
-    <!-- Applique le thème avant le premier affichage pour éviter tout flash clair/sombre. -->
+    <!-- Applique le thème avant le premier affichage : le plan bleu par défaut, le tirage papier si choisi. -->
     <script>
       (function () {
         var theme
         try { theme = localStorage.getItem('portfolio-theme') } catch (error) { /* stockage indisponible */ }
-        if (theme !== 'light' && theme !== 'dark') {
-          theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
-        document.documentElement.dataset.theme = theme
+        document.documentElement.dataset.theme = theme === 'light' ? 'light' : 'dark'
       })()
     </script>
 

@@ -4,7 +4,7 @@ import { useI18n } from '../i18n'
 import type { Theme } from '../useTheme'
 import { GithubIcon, MoonIcon, SunIcon } from './icons'
 
-/** Suit la section actuellement à l'écran pour surligner le lien correspondant. */
+/** Suit la section actuellement à l'écran pour souligner le lien correspondant. */
 function useActiveSection() {
   const [active, setActive] = useState<SectionId | null>(null)
 
@@ -52,8 +52,8 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
     <header className={`site-header ${menuOpen ? 'is-menu-open' : ''}`}>
       <div className="shell header-inner">
         <a className="brand" href="#top" aria-label={t.a11y.home} onClick={() => setMenuOpen(false)}>
-          <span className="brand-mark" aria-hidden="true" />
-          Timothée Maire
+          <span className="brand-slash" aria-hidden="true">/</span>
+          {t.brand}
         </a>
 
         <nav id="site-nav" className="site-nav" aria-label={t.a11y.mainNav}>
@@ -65,7 +65,7 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
               aria-current={active === id ? 'location' : undefined}
               onClick={() => setMenuOpen(false)}
             >
-              {t.nav[id]}
+              <span className="nav-label">{t.nav[id]}</span>
             </a>
           ))}
         </nav>
@@ -84,11 +84,15 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
             className="tool-button lang-toggle"
             type="button"
             onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-            aria-label={t.a11y.switchLang}
           >
+            {/* Le nom accessible reprend le texte visible, puis l'action, dans la langue visée. */}
             <span className={lang === 'fr' ? 'is-current' : ''}>FR</span>
             <span aria-hidden="true">/</span>
             <span className={lang === 'en' ? 'is-current' : ''}>EN</span>
+            <span className="sr-only" lang={lang === 'fr' ? 'en' : 'fr'}>
+              {' — '}
+              {t.a11y.switchLang}
+            </span>
           </button>
           <button
             className="tool-button"

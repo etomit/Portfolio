@@ -1,13 +1,17 @@
 import {
   BoxGeometry,
-  Color,
+  BufferAttribute,
+  BufferGeometry,
   ConeGeometry,
-  DirectionalLight,
+  DynamicDrawUsage,
+  EdgesGeometry,
   Group,
-  HemisphereLight,
   InstancedMesh,
+  LineBasicMaterial,
+  LineDashedMaterial,
+  LineSegments,
   Mesh,
-  MeshLambertMaterial,
+  MeshBasicMaterial,
   Object3D,
   OrthographicCamera,
   Scene,
@@ -38,6 +42,16 @@ const BUILD_DURATION = 0.75
 const BUS_SPEED = 1.15
 const SPIN_SPEED = 0.07
 
+// Dessin au trait : hauteur d'étage des façades, rayon et nombre de pans des arbres.
+const STOREY = 0.24
+const TREE_RADIUS = 0.17
+const TREE_HEIGHT = 0.5
+const TREE_SIDES = 6
+const MAX_BLOCKS = GRID * GRID * 2
+const MAX_TREES = GRID * GRID * 4
+const MAX_STOREYS = 18
+
+/** Style de façade : 'light' n'a que les étages, les autres ajoutent des meneaux verticaux. */
 type Role = 'light' | 'sand' | 'dark' | 'accent'
 
 interface Block {
@@ -55,17 +69,6 @@ interface Block {
 interface Tree { x: number; z: number; size: number; delay: number }
 interface Lot { x: number; z: number; park: boolean }
 interface CityPlan { blocks: Block[]; trees: Tree[]; lots: Lot[] }
-
-const PALETTES = {
-  light: {
-    ground: '#c9c1ae', lot: '#e6e0d1', park: '#b4bd94', tree: '#5d7848', glass: '#2a2923',
-    light: '#f7f3ea', sand: '#dcd3be', dark: '#2f2e27', accent: '#e2421b', sky: '#ffffff', bounce: '#d9cfb8',
-  },
-  dark: {
-    ground: '#2c2b26', lot: '#3d3c35', park: '#44543a', tree: '#7c9c62', glass: '#171610',
-    light: '#8a877a', sand: '#5f5d53', dark: '#f0ebde', accent: '#ff6b3d', sky: '#e6e9f5', bounce: '#3a3933',
-  },
-} as const
 
 /** Générateur pseudo-aléatoire déterministe : une graine donne toujours la même ville. */
 function mulberry32(seed: number) {
@@ -133,11 +136,49 @@ function planCity(seed: number): CityPlan {
 const easeOutCubic = (value: number) => 1 - Math.pow(1 - value, 3)
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
+/** Tampon de segments réécrit pendant la construction, puis figé. */
+class SegmentBuffer {
+  readonly array: Float32Array
+  readonly geometry = new BufferGeometry()
+  private cursor = 0
+
+  constructor(maxSegments: number) {
+    this.array = new Float32Array(maxSegments * 6)
+    const attribute = new BufferAttribute(this.array, 3)
+    attribute.setUsage(DynamicDrawUsage)
+    this.geometry.setAttribute('position', attribute)
+  }
+
+  reset() {
+    this.cursor = 0
+  }
+
+  push(ax: number, ay: number, az: number, bx: number, by: number, bz: number) {
+    if (this.cursor + 6 > this.array.length) return
+    this.array.set([ax, ay, az, bx, by, bz], this.cursor)
+    this.cursor += 6
+  }
+
+  /** Contour d'un rectangle horizontal à l'altitude y. */
+  rectangle(x0: number, z0: number, x1: number, z1: number, y: number) {
+    this.push(x0, y, z0, x1, y, z0)
+    this.push(x1, y, z0, x1, y, z1)
+    this.push(x1, y, z1, x0, y, z1)
+    this.push(x0, y, z1, x0, y, z0)
+  }
+
+  commit() {
+    this.geometry.setDrawRange(0, this.cursor / 3)
+    this.geometry.getAttribute('position').needsUpdate = true
+    // Indispensable pour que la ville ne disparaisse pas par erreur hors du champ de la caméra.
+    this.geometry.computeBoundingSphere()
+  }
+}
+
 export function createCityScene(canvas: HTMLCanvasElement): CityScene {
   // Lève une exception si WebGL est indisponible : l'appelant affiche alors un message.
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.shadowMap.enabled = true
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const scene = new Scene()
@@ -145,59 +186,68 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
   camera.position.set(12, 10.5, 12)
   camera.lookAt(0, 0.9, 0)
 
-  const hemisphere = new HemisphereLight('#ffffff', '#d9cfb8', 1.5)
-  const sun = new DirectionalLight('#ffffff', 2.4)
-  sun.position.set(5, 11, 3)
-  sun.castShadow = true
-  sun.shadow.mapSize.set(1024, 1024)
-  sun.shadow.camera.left = -9
-  sun.shadow.camera.right = 9
-  sun.shadow.camera.top = 9
-  sun.shadow.camera.bottom = -9
-  sun.shadow.camera.near = 1
-  sun.shadow.camera.far = 30
-  sun.shadow.bias = -0.0006
-  scene.add(hemisphere, sun)
-
   const city = new Group()
   city.rotation.y = -0.35
   scene.add(city)
 
-  // --- Géométries et matériaux, partagés entre toutes les instances -----------
+  // --- Matériaux : rendu au trait, couleurs lues dans les variables CSS du thème ---------
+  // Remplissage de la couleur du fond : il masque les arêtes cachées, comme sur un plan.
+  const fillMaterial = new MeshBasicMaterial({ polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 })
+  const lineMaterial = new LineBasicMaterial()
+  const softMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.85, depthWrite: false })
+  const facadeMaterial = new LineBasicMaterial({ transparent: true, opacity: 0.45, depthWrite: false })
+  const accentMaterial = new LineBasicMaterial()
+  const routeMaterial = new LineDashedMaterial({ dashSize: 0.16, gapSize: 0.12, transparent: true, opacity: 0.8, depthWrite: false })
+
+  // --- Géométries -----------------------------------------------------------------------
   const unitBox = new BoxGeometry(1, 1, 1).translate(0, 0.5, 0) // pied posé à y = 0
-  const cone = new ConeGeometry(0.17, 0.5, 6).translate(0, 0.25, 0)
-  const groundMaterial = new MeshLambertMaterial()
-  const instanceMaterial = new MeshLambertMaterial() // blanc : la teinte vient de chaque instance
-  const treeMaterial = new MeshLambertMaterial()
-  const busMaterial = new MeshLambertMaterial()
-  const glassMaterial = new MeshLambertMaterial()
+  const cone = new ConeGeometry(TREE_RADIUS, TREE_HEIGHT, TREE_SIDES).translate(0, TREE_HEIGHT / 2, 0)
 
   const groundSize = SPAN + RING * 2
-  const ground = new Mesh(new BoxGeometry(groundSize, 0.4, groundSize), groundMaterial)
-  ground.position.y = -0.2
-  ground.receiveShadow = true
+  const groundGeometry = new BoxGeometry(groundSize, 0.4, groundSize).translate(0, -0.2, 0)
+  const ground = new Mesh(groundGeometry, fillMaterial)
+  const groundEdges = new LineSegments(new EdgesGeometry(groundGeometry), lineMaterial)
 
-  const lotMesh = new InstancedMesh(unitBox, instanceMaterial, GRID * GRID)
-  lotMesh.receiveShadow = true
-  const blockMesh = new InstancedMesh(unitBox, instanceMaterial, GRID * GRID * 2)
-  blockMesh.castShadow = true
-  blockMesh.receiveShadow = true
-  const treeMesh = new InstancedMesh(cone, treeMaterial, GRID * GRID * 4)
-  treeMesh.castShadow = true
+  // Remplissages instanciés (immeubles, arbres) ; leurs arêtes sont recalculées à part.
+  const blockMesh = new InstancedMesh(unitBox, fillMaterial, MAX_BLOCKS)
+  const treeMesh = new InstancedMesh(cone, fillMaterial, MAX_TREES)
 
+  const blockEdges = new SegmentBuffer(MAX_BLOCKS * 12)
+  const facadeLines = new SegmentBuffer(MAX_BLOCKS * (MAX_STOREYS * 4 + 8))
+  const treeEdges = new SegmentBuffer(MAX_TREES * TREE_SIDES * 2)
+  const groundLines = new SegmentBuffer(GRID * GRID * 16) // trottoirs et hachures des parcs
+  const blockLines = new LineSegments(blockEdges.geometry, lineMaterial)
+  const facades = new LineSegments(facadeLines.geometry, facadeMaterial)
+  const treeLines = new LineSegments(treeEdges.geometry, softMaterial)
+  const lotLines = new LineSegments(groundLines.geometry, softMaterial)
+
+  // Boulevard : axe pointillé sur lequel tourne le bus.
+  const routeGeometry = new BufferGeometry()
+  const corners = [[-LOOP, -LOOP], [LOOP, -LOOP], [LOOP, LOOP], [-LOOP, LOOP]]
+  const routePositions: number[] = []
+  corners.forEach(([x, z], index) => {
+    const [nx, nz] = corners[(index + 1) % corners.length]
+    routePositions.push(x, 0.002, z, nx, 0.002, nz)
+  })
+  routeGeometry.setAttribute('position', new BufferAttribute(new Float32Array(routePositions), 3))
+  const route = new LineSegments(routeGeometry, routeMaterial)
+  route.computeLineDistances()
+
+  // Le bus de la ville, dessiné en couleur d'accent.
   const bus = new Group()
-  const busBody = new Mesh(new BoxGeometry(0.95, 0.34, 0.38), busMaterial)
-  busBody.position.y = 0.23
-  busBody.castShadow = true
-  const busWindows = new Mesh(new BoxGeometry(0.82, 0.11, 0.4), glassMaterial)
-  busWindows.position.y = 0.3
-  bus.add(busBody, busWindows)
+  const busBodyGeometry = new BoxGeometry(0.95, 0.34, 0.38).translate(0, 0.23, 0)
+  const busWindowGeometry = new BoxGeometry(0.82, 0.11, 0.4).translate(0, 0.3, 0)
+  bus.add(
+    new Mesh(busBodyGeometry, fillMaterial),
+    new Mesh(busWindowGeometry, fillMaterial),
+    new LineSegments(new EdgesGeometry(busBodyGeometry), accentMaterial),
+    new LineSegments(new EdgesGeometry(busWindowGeometry), accentMaterial),
+  )
 
-  city.add(ground, lotMesh, blockMesh, treeMesh, bus)
+  city.add(ground, groundEdges, route, lotLines, blockMesh, blockLines, facades, treeMesh, treeLines, bus)
 
-  // --- État --------------------------------------------------------------------
+  // --- État -------------------------------------------------------------------------------
   const dummy = new Object3D()
-  const tint = new Color()
   let plan = planCity(Math.floor(Math.random() * 1e9))
   let buildStart = performance.now() / 1000
   let building = true
@@ -210,33 +260,40 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
   let lastPointerX = 0
   let spinVelocity = 0
 
-  const currentPalette = () => PALETTES[document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light']
-
   function applyColors() {
-    const palette = currentPalette()
-    groundMaterial.color.set(palette.ground)
-    treeMaterial.color.set(palette.tree)
-    busMaterial.color.set(palette.accent)
-    glassMaterial.color.set(palette.glass)
-    hemisphere.color.set(palette.sky)
-    hemisphere.groundColor.set(palette.bounce)
-
-    plan.lots.forEach((lot, index) => lotMesh.setColorAt(index, tint.set(lot.park ? palette.park : palette.lot)))
-    plan.blocks.forEach((block, index) => blockMesh.setColorAt(index, tint.set(palette[block.role])))
-    if (lotMesh.instanceColor) lotMesh.instanceColor.needsUpdate = true
-    if (blockMesh.instanceColor) blockMesh.instanceColor.needsUpdate = true
+    const style = getComputedStyle(document.documentElement)
+    const read = (name: string) => style.getPropertyValue(name).trim()
+    const fill = read('--3d-fill')
+    const line = read('--3d-line')
+    const soft = read('--3d-line-soft')
+    const accent = read('--3d-accent')
+    if (fill) fillMaterial.color.set(fill)
+    if (line) lineMaterial.color.set(line)
+    if (soft) {
+      softMaterial.color.set(soft)
+      facadeMaterial.color.set(soft)
+      routeMaterial.color.set(soft)
+    }
+    if (accent) accentMaterial.color.set(accent)
     dirty = true
   }
 
-  function placeLots() {
-    plan.lots.forEach((lot, index) => {
-      dummy.position.set(lot.x, 0, lot.z)
-      dummy.scale.set(LOT, SIDEWALK, LOT)
-      dummy.updateMatrix()
-      lotMesh.setMatrixAt(index, dummy.matrix)
-    })
-    lotMesh.count = plan.lots.length
-    lotMesh.instanceMatrix.needsUpdate = true
+  /** Bordures des parcelles et hachures obliques des parcs (convention des espaces verts). */
+  function drawLots() {
+    groundLines.reset()
+    const half = LOT / 2
+    for (const lot of plan.lots) {
+      groundLines.rectangle(lot.x - half, lot.z - half, lot.x + half, lot.z + half, SIDEWALK)
+      if (!lot.park) continue
+      const inset = half - 0.08
+      for (let c = -2 * inset + 0.16; c < 2 * inset - 0.04; c += 0.16) {
+        // Droite x - z = c, découpée par le carré [-inset, inset]².
+        const from = Math.max(-inset, -inset + c)
+        const to = Math.min(inset, inset + c)
+        groundLines.push(lot.x + from, SIDEWALK, lot.z + from - c, lot.x + to, SIDEWALK, lot.z + to - c)
+      }
+    }
+    groundLines.commit()
   }
 
   /** Positionne immeubles et arbres selon l'avancement de la construction. Renvoie true une fois terminée. */
@@ -248,25 +305,71 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
       return Math.max(0.0001, easeOutCubic(progress))
     }
 
+    blockEdges.reset()
+    facadeLines.reset()
     plan.blocks.forEach((block, index) => {
       const grown = growth(block.delay)
-      dummy.position.set(block.x, SIDEWALK + block.base * grown, block.z)
-      dummy.scale.set(block.width, block.height * grown, block.depth)
+      const y0 = SIDEWALK + block.base * grown
+      const height = block.height * grown
+      dummy.position.set(block.x, y0, block.z)
+      dummy.scale.set(block.width, height, block.depth)
       dummy.updateMatrix()
       blockMesh.setMatrixAt(index, dummy.matrix)
+
+      // Arêtes du parallélépipède.
+      const y1 = y0 + height
+      const x0 = block.x - block.width / 2
+      const x1 = block.x + block.width / 2
+      const z0 = block.z - block.depth / 2
+      const z1 = block.z + block.depth / 2
+      blockEdges.rectangle(x0, z0, x1, z1, y0)
+      blockEdges.rectangle(x0, z0, x1, z1, y1)
+      for (const [x, z] of [[x0, z0], [x1, z0], [x1, z1], [x0, z1]]) blockEdges.push(x, y0, z, x, y1, z)
+
+      // Façades : un trait par étage, et des meneaux pour les immeubles de bureaux.
+      for (let storey = 1; storey <= MAX_STOREYS && storey * STOREY < height - 0.06; storey++) {
+        facadeLines.rectangle(x0, z0, x1, z1, y0 + storey * STOREY)
+      }
+      if (block.role !== 'light' && height > 0.2) {
+        for (const t of [1 / 3, 2 / 3]) {
+          const x = x0 + (x1 - x0) * t
+          const z = z0 + (z1 - z0) * t
+          facadeLines.push(x, y0, z0, x, y1, z0)
+          facadeLines.push(x, y0, z1, x, y1, z1)
+          facadeLines.push(x0, y0, z, x0, y1, z)
+          facadeLines.push(x1, y0, z, x1, y1, z)
+        }
+      }
     })
     blockMesh.count = plan.blocks.length
     blockMesh.instanceMatrix.needsUpdate = true
+    blockMesh.computeBoundingSphere()
+    blockEdges.commit()
+    facadeLines.commit()
 
+    treeEdges.reset()
     plan.trees.forEach((tree, index) => {
-      const grown = growth(tree.delay)
+      const size = tree.size * growth(tree.delay)
       dummy.position.set(tree.x, SIDEWALK, tree.z)
-      dummy.scale.setScalar(tree.size * grown)
+      dummy.scale.setScalar(size)
       dummy.updateMatrix()
       treeMesh.setMatrixAt(index, dummy.matrix)
+
+      // Cône à six pans : arêtes vers la pointe et contour de la base.
+      const apexY = SIDEWALK + TREE_HEIGHT * size
+      for (let side = 0; side < TREE_SIDES; side++) {
+        const a = (side / TREE_SIDES) * Math.PI * 2
+        const b = ((side + 1) / TREE_SIDES) * Math.PI * 2
+        const ax = tree.x + Math.sin(a) * TREE_RADIUS * size
+        const az = tree.z + Math.cos(a) * TREE_RADIUS * size
+        treeEdges.push(ax, SIDEWALK, az, tree.x, apexY, tree.z)
+        treeEdges.push(ax, SIDEWALK, az, tree.x + Math.sin(b) * TREE_RADIUS * size, SIDEWALK, tree.z + Math.cos(b) * TREE_RADIUS * size)
+      }
     })
     treeMesh.count = plan.trees.length
     treeMesh.instanceMatrix.needsUpdate = true
+    treeMesh.computeBoundingSphere()
+    treeEdges.commit()
     return finished
   }
 
@@ -323,7 +426,7 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
     renderer.render(scene, camera)
   }
 
-  // --- Interaction : glisser horizontalement pour faire pivoter la ville -------
+  // --- Interaction : glisser horizontalement pour faire pivoter la ville -------------------
   const onPointerDown = (event: PointerEvent) => {
     dragging = true
     lastPointerX = event.clientX
@@ -350,7 +453,7 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
   const themeObserver = new MutationObserver(applyColors)
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
 
-  placeLots()
+  drawLots()
   placeBuildings(0)
   placeBus()
   applyColors()
@@ -362,8 +465,8 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
       plan = planCity(Math.floor(Math.random() * 1e9))
       buildStart = performance.now() / 1000
       building = true
-      placeLots()
-      applyColors()
+      drawLots()
+      dirty = true
     },
     setRunning(next) {
       if (next === running) return
@@ -383,9 +486,11 @@ export function createCityScene(canvas: HTMLCanvasElement): CityScene {
       canvas.removeEventListener('pointermove', onPointerMove)
       canvas.removeEventListener('pointerup', onPointerUp)
       canvas.removeEventListener('pointercancel', onPointerUp)
-      for (const mesh of [lotMesh, blockMesh, treeMesh]) mesh.dispose()
-      for (const geometry of [unitBox, cone, ground.geometry, busBody.geometry, busWindows.geometry]) geometry.dispose()
-      for (const material of [groundMaterial, instanceMaterial, treeMaterial, busMaterial, glassMaterial]) material.dispose()
+      for (const mesh of [blockMesh, treeMesh]) mesh.dispose()
+      scene.traverse((object) => {
+        if (object instanceof Mesh || object instanceof LineSegments) object.geometry.dispose()
+      })
+      for (const material of [fillMaterial, lineMaterial, softMaterial, facadeMaterial, accentMaterial, routeMaterial]) material.dispose()
       renderer.dispose()
     },
   }

@@ -1,183 +1,462 @@
 .hero {
-  padding-top: var(--hero-top);
+  padding-top: clamp(28px, 4vw, 56px);
+}
+
+.hero-sheet {
+  padding-bottom: clamp(56px, 6vw, 80px);
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
-  gap: clamp(32px, 6vw, 96px);
-  align-items: end;
+  grid-template-columns: minmax(0, 11fr) minmax(0, 12fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+}
+
+.hero-copy {
+  position: relative;
+  padding-top: clamp(36px, 6vw, 84px);
+  /* Conteneur de référence pour le cartouche des rôles (requête de conteneur plus bas). */
+  container-type: inline-size;
+}
+
+/* Annotation au crayon avec sa flèche courbe vers le nom. */
+.hero-annotation {
+  position: absolute;
+  top: 0;
+  left: clamp(0px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+  transform: rotate(-6deg);
+  transform-origin: left top;
+}
+
+.hero-annotation span:nth-child(2) {
+  margin-left: 0.6em;
+}
+
+.hero-annotation span:nth-child(3) {
+  margin-left: 1.2em;
+}
+
+.note-arrow {
+  width: 64px;
+  height: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-annotation .note-arrow {
+  position: absolute;
+  top: 18px;
+  left: calc(100% + 4px);
+  transform: rotate(8deg);
+}
+
+.hero-kicker {
+  margin-top: clamp(28px, 4vw, 40px);
+  color: var(--ink);
+  font-size: 0.86rem;
+  letter-spacing: 0.22em;
 }
 
 .hero h1 {
-  margin-top: 24px;
-  font-size: clamp(2.6rem, 6.6vw, 5.75rem);
-  font-weight: 620;
-  line-height: 0.98;
-  letter-spacing: -0.042em;
+  margin: 10px 0 0;
 }
 
-.hero h1 em {
-  font-style: normal;
-  color: var(--accent);
-}
-
-/* La seconde phrase du titre passe à la ligne et s'efface un peu derrière le prénom. */
-.hero h1 span {
+.hero-name {
   display: block;
-  margin-top: 0.18em;
-  font-size: 0.62em;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
+  width: min(100%, 560px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 14px var(--glow));
+}
+
+.hero-name text {
+  font: 600 150px var(--font-display);
+  letter-spacing: 0.02em;
+}
+
+.hn-construct path {
+  fill: none;
+  stroke: var(--line-2);
+  stroke-width: 1;
+  opacity: 0.4;
+}
+
+.hn-outline text {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.hn-hatch-line {
+  stroke: var(--line-2);
+  stroke-width: 1.4;
+}
+
+.hn-fill text {
+  opacity: 0.85;
+}
+
+.hero-roles {
+  display: inline-flex;
+  margin-top: 18px;
+  padding: 9px 12px;
+  border: 1px solid var(--line-2);
+  font: 500 0.8rem/1.4 var(--font-mono);
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.hero-roles-sep {
+  /* Espaces portées par le padding : en début d'élément flexible, un espace texte serait supprimé. */
+  padding-inline: 0.5em;
+  color: var(--line-2);
+}
+
+/* Le cartouche tient sur une ligne ou s'empile, une fonction par ligne : jamais de ligne
+   qui commence par un séparateur. Le seuil est la largeur du cartouche sur une ligne. */
+@container (max-width: 510px) {
+  .hero-roles {
+    flex-direction: column;
+  }
+
+  .hero-roles-sep {
+    display: none;
+  }
+}
+
+.hero-text {
+  max-width: 54ch;
+  margin-top: 26px;
+}
+
+.hero-greeting {
+  font: 500 1.05rem/1.4 var(--font-mono);
+  color: var(--ink);
 }
 
 .hero-lead {
-  max-width: 58ch;
-  margin-top: 28px;
+  margin-top: 10px;
   color: var(--ink-soft);
-  font-size: clamp(1.05rem, 1.5vw, 1.25rem);
+  font-size: clamp(1rem, 1.3vw, 1.1rem);
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 30px;
 }
 
-.hero-actions .icon {
-  transition: transform 0.3s var(--ease);
-}
+/* ---------- Le bus ---------- */
 
-.hero-actions .button:hover .icon {
-  transform: translateY(3px);
-}
-
-/* ---------- Portrait ---------- */
-
-.portrait {
-  margin: 0;
-}
-
-.portrait-frame {
+.bus-stage {
   position: relative;
-  aspect-ratio: 6 / 7;
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: var(--portrait);
+  padding-bottom: 54px;
 }
 
-.portrait-frame::after {
-  content: '';
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 14px;
-  height: 14px;
-  background: var(--accent);
+.bus-view {
+  position: relative;
+  aspect-ratio: 16 / 13;
 }
 
-.portrait-frame img {
+.bus-view canvas,
+.bus-view .bus-fallback {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  display: block;
+  inset: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
-.portrait figcaption {
+.bus-view canvas {
+  display: block;
+  opacity: 0;
+  cursor: grab;
+  touch-action: pan-y;
+  transition: opacity 0.8s ease;
+}
+
+.bus-view canvas:active {
+  cursor: grabbing;
+}
+
+.bus-view .bus-fallback {
+  transition: opacity 0.6s ease;
+}
+
+.bus-view.is-ready canvas {
+  opacity: 1;
+}
+
+.bus-view.is-ready .bus-fallback {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.model-note {
+  position: absolute;
+  bottom: 62px;
+  left: -8px;
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 10px;
-  font: 500 0.72rem/1.4 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
+  flex-direction: column;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  transform: rotate(-5deg);
+  pointer-events: none;
 }
 
-/* ---------- Fiche d'identité ---------- */
+.model-note .note-arrow {
+  position: absolute;
+  bottom: calc(100% - 4px);
+  left: 70%;
+  width: 54px;
+  transform: scaleY(-1) rotate(-20deg);
+}
+
+.bus-controls {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: fade-in 0.6s ease both;
+}
+
+/* ---------- Cartouche du hero ---------- */
 
 .hero-facts {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  margin: clamp(40px, 6vw, 80px) 0 0;
-  border-top: 1px solid var(--line-strong);
+  margin: clamp(36px, 5vw, 56px) 0 0;
+  border: 1px solid var(--line-3);
 }
 
 .hero-facts > div {
-  padding: 20px 20px 32px 0;
+  padding: 14px 16px 16px;
 }
 
 .hero-facts > div + div {
-  padding-left: 20px;
-  border-left: 1px solid var(--line);
+  border-left: 1px solid var(--line-3);
 }
 
 .hero-facts dt {
   font: 500 0.72rem/1.4 var(--font-mono);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
 
 .hero-facts dd {
-  margin: 10px 0 0;
+  margin: 8px 0 0;
 }
 
 .hero-facts strong {
   display: block;
-  font: 600 1.15rem/1.25 var(--font-display);
-  letter-spacing: -0.01em;
+  font: 500 1.05rem/1.25 var(--font-display);
+  color: var(--ink);
 }
 
 .hero-facts dd span {
   display: block;
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
+  margin-top: 2px;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
 }
 
-@media (max-width: 900px) {
+.scroll-cue {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  color: var(--line-2);
+  transform: translateX(-50%);
+  animation: cue 2.4s ease-in-out infinite;
+}
+
+@keyframes cue {
+  50% {
+    transform: translate(-50%, 5px);
+  }
+}
+
+.intro-skip {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-3);
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  animation: fade-in 0.4s ease 0.6s both;
+}
+
+/* ---------- Intro : 1. tracés, 2. contour, 3. hachures, 4. le reste du hero ---------- */
+
+.hero[data-intro='play'] .hn-construct path {
+  stroke-dasharray: 1;
+  animation: hn-draw 0.9s var(--ease) both, hn-settle 0.8s ease 2.6s both;
+}
+
+.hero[data-intro='play'] .hn-construct path:nth-child(2) {
+  animation-delay: 0.12s, 2.6s;
+}
+
+.hero[data-intro='play'] .hn-outline text {
+  stroke-dasharray: 900;
+  animation: hn-outline 1.8s var(--ease) 0.55s both;
+}
+
+.hero[data-intro='play'] .hn-fill {
+  animation: fade-in 0.8s ease 2.1s both;
+}
+
+.hero[data-intro='play'] .hero-name {
+  animation: hn-glow 1s ease 2.4s both;
+}
+
+.hero[data-intro='play'] :is(.hero-annotation, .hero-kicker, .hero-roles, .hero-text, .hero-actions, .hero-facts, .bus-stage) {
+  animation: rise 0.8s var(--ease) both;
+}
+
+/* Le texte utile arrive presque tout de suite (0,35 s au plus) : seuls le nom,
+   son cartouche, l'annotation et le bus suivent la séquence de la maquette. */
+.hero[data-intro='play'] .hero-kicker {
+  animation-delay: 0.1s;
+}
+
+.hero[data-intro='play'] .hero-text {
+  animation-delay: 0.25s;
+}
+
+.hero[data-intro='play'] :is(.hero-actions, .hero-facts) {
+  animation-delay: 0.35s;
+}
+
+.hero[data-intro='play'] .bus-stage {
+  animation-delay: 1.2s;
+}
+
+.hero[data-intro='play'] .hero-roles {
+  animation-delay: 2.3s;
+}
+
+.hero[data-intro='play'] .hero-annotation {
+  animation-delay: 2.5s;
+}
+
+/* Un simple fondu : `rise` écraserait le translateX(-50%) qui centre le chevron. */
+.hero[data-intro='play'] .scroll-cue {
+  animation: fade-in 0.6s ease 2.6s both;
+}
+
+@keyframes hn-draw {
+  from {
+    stroke-dashoffset: 1;
+    opacity: 0.9;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 0.9;
+  }
+}
+
+@keyframes hn-settle {
+  to {
+    opacity: 0.4;
+  }
+}
+
+@keyframes hn-outline {
+  from {
+    stroke-dashoffset: 900;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hn-glow {
+  from {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (max-width: 960px) {
   .hero-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .portrait {
-    width: min(320px, 72vw);
+  .bus-stage {
+    max-width: 640px;
   }
 
   .hero-facts {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .hero-facts > div {
-    padding-bottom: 20px;
-  }
-
-  .hero-facts > div:nth-child(odd) {
-    padding-left: 0;
+  .hero-facts > div:nth-child(3) {
     border-left: 0;
   }
 
   .hero-facts > div:nth-child(n + 3) {
-    border-top: 1px solid var(--line);
+    border-top: 1px solid var(--line-3);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
+  .hero-annotation {
+    font-size: 1.05rem;
+  }
+
+  .hero-annotation .note-arrow {
+    width: 46px;
+  }
+
+  .hero-roles {
+    font-size: 0.76rem;
+  }
+
+  .model-note {
+    bottom: 58px;
+    font-size: 1.02rem;
+  }
+
+  .bus-controls {
+    right: auto;
+    left: 0;
+  }
+
   .hero-facts {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .hero-facts > div,
   .hero-facts > div + div {
-    padding: 16px 0;
+    border-top: 1px solid var(--line-3);
     border-left: 0;
   }
 
-  .hero-facts > div + div {
-    border-top: 1px solid var(--line);
+  .intro-skip {
+    top: 10px;
+    right: 12px;
   }
 }

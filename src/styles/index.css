@@ -3,8 +3,9 @@
 @import './base.css';
 @import './header.css';
 @import './hero.css';
-@import './experience.css';
+@import './about.css';
+@import './timeline.css';
 @import './projects.css';
-@import './skills.css';
+@import './ai.css';
 @import './contact.css';
 @import './games.css';

@@ -1,0 +1,244 @@
+/* ---------- Le dessin technique du bus (hero de secours et « À propos ») ---------- */
+
+.bus-sketch {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.sk-layer-1 {
+  --draw: var(--s1, 1);
+}
+
+.sk-layer-2 {
+  --draw: var(--s2, 1);
+}
+
+.sk-layer-3 {
+  --draw: var(--s3, 1);
+}
+
+.sk-layer-4 {
+  --draw: var(--s4, 1);
+}
+
+.sk-path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Traits pleins : ils se dessinent selon l'avancement du calque. */
+.sk-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw));
+}
+
+.sk-thin {
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+
+.sk-accent {
+  stroke: var(--accent);
+  stroke-width: 1.1;
+}
+
+/* Arêtes cachées et axes : en tirets, ils apparaissent en fondu. */
+.sk-hidden {
+  stroke: var(--line-2);
+  stroke-width: 1;
+  stroke-dasharray: 6 5;
+  opacity: calc(var(--draw) * 0.75);
+}
+
+.sk-axis {
+  stroke: var(--line-2);
+  stroke-width: 0.9;
+  stroke-dasharray: 16 5 2 5;
+  opacity: calc(var(--draw) * 0.7);
+}
+
+.sk-fill {
+  stroke: none;
+  opacity: calc(var(--draw) * 0.9);
+}
+
+.sk-hatch-line {
+  stroke: var(--line-2);
+  stroke-width: 0.9;
+  opacity: 0.5;
+}
+
+.sk-label {
+  font: 500 15px var(--font-mono);
+  fill: var(--accent);
+  opacity: var(--draw);
+}
+
+/* ---------- Section « À propos » ---------- */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(28px, 5vw, 72px);
+}
+
+.portrait {
+  position: relative;
+  width: min(220px, 52%);
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  padding: 8px;
+  border: 1px solid var(--line-3);
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--bg-raised);
+  filter: grayscale(1) contrast(1.08);
+  mix-blend-mode: luminosity;
+}
+
+.portrait::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+
+.portrait figcaption {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.about-steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* L'étape lue se signale par son filet et sa note ; le texte garde partout son contraste. */
+.about-steps li {
+  min-height: 34vh;
+  padding: 18px 0 18px 20px;
+  border-left: 1px solid var(--line-3);
+  transition: border-color 0.4s ease;
+}
+
+.about-steps li.is-active {
+  border-left-color: var(--accent);
+}
+
+.about-steps li:last-child {
+  min-height: 0;
+}
+
+.about-note {
+  font-size: 1.7rem;
+  color: var(--muted);
+  transition: color 0.4s ease;
+}
+
+.is-active .about-note {
+  color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-note {
+    color: var(--accent);
+  }
+}
+
+.about-step-text {
+  max-width: 48ch;
+  margin-top: 6px;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.about-drawing-inner {
+  position: sticky;
+  top: calc(var(--header-height) + 32px);
+}
+
+.about-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  justify-content: center;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-hand);
+  font-size: 1.3rem;
+  color: var(--muted);
+}
+
+.about-legend li {
+  transition: color 0.3s ease;
+}
+
+.about-legend li::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+}
+
+.about-legend li.is-on {
+  color: var(--accent);
+}
+
+.about-legend li.is-on::before {
+  background: currentColor;
+}
+
+@media (max-width: 900px) {
+  .about-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Sur petit écran, le dessin reste collé en haut pendant qu'on lit les étapes. */
+  .about-drawing {
+    order: -1;
+    position: sticky;
+    top: var(--header-height);
+    z-index: 2;
+    margin-inline: -8px;
+    padding: 10px 8px 8px;
+    border-bottom: 1px solid var(--line-3);
+    /* Opaque : le texte qui défile dessous ne doit pas se lire à travers. */
+    background: var(--bg);
+  }
+
+  .about-drawing-inner {
+    position: static;
+  }
+
+  .about-drawing .bus-sketch {
+    max-height: 30vh;
+  }
+
+  .about-legend {
+    margin-top: 4px;
+    font-size: 1.05rem;
+  }
+
+  .about-steps li {
+    min-height: 30vh;
+  }
+}

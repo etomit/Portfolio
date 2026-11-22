@@ -165,7 +165,7 @@ function WordleBoard({ onClose }: { onClose: () => void }) {
         {status !== 'playing' && (
           <div className="game-result" role="status">
             <p>{status === 'won' ? t.games.won : `${t.games.wordleAnswer} ${target}`}</p>
-            <button type="button" className="button button-primary" onClick={restart}>{t.games.retry}</button>
+            <button type="button" className="bracket bracket-small" onClick={restart}><span className="bracket-label">{t.games.retry}</span></button>
           </div>
         )}
       </div>
