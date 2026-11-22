@@ -1,4 +1,4 @@
-import { siGithub } from 'simple-icons/icons'
+import { siGithub } from 'simple-icons'
 
 const stroke = {
   className: 'icon',

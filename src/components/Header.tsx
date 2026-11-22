@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LINKS, SECTION_IDS, type SectionId } from '../content'
 import { useI18n } from '../i18n'
 import type { Theme } from '../useTheme'
@@ -38,11 +38,17 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
   const { lang, setLang, t } = useI18n()
   const active = useActiveSection()
   const [menuOpen, setMenuOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const menuToggleRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!menuOpen) return
+    // Les liens précèdent le bouton dans la page : sans cela, Tab quitterait le menu qu'on vient d'ouvrir.
+    navRef.current?.querySelector('a')?.focus()
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      menuToggleRef.current?.focus()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -56,7 +62,7 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
           {t.brand}
         </a>
 
-        <nav id="site-nav" className="site-nav" aria-label={t.a11y.mainNav}>
+        <nav ref={navRef} id="site-nav" className="site-nav" aria-label={t.a11y.mainNav}>
           {SECTION_IDS.map((id) => (
             <a
               key={id}
@@ -103,6 +109,7 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
+            ref={menuToggleRef}
             className="tool-button menu-toggle"
             type="button"
             onClick={() => setMenuOpen((open) => !open)}

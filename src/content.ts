@@ -1160,5 +1160,3 @@ const en: Content = {
 export const content: Record<Lang, Content> = { fr, en }
 
 export type ProjectItem = Project
-export type JobItem = Job
-export type DiplomaItem = Diploma

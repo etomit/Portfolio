@@ -180,6 +180,9 @@ function WordleBoard({ onClose }: { onClose: () => void }) {
                 className={`wl-key ${key.length > 1 ? 'is-wide' : ''}`}
                 data-state={keyStates[key]}
                 aria-label={key === 'ENTER' ? t.games.enter : key === 'BACKSPACE' ? t.games.backspace : undefined}
+                // Un clic de souris ne donne pas le focus à la touche : sinon l'Entrée du clavier physique
+                // réactiverait cette touche au lieu de valider le mot.
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={() => press(key)}
               >
                 {key === 'ENTER' ? '↵' : key === 'BACKSPACE' ? '⌫' : key}

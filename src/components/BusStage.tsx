@@ -38,7 +38,8 @@ export function BusStage() {
   return (
     <div className="bus-stage" ref={containerRef}>
       <div className={`bus-view ${ready ? 'is-ready' : ''}`}>
-        {webgl && <canvas ref={canvasRef} role="img" aria-label={hero.canvasLabel} />}
+        {/* Tant que la scène n'est pas affichée, seul le dessin de secours est annoncé : jamais deux images à la fois. */}
+        {webgl && <canvas ref={canvasRef} role="img" aria-label={hero.canvasLabel} aria-hidden={!ready || undefined} />}
         <BusSketch className="bus-fallback" labels={hero.dims} label={hero.sketchLabel} hidden={ready} />
       </div>
 
