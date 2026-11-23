@@ -1,7 +1,7 @@
 // Captures de contrôle du portfolio avec Playwright.
 // Usage : node scripts/captures.mjs [url] [dossier]
 //   url     : adresse du site (par défaut http://localhost:5173, lancer `npm run dev` avant)
-//   dossier : où écrire les images (par défaut docs/refonte-blueprint/captures)
+//   dossier : où écrire les images (par défaut docs/portrait-ecitaro/captures)
 // Prérequis : `npx playwright install chromium` une fois.
 
 import { mkdirSync } from 'node:fs'
@@ -9,7 +9,7 @@ import path from 'node:path'
 import { chromium } from 'playwright'
 
 const url = process.argv[2] ?? 'http://localhost:5173'
-const outDir = process.argv[3] ?? 'docs/refonte-blueprint/captures'
+const outDir = process.argv[3] ?? 'docs/portrait-ecitaro/captures'
 mkdirSync(outDir, { recursive: true })
 
 const VIEWPORTS = {
@@ -134,6 +134,93 @@ for (const [viewport, lang, theme] of combos) {
   await page.getByRole('button', { name: /PokéLine/ }).first().click()
   await page.waitForTimeout(700)
   await shot(page, 'desktop-fr-dark-fiche-projet.png')
+  await context.close()
+}
+
+/** Amène « À propos » à l'écran et attend que les traits du portrait soient chargés. */
+async function reachPortrait(page, label) {
+  await page.locator('#about').scrollIntoViewIfNeeded()
+  try {
+    await page.waitForSelector('.ps-l2 path', { timeout: 15000 })
+    return true
+  } catch {
+    problems.push(`[${label}] traits du portrait non chargés`)
+    return false
+  }
+}
+
+// 4. « À propos » : le portrait à la fin de chacune des quatre étapes du parcours.
+for (const [viewport, lang, theme] of [
+  ['desktop', 'fr', 'dark'],
+  ['desktop', 'fr', 'light'],
+  ['desktop', 'en', 'dark'],
+  ['mobile', 'fr', 'dark'],
+  ['mobile', 'en', 'light'],
+]) {
+  const label = `${viewport}-${lang}-${theme}`
+  const { context, page } = await open(viewport, { lang, theme })
+  if (await reachPortrait(page, label)) {
+    for (let stage = 0; stage < 4; stage++) {
+      await page.evaluate((index) => {
+        const item = document.querySelectorAll('.about-steps > li')[index]
+        if (!item) return
+        const height = window.innerHeight
+        const rect = item.getBoundingClientRect()
+        // Même calcul que About.tsx : l'étape est finie quand son haut a passé la ligne de lecture
+        // (60 % de l'écran) d'au moins sa hauteur, ou d'un quart d'écran si elle est plus courte.
+        const span = Math.max(rect.height, height * 0.25)
+        window.scrollTo(0, window.scrollY + rect.top - (height * 0.6 - span) + 4)
+      }, stage)
+      await page.waitForTimeout(800)
+      await shot(page, `about-${label}-${stage + 1}.png`)
+    }
+  }
+  await context.close()
+}
+
+// 5. Le calque du contour seul (desktop, plan bleu) : les variables sont imposées par une feuille
+//    en !important, qui l'emporte sur celles qu'écrit le défilement.
+{
+  const { context, page } = await open('desktop')
+  if (await reachPortrait(page, 'contour seul')) {
+    await page.addStyleTag({ content: '.portrait-sketch { --s1: 0 !important; --s2: 1 !important; --s3: 0 !important; --s4: 0 !important; }' })
+    await page.waitForTimeout(400)
+    await page.locator('.ps-box').screenshot({ path: path.join(outDir, 'about-contour-seul.png') })
+  }
+  await context.close()
+}
+
+// 6. Bus éclaté sur mobile et en tirage papier, carte du moteur assemblée puis éclatée.
+for (const [viewport, theme] of [
+  ['desktop', 'dark'],
+  ['desktop', 'light'],
+  ['mobile', 'dark'],
+]) {
+  const label = `${viewport}-fr-${theme}`
+  const { context, page } = await open(viewport, { theme })
+  await page.waitForTimeout(2500)
+  if (viewport === 'mobile' || theme === 'light') {
+    const exploded = page.getByRole('button', { name: /Vue éclatée/ })
+    if (await exploded.count()) {
+      await exploded.click()
+      await page.waitForTimeout(1400)
+      await page.locator('.hero').screenshot({ path: path.join(outDir, `${label}-bus-eclate.png`) })
+    } else {
+      problems.push(`[${label}] bouton « Vue éclatée » absent`)
+    }
+  }
+  const card = page.locator('.engine-card')
+  await card.scrollIntoViewIfNeeded()
+  try {
+    await page.waitForSelector('.engine-card canvas[role="img"]', { timeout: 20000 })
+    await page.waitForTimeout(1200)
+    await card.screenshot({ path: path.join(outDir, `${label}-moteur-assemble.png`) })
+    await card.getByRole('button', { name: /Éclater le moteur/ }).click()
+    await page.waitForTimeout(1600)
+    await card.screenshot({ path: path.join(outDir, `${label}-moteur-eclate.png`) })
+  } catch {
+    problems.push(`[${label}] scène du moteur non chargée`)
+  }
   await context.close()
 }
 

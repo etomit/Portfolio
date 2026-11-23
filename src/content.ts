@@ -412,14 +412,14 @@ const fr = {
     cta: 'Découvrir mes projets',
     secondary: 'Me contacter',
     annotation: ['Symfony · React', 'Three.js', 'agents IA'],
-    modelNote: ['Mercedes-Benz eCitaro', 'en 3D, avec Three.js'],
+    modelNote: ['Mercedes-Benz eCitaro', 'modèle 3D'],
     explode: 'Vue éclatée',
     assemble: 'Vue assemblée',
     dragHint: 'Glisser pour tourner',
-    canvasLabel: 'Mercedes-Benz eCitaro en fil de fer, en 3D : 12 135 mm de long, 2 550 mm de large, 3 400 mm de haut. Il tourne lentement et suit la souris.',
+    canvasLabel: 'Mercedes-Benz eCitaro en fil de fer, en 3D : 12 135 mm de long, 2 550 mm de large, 3 400 mm de haut.',
     sketchLabel: 'Dessin technique d’un Mercedes-Benz eCitaro de 12 mètres, avec ses cotes',
     dims: { length: '12 135 mm', width: '2 550 mm', height: '3 400 mm' },
-    source: 'D’après la fiche constructeur (04/2026) · dessin personnel',
+    source: 'D’après les données constructeur (2025-2026) · dessin personnel',
     partsTitle: 'Dans la vue éclatée',
     parts: [
       {
@@ -457,7 +457,7 @@ const fr = {
       },
       {
         note: 'le contour',
-        text: 'Puis le logiciel : un BTS, une licence, et mes premières missions, dès 2022.',
+        text: 'Puis le logiciel : un BTS, une licence, et mes premières missions.',
       },
       {
         note: 'la profondeur',
@@ -499,11 +499,11 @@ const fr = {
       city: {
         name: 'Ville procédurale',
         description:
-          'Une petite ville tirée au hasard, dessinée en WebGL avec Three.js. Faites-la tourner à la souris ou au doigt, puis reconstruisez-la. Le bus qui fait le tour du quartier, vous l’aurez compris, est un clin d’œil.',
+          'Une petite ville tirée au hasard. Faites-la tourner à la souris ou au doigt, puis reconstruisez-la. Le bus qui fait le tour du quartier, vous l’aurez compris, est un clin d’œil.',
         tech: 'Three.js · WebGL',
         rebuild: 'Reconstruire la ville',
         canvasLabel: 'Scène 3D interactive : une ville générée aléatoirement, à faire pivoter',
-        hint: 'Glisser pour faire pivoter',
+        hint: 'Glisser pour tourner',
         loading: 'Chargement de la scène…',
         unsupported: 'WebGL n’est pas disponible sur cet appareil.',
       },
@@ -515,10 +515,10 @@ const fr = {
         explode: 'Éclater le moteur',
         assemble: 'Remonter le moteur',
         canvasLabel: 'Scène 3D : le moteur diesel OM 936 du Citaro en fil de fer, à faire pivoter',
-        hint: 'Glisser pour faire pivoter',
+        hint: 'Glisser pour tourner',
         loading: 'Chargement de la scène…',
         unsupported: 'WebGL n’est pas disponible sur cet appareil.',
-        source: 'Schéma de principe d’après la fiche constructeur (04/2026)',
+        source: 'Schéma de principe d’après les données Mercedes-Benz (2012 et 2026)',
       },
       g2048: {
         name: '2048',
@@ -965,13 +965,13 @@ const en: Content = {
     cta: 'See my projects',
     secondary: 'Get in touch',
     annotation: ['Symfony · React', 'Three.js', 'AI agents'],
-    modelNote: ['Mercedes-Benz eCitaro', 'in 3D, with Three.js'],
+    modelNote: ['Mercedes-Benz eCitaro', '3D model'],
     explode: 'Exploded view',
     assemble: 'Assembled view',
     dragHint: 'Drag to rotate',
-    canvasLabel: 'Wireframe Mercedes-Benz eCitaro in 3D: 12,135 mm long, 2,550 mm wide, 3,400 mm high. It turns slowly and follows the mouse.',
+    canvasLabel: 'Wireframe Mercedes-Benz eCitaro in 3D: 12,135 mm long, 2,550 mm wide, 3,400 mm high.',
     sketchLabel: 'Technical drawing of a 12-metre Mercedes-Benz eCitaro, with its dimensions',
-    source: 'After the manufacturer’s data sheet (04/2026) · my own drawing',
+    source: 'After manufacturer data (2025–2026) · my own drawing',
     partsTitle: 'In the exploded view',
     parts: [
       {
@@ -1010,7 +1010,7 @@ const en: Content = {
       },
       {
         note: 'the outline',
-        text: 'Then software: a BTS, a bachelor’s degree, and my first assignments, from 2022.',
+        text: 'Then software: a BTS, a bachelor’s degree, and my first assignments.',
       },
       {
         note: 'the depth',
@@ -1052,7 +1052,7 @@ const en: Content = {
       city: {
         name: 'Procedural city',
         description:
-          'A small random city drawn in WebGL with Three.js. Drag to rotate it with a mouse or a finger, then rebuild it. The bus doing laps around the block is, as you may have guessed, a nod.',
+          'A small random city. Drag to rotate it with a mouse or a finger, then rebuild it. The bus doing laps around the block is, as you may have guessed, a nod.',
         tech: 'Three.js · WebGL',
         rebuild: 'Rebuild the city',
         canvasLabel: 'Interactive 3D scene: a randomly generated city you can rotate',
@@ -1071,7 +1071,7 @@ const en: Content = {
         hint: 'Drag to rotate',
         loading: 'Loading the scene…',
         unsupported: 'WebGL is not available on this device.',
-        source: 'Schematic after the manufacturer’s data sheet (04/2026)',
+        source: 'Schematic based on Mercedes-Benz data (2012 and 2026)',
       },
       g2048: {
         name: '2048',

@@ -442,19 +442,36 @@ function contour(L, A) {
   const hand = FACE_MODE === 'hand' ? HAND_FACE.map(({ pts, closed }) => ({ pts, closed, kind: 'main', head: true })) : []
   lines.sort((a, b) => b.score - a.score)
   const keep = lines.slice(0, MAX_STROKES - silhouette.length - hand.length)
-  const strokes = [
-    ...silhouette,
-    ...hand,
-    ...keep
-      .map((s) => ({ ...s, pts: trimHooks(rdp(smooth(s.raw, s.head ? 2 : 3), s.head ? 1.2 : 1.8)) }))
-      .filter((s) => polyLength(s.pts) >= MIN_TRIMMED),
-  ]
+  const detected = keep
+    .map((s) => ({ ...s, pts: trimHooks(rdp(smooth(s.raw, s.head ? 2 : 3), s.head ? 1.2 : 1.8)) }))
+    .filter((s) => polyLength(s.pts) >= MIN_TRIMMED)
+  // Bruit : un trait détecté court, bas (sous y = 640) et isolé, sans extrémité près d'un autre trait, est écarté.
+  const others = [...silhouette, ...hand, ...detected]
+  const isolated = (s) => [s.pts[0], s.pts[s.pts.length - 1]].every((p) => others.every((o) => o === s || distToPolyline(p, o.pts) >= NOISE.gap))
+  const noise = detected.filter((s) => polyLength(s.pts) < NOISE.maxLen && s.pts.every(([, y]) => y > NOISE.minY) && isolated(s))
+  const strokes = [...silhouette, ...hand, ...detected.filter((s) => !noise.includes(s))]
   // Ordre de tracé : la silhouette d'abord, puis de haut en bas.
   const midY = (s) => s.pts.reduce((t, q) => t + q[1], 0) / s.pts.length
   strokes.sort((a, b) => (b.kind === 'silhouette') - (a.kind === 'silhouette') || midY(a) - midY(b))
   const paths = strokes.map((s) => (s.closed ? bezierClosed(s.pts) : bezier(s.pts))).filter(Boolean)
   const coatLines = strokes.filter((s) => s.kind === 'corps').map((s) => s.pts)
-  return { paths, coatLines, stats: { silhouette: silhouette.length, main: hand.length, corps: coatLines.length, candidats: lines.length } }
+  return { paths, coatLines, stats: { silhouette: silhouette.length, main: hand.length, corps: coatLines.length, candidats: lines.length, bruit: noise.length } }
+}
+// Seuils du bruit écarté sur le calque 2, en unités du viewBox.
+const NOISE = { maxLen: 45, minY: 640, gap: 20 }
+/** Distance d'un point à une polyligne (segments successifs). */
+function distToPolyline([px, py], pts) {
+  if (pts.length === 1) return Math.hypot(px - pts[0][0], py - pts[0][1])
+  let best = Infinity
+  for (let i = 1; i < pts.length; i++) {
+    const [ax, ay] = pts[i - 1]
+    const [bx, by] = pts[i]
+    const dx = bx - ax
+    const dy = by - ay
+    const t = dx || dy ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy))) : 0
+    best = Math.min(best, Math.hypot(px - ax - t * dx, py - ay - t * dy))
+  }
+  return best
 }
 // Ébarbage : un bout de trait court qui tourne brusquement (crochet laissé par le squelette) est retiré.
 const SIL_END = 900

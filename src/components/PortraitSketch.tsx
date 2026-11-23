@@ -57,10 +57,15 @@ export function PortraitSketch({ alt, caption, stages = [1, 1, 1, 1], ref }: Por
       { rootMargin: '900px 0px' },
     )
     observer.observe(box)
+    // Préchargement au repos : les traits sont là pour une impression lancée sans défilement ni beforeprint.
+    const idle = typeof window.requestIdleCallback === 'function'
+    const idleId = idle ? window.requestIdleCallback(load, { timeout: 4000 }) : window.setTimeout(load, 2500)
     return () => {
       cancelled = true
       observer.disconnect()
       window.removeEventListener('beforeprint', load)
+      if (idle) window.cancelIdleCallback(idleId)
+      else window.clearTimeout(idleId)
     }
   }, [])
 
@@ -93,17 +98,23 @@ export function PortraitSketch({ alt, caption, stages = [1, 1, 1, 1], ref }: Por
                 {/* Demi-plan qui balaie le dessin en diagonale, du coin haut gauche au coin bas droit, selon --s3. */}
                 <rect className="ps-sweep" x="-3000" y="-3000" width="3000" height="6000" />
               </clipPath>
+              {/* Le cadre de la feuille (M28 28 H972 V1142) : contour et hachures s'arrêtent au filet, comme la photo. */}
+              <clipPath id={`${clipId}-frame`}>
+                <rect x="28" y="28" width="944" height="1114" />
+              </clipPath>
             </defs>
-            <g className="ps-l3" clipPath={`url(#${clipId})`}>
-              <path className="ps-hatch" d={paths.hatchPaths[0]} />
-              <path className="ps-hatch ps-hatch-odd" d={paths.hatchPaths[1]} />
+            <g clipPath={`url(#${clipId}-frame)`}>
+              <g className="ps-l3" clipPath={`url(#${clipId})`}>
+                <path className="ps-hatch" d={paths.hatchPaths[0]} />
+                <path className="ps-hatch ps-hatch-odd" d={paths.hatchPaths[1]} />
+              </g>
             </g>
             <g className="ps-l1">
               {windows(paths.constructionStrokes).map((win, i) => (
                 <path key={i} d={paths.constructionStrokes[i]} pathLength={1} className="ps-stroke" style={win} />
               ))}
             </g>
-            <g className="ps-l2">
+            <g className="ps-l2" clipPath={`url(#${clipId}-frame)`}>
               {windows(paths.contourStrokes).map((win, i) => (
                 <path key={i} d={paths.contourStrokes[i]} pathLength={1} className="ps-stroke" style={win} />
               ))}

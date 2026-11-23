@@ -1,4 +1,4 @@
-import { useCallback, useId, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import type { BusScene } from '../three/busScene'
 import { hasWebGL, useLazyScene } from '../useLazyScene'
@@ -23,12 +23,17 @@ export function BusStage() {
       const { createBusScene } = await import('../three/busScene')
       return createBusScene(canvas, { labels: hero.dims, parts: hero.parts.map((part) => part.tag) })
     },
-    // La scène est créée une fois ; ses étiquettes gardent la langue en vigueur à ce moment-là.
+    // La scène est créée une fois ; l'effet ci-dessous lui passe ensuite les libellés de la langue courante.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
   const { sceneRef, status } = useLazyScene<BusScene>(containerRef, canvasRef, factory, webgl)
   const ready = status === 'ready'
+
+  // Bascule FR/EN : cotes et étiquettes des pièces changent de langue dans la scène.
+  useEffect(() => {
+    if (ready) sceneRef.current?.setLabels(hero.dims, hero.parts.map((part) => part.tag))
+  }, [ready, hero, sceneRef])
 
   const toggle = () => {
     const next = !exploded

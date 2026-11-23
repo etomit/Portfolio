@@ -464,6 +464,10 @@ button {
   .bus-controls,
   .wave-bg,
   .back-to-top,
+  .model-note,
+  .city-stage,
+  .engine-card .city-stage,
+  .city-hint,
   canvas {
     display: none !important;
   }

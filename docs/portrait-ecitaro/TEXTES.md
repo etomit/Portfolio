@@ -279,7 +279,7 @@ Ces décisions **remplacent** les propositions du §2 quand les deux se contredi
 |---|---|---|
 | `about.stages[3].note` | la ressemblance | the likeness |
 | `about.stages[0].text` | Je suis arrivé au développement par le réseau et le matériel : un bac pro, entre Cisco, VLAN et Arduino. | I came to software through networks and hardware: a vocational baccalauréat, among Cisco, VLANs and Arduino. |
-| `about.stages[1].text` | Puis le logiciel : un BTS, une licence, et mes premières missions, dès 2022. | Then software: a BTS, a bachelor’s degree, and my first assignments, from 2022. |
+| `about.stages[1].text` | Puis le logiciel : un BTS, une licence, et mes premières missions. | Then software: a BTS, a bachelor’s degree, and my first assignments. |
 | `about.stages[2].text` | Depuis 2024, je travaille chez Daimler Buses France, à Ligny-en-Barrois, où est produit l’eCitaro dessiné en haut de page. Je prépare aussi un master. | Since 2024 I have been working at Daimler Buses France in Ligny-en-Barrois, where the eCitaro drawn at the top of this page is built. I am also studying for a master’s degree. |
 | `experience.intro` | Quatre missions de développement depuis 2022, et un emploi en logistique pendant mes études. | Four development assignments since 2022, and a logistics job during my studies. |
 | `about.sketchLabel` | supprimée (le SVG des traits est décoratif ; la photo porte le texte alternatif) | supprimée |
@@ -294,11 +294,11 @@ Le tableau des comptages du §2 est donc à corriger : Daimler et Ligny gagnent 
 
 | Clé | FR | EN |
 |---|---|---|
-| `hero.modelNote` | ['Mercedes-Benz eCitaro', 'en 3D, avec Three.js'] | ['Mercedes-Benz eCitaro', 'in 3D, with Three.js'] |
-| `hero.canvasLabel` | Mercedes-Benz eCitaro en fil de fer, en 3D : 12 135 mm de long, 2 550 mm de large, 3 400 mm de haut. Il tourne lentement et suit la souris. | Wireframe Mercedes-Benz eCitaro in 3D: 12,135 mm long, 2,550 mm wide, 3,400 mm high. It turns slowly and follows the mouse. |
+| `hero.modelNote` | ['Mercedes-Benz eCitaro', 'modèle 3D'] | ['Mercedes-Benz eCitaro', '3D model'] |
+| `hero.canvasLabel` | Mercedes-Benz eCitaro en fil de fer, en 3D : 12 135 mm de long, 2 550 mm de large, 3 400 mm de haut. | Wireframe Mercedes-Benz eCitaro in 3D: 12,135 mm long, 2,550 mm wide, 3,400 mm high. |
 | `hero.sketchLabel` | Dessin technique d’un Mercedes-Benz eCitaro de 12 mètres, avec ses cotes | Technical drawing of a 12-metre Mercedes-Benz eCitaro, with its dimensions |
 | `hero.dims` | { length: '12 135 mm', width: '2 550 mm', height: '3 400 mm' } | { length: '12,135 mm', width: '2,550 mm', height: '3,400 mm' } |
-| `hero.source` (nouvelle) | D’après la fiche constructeur (04/2026) · dessin personnel | After the manufacturer’s data sheet (04/2026) · my own drawing |
+| `hero.source` (nouvelle) | D’après les données constructeur (2025-2026) · dessin personnel | After manufacturer data (2025–2026) · my own drawing |
 | `hero.partsTitle` (nouvelle) | Dans la vue éclatée | In the exploded view |
 | `hero.parts` (nouvelle, liste) | voir ci-dessous | voir ci-dessous |
 
@@ -322,7 +322,7 @@ L'ancienne note « Modèle 3D (Three.js) · un bus, évidemment » disparaît.
 | `explode` | Éclater le moteur | Explode the engine |
 | `assemble` | Remonter le moteur | Reassemble the engine |
 | `canvasLabel` | Scène 3D : le moteur diesel OM 936 du Citaro en fil de fer, à faire pivoter | 3D scene: the diesel OM 936 engine of the Citaro in wireframe, which you can rotate |
-| `hint` | Glisser pour faire pivoter | Drag to rotate |
+| `hint` | Glisser pour tourner | Drag to rotate |
 | `loading` | Chargement de la scène… | Loading the scene… |
 | `unsupported` | WebGL n’est pas disponible sur cet appareil. | WebGL is not available on this device. |
-| `source` | Schéma de principe d’après la fiche constructeur (04/2026) | Schematic after the manufacturer’s data sheet (04/2026) |
+| `source` | Schéma de principe d’après les données Mercedes-Benz (2012 et 2026) | Schematic based on Mercedes-Benz data (2012 and 2026) |

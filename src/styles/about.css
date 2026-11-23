@@ -82,9 +82,9 @@
 /* ---------- Section « À propos » ---------- */
 
 .about-grid {
-  /* Hauteur de la légende sous le portrait (deux lignes au plus), et hauteur maximale du portrait :
+  /* Hauteur de la légende sous le portrait (une ligne), et hauteur maximale du portrait :
      il tient dans l'écran sous l'en-tête, avec sa légende. */
-  --legend-h: 72px;
+  --legend-h: 40px;
   --ps-h: min(560px, calc(100svh - 96px - var(--legend-h) - 24px));
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -107,6 +107,8 @@
   width: min(100%, calc(var(--ps-h) * 1000 / 1170));
   aspect-ratio: 1000 / 1170;
   margin-inline: auto;
+  /* Fond opaque du thème : le mélange de la photo se fait sur lui, sur ordinateur comme sur mobile. */
+  background: var(--bg);
 }
 
 /* Calque 4 : la photo, révélée par un masque qui descend, teintée par le thème. */
@@ -120,6 +122,8 @@
   opacity: min(1, calc(var(--s4, 1) * 2.5));
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--s4, 1) * 125% - 25%), transparent calc(var(--s4, 1) * 125%));
   mask-image: linear-gradient(to bottom, #000 calc(var(--s4, 1) * 125% - 25%), transparent calc(var(--s4, 1) * 125%));
+  /* Découpée au filet du cadre de mise au carreau (x = 28, y = 1142 du viewBox 1000 × 1170) : rien ne déborde en bas ni à gauche. */
+  clip-path: inset(0 0 calc(28 / 1170 * 100%) calc(28 / 1000 * 100%));
 }
 
 /* Une fois la photo là, les traits restent en surimpression légère, comme un calque sur un tirage. */
@@ -241,13 +245,13 @@
 .about-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 22px;
+  gap: 8px 14px;
   justify-content: center;
   margin: 14px 0 0;
   padding: 0;
   list-style: none;
   font-family: var(--font-hand);
-  font-size: 1.3rem;
+  font-size: 1.12rem;
   color: var(--muted);
 }
 
@@ -316,7 +320,15 @@
 
   .about-legend {
     margin-top: 4px;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
+    gap: 12px;
+    /* La légende déborde un peu de la colonne du dessin, dans la marge du bandeau. */
+    margin-inline: -12px;
+  }
+
+  /* Losange plus serré : avec le débord, les quatre notes tiennent sur une ligne à 390 px. */
+  .about-legend li::before {
+    margin-right: 5px;
   }
 
   .about-text {

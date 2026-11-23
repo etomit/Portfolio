@@ -54,6 +54,8 @@ export interface BusScene {
   setExploded(exploded: boolean): void
   /** Met le rendu en pause quand la scène n'est pas à l'écran. */
   setRunning(running: boolean): void
+  /** Remplace les libellés des cotes et des pièces (changement de langue) et les redessine. */
+  setLabels(dims: BusSceneOptions['labels'], tags: string[]): void
   dispose(): void
 }
 
@@ -71,6 +73,7 @@ const WIDTH = ECITARO_WIDTH
 const HALF_W = WIDTH / 2
 const HEIGHT = ECITARO_HEIGHT // sommet de l'îlot de toit
 const FLOOR_Y = 0.32 // bas de caisse
+const TAGS_MIN_WIDTH = 560 // largeur de canevas (px CSS) sous laquelle les pièces ne sont nommées que par la liste DOM
 const ROOF_Y = 2.8 // dessus du pavillon, sous l'îlot (non coté)
 const ROOF_CUT_Y = 2.72 // jonction flancs / pavillon
 const BAND_Y = 2.36 // bas de la bande noire qui prolonge le vitrage jusqu'au toit
@@ -875,6 +878,8 @@ interface Label {
 }
 
 interface Dimension {
+  /** Cote mesurée : sert à retrouver son libellé lors d'un changement de langue. */
+  kind: keyof BusSceneOptions['labels']
   lines: LineSegments
   material: LineBasicMaterial
   label: Label
@@ -1116,7 +1121,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
   // Une par pièce, au-dessus (side = 1) ou au-dessous (side = -1) de son point d'attache, qui suit la pièce.
   // Chaque étiquette se pose au-dessus du point le plus haut (ou au-dessous du plus bas) de sa pièce à l'écran,
   // pour ne jamais masquer la pièce, quel que soit l'angle de vue.
-  const partTags: Array<{ label: Label; part: Part; points: Vector3[]; side: 1 | -1 }> = []
+  const partTags: Array<{ label: Label; part: Part; points: Vector3[]; side: 1 | -1; index: number }> = []
   const tagTexts = options.parts ?? []
   const corners = (x0: number, x1: number, y: number, z0: number, z1: number): P3[] => [[x0, y, z0], [x1, y, z0], [x0, y, z1], [x1, y, z1]]
   const tagSpecs: Array<[Part, P3[], 1 | -1]> = [
@@ -1128,12 +1133,22 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const text = tagTexts[index]
     if (!text) return
     const vectors = points.map((point) => new Vector3(...point))
-    partTags.push({ label: createLabel(text, vectors[0], true), part, points: vectors, side })
+    partTags.push({ label: createLabel(text, vectors[0], true), part, points: vectors, side, index })
   })
+  // Traits de rappel : de la pièce au bord de son étiquette, 1 px, tracés sous les étiquettes.
+  const leaderPositions = new Float32Array(partTags.length * 6)
+  const leaderGeometry = new BufferGeometry()
+  leaderGeometry.setAttribute('position', new BufferAttribute(leaderPositions, 3))
+  const leaderMaterial = new LineBasicMaterial({ transparent: true, depthTest: false, depthWrite: false, opacity: 0 })
+  const leaders = new LineSegments(leaderGeometry, leaderMaterial)
+  leaders.frustumCulled = false
+  leaders.renderOrder = 9
+  leaders.visible = false
+  bus.add(leaders)
 
   /** Ligne de cote avec flèches aux deux bouts, lignes d'attache et libellé. */
   function addDimension(
-    text: string,
+    kind: Dimension['kind'],
     start: Vector3,
     end: Vector3,
     across: Vector3,
@@ -1160,8 +1175,8 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const lines = new LineSegments(geometry, material)
     lines.visible = false
     bus.add(lines)
-    const label = createLabel(text, start.clone().add(end).multiplyScalar(0.5))
-    dimensions.push({ lines, material, label, start, end, visibility })
+    const label = createLabel(options.labels[kind], start.clone().add(end).multiplyScalar(0.5))
+    dimensions.push({ kind, lines, material, label, start, end, visibility })
   }
 
   const v = (x: number, y: number, z: number) => new Vector3(x, y, z)
@@ -1172,19 +1187,19 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const z = side * HALF_W
     const facing = (view: Vector3) => smoothstep(0.12, 0.4, side * view.z)
     // Longueur, sous le bus, du côté visible.
-    addDimension(options.labels.length, v(-HALF_L, LENGTH_Y, z), v(HALF_L, LENGTH_Y, z), v(0, 1, 0), [
+    addDimension('length', v(-HALF_L, LENGTH_Y, z), v(HALF_L, LENGTH_Y, z), v(0, 1, 0), [
       [v(-HALF_L, FLOOR_Y + 0.1, z), v(-HALF_L, LENGTH_Y, z)],
       [v(HALF_L, FLOOR_Y + 0.12, z), v(HALF_L, LENGTH_Y, z)],
     ], facing)
     // Hauteur, à l'arrière, au sommet de l'îlot de toit (le pavillon n'est pas coté).
     const zh = side * 0.8
-    addDimension(options.labels.height, v(HEIGHT_X, 0, zh), v(HEIGHT_X, HEIGHT, zh), v(1, 0, 0), [
+    addDimension('height', v(HEIGHT_X, 0, zh), v(HEIGHT_X, HEIGHT, zh), v(1, 0, 0), [
       [v(-HALF_L, 0, zh), v(HEIGHT_X, 0, zh)],
       [v(ECITARO_ISLAND[0] + 0.25, HEIGHT, zh), v(HEIGHT_X, HEIGHT, zh)],
     ], facing)
   }
   // Largeur, à l'avant, au sol.
-  addDimension(options.labels.width, v(WIDTH_X, 0, -HALF_W), v(WIDTH_X, 0, HALF_W), v(1, 0, 0), [
+  addDimension('width', v(WIDTH_X, 0, -HALF_W), v(WIDTH_X, 0, HALF_W), v(1, 0, 0), [
     [v(HALF_L, 0, -HALF_W), v(WIDTH_X, 0, -HALF_W)],
     [v(HALF_L, 0, HALF_W), v(WIDTH_X, 0, HALF_W)],
   ], (view) => smoothstep(0.12, 0.4, view.x))
@@ -1234,6 +1249,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     if (colors.accent) {
       accentMaterial.color.set(colors.accent)
       for (const dimension of dimensions) dimension.material.color.set(colors.accent)
+      leaderMaterial.color.set(colors.accent)
     }
     drawLabels()
   }
@@ -1340,12 +1356,35 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     }
   }
 
-  /** Étiquettes des pièces : visibles en fin d'éclatement, entières dans le canevas. */
+  // Coins de la caisse (hors pièces éclatées), projetés à chaque image pour en tirer l'emprise à l'écran.
+  const bodyCorners = [-HALF_L, HALF_L].flatMap((x) => [FLOOR_Y, ROOF_Y].flatMap((y) => [-HALF_W, HALF_W].map((z) => new Vector3(x, y, z))))
+  const leaderEnd = new Vector3()
+
+  /** Étiquettes des pièces : visibles en fin d'éclatement, entières dans le canevas, hors de la silhouette de la caisse. */
   function updatePartTags() {
-    const shown = smoothstep(0.6, 1, easeInOutCubic(explodeProgress)) * smoothstep(0.72, 1, buildProgress)
+    // Canevas étroit : pas d'étiquettes de pièces dans la scène, la liste affichée sous le bus les nomme déjà.
+    // Le seuil est relu à chaque image sur la largeur courante : rotation d'écran et redimensionnement compris.
+    const shown = viewWidth < TAGS_MIN_WIDTH ? 0 : smoothstep(0.6, 1, easeInOutCubic(explodeProgress)) * smoothstep(0.72, 1, buildProgress)
     const scale = 2 / (camera.projectionMatrix.elements[5] * viewHeight)
-    const placed: Array<[number, number, number, number]> = [] // centre et demi-encombrement des étiquettes déjà posées
-    for (const { label, part, points, side } of partTags) {
+    leaderMaterial.opacity = shown
+    leaders.visible = shown > 0.01
+    leaderPositions.fill(0)
+    // Centre et demi-encombrement des zones déjà prises : d'abord la caisse, puis chaque étiquette posée.
+    let minX = Infinity
+    let maxX = -Infinity
+    let minY = Infinity
+    let maxY = -Infinity
+    for (const corner of bodyCorners) {
+      projectedA.copy(corner).applyMatrix4(bus.matrixWorld).project(camera)
+      const px = (projectedA.x * viewWidth) / 2
+      const py = (projectedA.y * viewHeight) / 2
+      minX = Math.min(minX, px)
+      maxX = Math.max(maxX, px)
+      minY = Math.min(minY, py)
+      maxY = Math.max(maxY, py)
+    }
+    const placed: Array<[number, number, number, number]> = [[(minX + maxX) / 2, (minY + maxY) / 2, (maxX - minX) / 2, (maxY - minY) / 2]]
+    for (const [slot, { label, part, points, side }] of partTags.entries()) {
       label.material.opacity = shown
       label.material.rotation = 0
       label.sprite.visible = shown > 0.01 && label.texture !== null
@@ -1354,6 +1393,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
       let middle = 0 // abscisse moyenne de la pièce à l'écran
       let sx = 0 // coin retenu, où le sprite est posé
       let sy = side * -Infinity
+      let sz = 0 // profondeur normalisée du coin retenu, pour ramener le bout du trait de rappel dans la scène
       for (const point of points) {
         projectedB.copy(point).add(part.group.position)
         projectedA.copy(projectedB).applyMatrix4(bus.matrixWorld).project(camera)
@@ -1363,6 +1403,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
         if (side * py > side * sy) {
           sx = px
           sy = py
+          sz = projectedA.z
           label.sprite.position.copy(projectedB)
         }
       }
@@ -1381,7 +1422,15 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
       placed.push([cx, cy, halfW, halfH])
       label.sprite.center.set(0.5 - (cx - sx) / label.widthPx, 0.5 - (cy - sy) / label.heightPx)
       label.sprite.scale.set(label.widthPx * scale, label.heightPx * scale, 1)
+      // Trait de rappel : du coin de la pièce au bord de l'étiquette qui lui fait face.
+      const ex = clamp(sx, cx - halfW + 2, cx + halfW - 2)
+      const ey = sy < cy ? cy - halfH : cy + halfH
+      leaderEnd.set((2 * ex) / viewWidth, (2 * ey) / viewHeight, sz).unproject(camera)
+      bus.worldToLocal(leaderEnd)
+      const anchor = label.sprite.position
+      leaderPositions.set([anchor.x, anchor.y, anchor.z, leaderEnd.x, leaderEnd.y, leaderEnd.z], slot * 6)
     }
+    leaderGeometry.getAttribute('position').needsUpdate = true
   }
 
   function resize() {
@@ -1523,6 +1572,13 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
         dirty = true
         frameId = requestAnimationFrame(tick)
       }
+    },
+    setLabels(dims, tags) {
+      if (disposed) return
+      // Textes mis à jour même quand les étiquettes de pièces sont masquées : justes dès que le canevas s'élargit.
+      for (const dimension of dimensions) dimension.label.text = dims[dimension.kind]
+      for (const tag of partTags) tag.label.text = tags[tag.index] ?? tag.label.text
+      drawLabels()
     },
     dispose() {
       disposed = true
