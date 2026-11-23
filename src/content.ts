@@ -406,7 +406,7 @@ const fr = {
   hero: {
     kicker: 'Portfolio',
     nameLines: ['Timothée', 'Maire'],
-    roles: ['Développeur full-stack', 'Architecte logiciel', 'Créateur de jeux'],
+    roles: ['Développeur full-stack', 'Architecte logiciel'],
     greeting: 'Bonjour, moi c’est Timothée.',
     lead: 'Je construis l’intranet de Daimler Buses France, dont se servent plus de 1 200 salariés.',
     cta: 'Découvrir mes projets',
@@ -959,7 +959,7 @@ const en: Content = {
   hero: {
     kicker: 'Portfolio',
     nameLines: ['Timothée', 'Maire'],
-    roles: ['Full-stack developer', 'Software architect', 'Game maker'],
+    roles: ['Full-stack developer', 'Software architect'],
     greeting: 'Hi, I’m Timothée.',
     lead: 'I build the Daimler Buses France intranet, used by more than 1,200 employees.',
     cta: 'See my projects',
