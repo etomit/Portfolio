@@ -24,7 +24,7 @@ body {
   font: 400 1rem/1.65 var(--font-body);
 }
 
-/* Le papier millimétré : petits carreaux, carreaux majeurs, vignettage. Une seule couche fixe. */
+/* La table sous la pile de tirages : une teinte unie, assombrie vers les bords. Une seule couche fixe. */
 body::before {
   content: '';
   position: fixed;
@@ -32,12 +32,8 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 35%, transparent 45%, var(--vignette) 100%),
-    linear-gradient(var(--grid-major) 1px, transparent 1px) 0 0 / 80px 80px,
-    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px) 0 0 / 80px 80px,
-    linear-gradient(var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
-    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
-    var(--bg);
+    radial-gradient(ellipse at 50% 35%, transparent 40%, var(--page-vignette) 100%),
+    var(--page);
 }
 
 h1,
@@ -145,13 +141,40 @@ button {
 
 .section {
   padding-block: clamp(56px, 8vw, 104px);
+  /* Les tirages tournés sous une feuille haute débordent de quelques pixels sur les côtés :
+     clip les coupe sans créer de conteneur de défilement (le dessin collant d'« À propos » reste collant). */
+  overflow-x: clip;
 }
 
+/* Chaque feuille est un tirage quadrillé posé sur deux autres, décalés et tournés.
+   Les deux tirages du dessous sont les pseudo-éléments de .crosses, en z-index négatif :
+   .sheet ne crée volontairement pas de contexte d'empilement, pour qu'ils passent sous son fond. */
 .sheet {
   position: relative;
   padding: clamp(24px, 4.5vw, 64px);
   border: 1px solid var(--line-3);
-  background: color-mix(in srgb, var(--bg) 55%, transparent);
+  background: var(--sheet-grid), var(--bg);
+  box-shadow: 0 16px 36px -16px var(--sheet-shadow);
+}
+
+.crosses::before,
+.crosses::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border: 1px solid var(--line-4);
+  box-shadow: 0 12px 30px -12px var(--sheet-shadow);
+}
+
+.crosses::before {
+  background: var(--sheet-grid-major), var(--stack-1);
+  transform: translate(-14px, 10px) rotate(-1.6deg);
+}
+
+.crosses::after {
+  background: var(--sheet-grid-major), var(--stack-2);
+  transform: translate(12px, 16px) rotate(1.1deg);
 }
 
 /* Double filet intérieur, discret, comme le cadre d'une feuille de dessin. */
@@ -424,6 +447,15 @@ button {
     padding: 22px 18px;
   }
 
+  /* Sur téléphone, les tirages du dessous dépassent à peine : la marge latérale est étroite. */
+  .crosses::before {
+    transform: translate(-5px, 6px) rotate(-1deg);
+  }
+
+  .crosses::after {
+    transform: translate(5px, 9px) rotate(0.8deg);
+  }
+
   .cross {
     width: 20px;
     height: 20px;
@@ -453,8 +485,15 @@ button {
 /* Impression : le thème passe en « tirage papier » (voir useTheme), tout le contenu est affiché,
    et ce qui ne sert qu'à l'écran disparaît. */
 @media print {
-  body::before {
+  body::before,
+  .crosses::before,
+  .crosses::after {
     background: none;
+    display: none;
+  }
+
+  .sheet {
+    box-shadow: none;
   }
 
   .site-header,

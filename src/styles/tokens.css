@@ -26,6 +26,22 @@
   --hatch: rgb(143 184 255 / 0.45);
   --vignette: rgb(3 10 30 / 0.55);
 
+  /* La pile de tirages : la table dessous, les deux feuilles décalées, l'ombre portée. */
+  --page: #050f28;
+  --page-vignette: rgb(0 0 0 / 0.35);
+  --stack-1: #0a1d4c;
+  --stack-2: #0d2558;
+  --sheet-shadow: rgb(0 0 0 / 0.6);
+  /* Quadrillage d'une feuille : carreaux majeurs (80 px) et mineurs (16 px). Défini une fois,
+     il suit les couleurs --grid-* du thème actif. */
+  --sheet-grid-major:
+    linear-gradient(var(--grid-major) 1px, transparent 1px) 0 0 / 80px 80px,
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px) 0 0 / 80px 80px;
+  --sheet-grid:
+    var(--sheet-grid-major),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px;
+
   /* Couleurs lues par les scènes Three.js (valeurs hexadécimales obligatoires). */
   --3d-line: #d6e8ff;
   --3d-line-soft: #5f86c9;
@@ -64,6 +80,12 @@
   --glow: rgb(10 98 168 / 0.18);
   --hatch: rgb(22 53 122 / 0.38);
   --vignette: rgb(22 53 122 / 0.08);
+
+  --page: #c9d3e3;
+  --page-vignette: rgb(22 53 122 / 0.18);
+  --stack-1: #e4ebf6;
+  --stack-2: #eef2f9;
+  --sheet-shadow: rgb(22 40 80 / 0.35);
 
   --3d-line: #16357a;
   --3d-line-soft: #8aa6d8;
