@@ -3,7 +3,11 @@
   top: 0;
   z-index: 50;
   border-bottom: 1px solid var(--line-3);
-  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  /* Le header reste un bandeau de plan bleu quadrillé, au-dessus de la table. */
+  background:
+    linear-gradient(var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px) 0 0 / 16px 16px,
+    color-mix(in srgb, var(--bg) 92%, transparent);
   backdrop-filter: blur(12px) saturate(130%);
 }
 

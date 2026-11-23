@@ -106,7 +106,7 @@ for (const [viewport, lang, theme] of combos) {
   await shot(page, `${label}-hero.png`)
   await scrollThrough(page)
   await checkOverflow(page, label)
-  await shot(page, `${label}-full.jpg`, { fullPage: true })
+  await shot(page, `${label}-full.jpg`, { fullPage: true, timeout: 120000 })
   await context.close()
 }
 
