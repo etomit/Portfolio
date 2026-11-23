@@ -164,7 +164,136 @@
 
 .bus-stage {
   position: relative;
+}
+
+/* Le cadre du bus : le canevas, la note manuscrite et les commandes posées dessous. */
+.bus-frame {
+  position: relative;
   padding-bottom: 54px;
+}
+
+/* Source des cotes, en label discret sous le bus. */
+.bus-source {
+  margin: 10px 0 0;
+  font: 400 0.68rem/1.45 var(--font-mono);
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* Pièces de la vue éclatée : masquées à l'écran tant que le bus est assemblé, mais toujours lues. */
+.bus-parts:not(.is-open) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.bus-parts.is-open {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-3);
+  animation: fade-in 0.5s ease both;
+}
+
+.bus-parts dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 18px;
+  margin: 8px 0 0;
+}
+
+.bus-parts dt {
+  font: 500 0.8rem/1.35 var(--font-mono);
+  color: var(--accent);
+}
+
+.bus-parts dd {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* Dessin de secours du bus : styles des calques, aussi utilisés hors du hero. */
+.bus-sketch {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.bus-sketch .sk-layer-1 {
+  --draw: var(--s1, 1);
+}
+
+.bus-sketch .sk-layer-2 {
+  --draw: var(--s2, 1);
+}
+
+.bus-sketch .sk-layer-3 {
+  --draw: var(--s3, 1);
+}
+
+.bus-sketch .sk-layer-4 {
+  --draw: var(--s4, 1);
+}
+
+.bus-sketch .sk-path {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bus-sketch .sk-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--draw));
+}
+
+.bus-sketch .sk-thin {
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+
+.bus-sketch .sk-accent {
+  stroke: var(--accent);
+  stroke-width: 1.1;
+}
+
+.bus-sketch .sk-hidden {
+  stroke: var(--line-2);
+  stroke-width: 1;
+  stroke-dasharray: 6 5;
+  opacity: calc(var(--draw) * 0.75);
+}
+
+.bus-sketch .sk-axis {
+  stroke: var(--line-2);
+  stroke-width: 0.9;
+  stroke-dasharray: 16 5 2 5;
+  opacity: calc(var(--draw) * 0.7);
+}
+
+.bus-sketch .sk-fill {
+  stroke: none;
+  opacity: calc(var(--draw) * 0.9);
+}
+
+.bus-sketch .sk-hatch-line {
+  stroke: var(--line-2);
+  stroke-width: 0.9;
+  opacity: 0.5;
+}
+
+.bus-sketch .sk-label {
+  font: 500 15px var(--font-mono);
+  fill: var(--accent);
+  opacity: var(--draw);
 }
 
 .bus-view {
@@ -455,6 +584,14 @@
     font-size: 1.02rem;
   }
 
+  .bus-parts dl {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bus-source {
+    text-align: left;
+  }
+
   .bus-controls {
     right: auto;
     left: 0;
@@ -472,5 +609,22 @@
   .intro-skip {
     top: 10px;
     right: 12px;
+  }
+}
+
+/* Impression : la liste des pièces accompagne le dessin technique. */
+@media print {
+  .bus-parts:not(.is-open) {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 14px 0 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .bus-parts {
+    break-inside: avoid;
   }
 }

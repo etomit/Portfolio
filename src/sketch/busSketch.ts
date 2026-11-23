@@ -1,19 +1,45 @@
 /**
- * Dessin technique d'un bus urbain de 12 m, en projection oblique, calculé à partir
- * de coordonnées 3D (en mètres). Le dessin est rangé en quatre calques qui peuvent
+ * Dessin technique du Mercedes-Benz eCitaro solo (12 m), en projection oblique, calculé
+ * à partir de coordonnées 3D (en mètres). Le dessin est rangé en quatre calques qui peuvent
  * se tracer l'un après l'autre : le plan au sol, le volume, les détails, le rendu.
  *
- * Repère : x le long du bus (0 = arrière, L = avant), y vers le haut, z en travers
+ * Cotes : fiche constructeur (docs/ecitaro/REFERENCE.md). Positions des portes, des vitres
+ * et de l'îlot de toit : relevées sur les vues officielles (docs/ecitaro/RELEVES.md).
+ *
+ * Repère du dessin : x le long du bus (0 = arrière, L = avant), y vers le haut, z en travers
  * (z = W est le flanc droit, côté portes, tourné vers le lecteur).
  */
 
-const L = 12
-const W = 2.55
-const H = 3.05
-const FLOOR = 0.3 // bas de caisse
-const REAR_AXLE = 3.0
-const FRONT_AXLE = 9.0
+type Span = [number, number]
+
+// --- Gabarit partagé avec la scène 3D (repère de la scène : origine au centre, avant vers +x) ---
+export const ECITARO_LENGTH = 12.135
+export const ECITARO_WIDTH = 2.55
+/** Sommet de l'îlot de toit (batteries et climatisation). */
+export const ECITARO_HEIGHT = 3.4
+/** Empattement 5 900 mm, porte-à-faux avant 2 805 mm, arrière 3 430 mm. */
+export const ECITARO_FRONT_AXLE = 3.2625
+export const ECITARO_REAR_AXLE = -2.6375
+export const ECITARO_WINDOW: Span = [1.31, 2.28]
+export const ECITARO_DOOR_TOP = 2.32
+/** Ouvertures de 1,25 m, centrées sur les cadres relevés (portes 3, 2, 1). */
+export const ECITARO_DOORS: Span[] = [[-4.87, -3.62], [-0.875, 0.375], [4.23, 5.48]]
+export const ECITARO_RIGHT_PANES: Span[] = [[-5.5, -5.05], [-3.4, -1.87], [-1.68, -1.09], [0.54, 2.29], [2.55, 4.01]]
+/** Partie plate de l'îlot de toit ; il descend ensuite vers le pare-brise. */
+export const ECITARO_ISLAND: Span = [-5.45, 3.65]
+
+const L = ECITARO_LENGTH
+const W = ECITARO_WIDTH
+const H = ECITARO_HEIGHT
+const HALF = L / 2
+const FLOOR = 0.32 // bas de caisse
+const BAND = 3.05 // haut de la bande noire qui prolonge le vitrage vers le toit
+const REAR_AXLE = HALF + ECITARO_REAR_AXLE
+const FRONT_AXLE = HALF + ECITARO_FRONT_AXLE
 const WHEEL_R = 0.48
+const [WIN0, WIN1] = ECITARO_WINDOW
+const DOORS = ECITARO_DOORS.map(([a, b]): Span => [a + HALF, b + HALF])
+const PANES = ECITARO_RIGHT_PANES.map(([a, b]): Span => [a + HALF, b + HALF])
 const SCALE = 46 // pixels par mètre
 
 type Vec3 = [number, number, number]
@@ -88,18 +114,41 @@ function sideRect(x0: number, x1: number, y0: number, y1: number, z = W): Vec3[]
   ]
 }
 
-/** Profil latéral de la caisse (x, y), parcouru de l'arrière bas vers l'avant puis le toit. */
+/** Rectangle dans le plan de la face avant (x = L), en (z, y). */
+function frontRect(z0: number, z1: number, y0: number, y1: number): Vec3[] {
+  return [
+    [L, y0, z0],
+    [L, y0, z1],
+    [L, y1, z1],
+    [L, y1, z0],
+  ]
+}
+
+/** Profil latéral de la caisse (x, y), de l'arrière bas vers l'avant puis le haut de la bande noire. */
 const PROFILE: [number, number][] = [
   [0, FLOOR],
   [L, FLOOR],
-  [L, 1.15],
-  [L - 0.33, H - 0.12],
-  [L - 0.55, H],
-  [0.28, H],
-  [0, H - 0.28],
+  [L, 0.95],
+  [L - 0.32, 2.62],
+  [L - 0.62, BAND],
+  [0.3, BAND],
+  [0.08, 2.92],
+  [0, 2.62],
 ]
 
-const at = (z: number) => PROFILE.map(([x, y]) => [x, y, z] as Vec3)
+/** Îlot de toit vu de profil : plat au-dessus des batteries, en pente douce vers le pare-brise. */
+const ISLAND: [number, number][] = [
+  [0.62, BAND],
+  [L - 0.75, BAND],
+  [L - 1.35, 3.24],
+  [L - 1.9, 3.36],
+  [HALF + ECITARO_ISLAND[1], H],
+  [HALF + ECITARO_ISLAND[0] + 0.25, H],
+  [0.66, 3.32],
+]
+const ISLAND_INSET = 0.16
+
+const at = (profile: [number, number][], z: number) => profile.map(([x, y]) => [x, y, z] as Vec3)
 
 /** Ligne de cote : traits d'attache, ligne, flèches ouvertes et position du libellé. */
 function dimension(a: Vec3, b: Vec3, offset: Vec3, key: SketchLabel['key']): { paths: SketchPath[]; label: SketchLabel } {
@@ -146,12 +195,6 @@ function dimension(a: Vec3, b: Vec3, offset: Vec3, key: SketchLabel['key']): { p
   }
 }
 
-const DOORS: [number, number][] = [
-  [1.0, 2.1],
-  [5.6, 6.9],
-  [10.0, 11.4],
-]
-
 function buildPlan(): SketchLayer {
   const paths: SketchPath[] = []
   // Lignes de construction prolongées au-delà de l'emprise.
@@ -162,12 +205,14 @@ function buildPlan(): SketchLayer {
   // Emprise au sol et axe longitudinal.
   paths.push({ d: polyline([[0, 0, 0], [L, 0, 0], [L, 0, W], [0, 0, W]], true), kind: 'line' })
   paths.push({ d: segment([-0.8, 0, W / 2], [L + 0.8, 0, W / 2]), kind: 'axis' })
-  // Essieux et empreintes des roues.
+  // Essieux et empreintes des roues (jumelées à l'arrière).
   for (const axle of [REAR_AXLE, FRONT_AXLE]) {
     paths.push({ d: segment([axle, 0, -0.5], [axle, 0, W + 0.5]), kind: 'axis' })
-    for (const z of [0.12, W - 0.42]) {
+    const tracks = axle === REAR_AXLE ? [0.12, W - 0.72] : [0.12, W - 0.42]
+    const tread = axle === REAR_AXLE ? 0.6 : 0.3
+    for (const z of tracks) {
       paths.push({
-        d: polyline([[axle - WHEEL_R, 0, z], [axle + WHEEL_R, 0, z], [axle + WHEEL_R, 0, z + 0.3], [axle - WHEEL_R, 0, z + 0.3]], true),
+        d: polyline([[axle - WHEEL_R, 0, z], [axle + WHEEL_R, 0, z], [axle + WHEEL_R, 0, z + tread], [axle - WHEEL_R, 0, z + tread]], true),
         kind: 'thin',
       })
     }
@@ -177,18 +222,26 @@ function buildPlan(): SketchLayer {
 
 function buildVolume(): SketchLayer {
   const paths: SketchPath[] = []
-  const near = at(W)
-  const far = at(0)
+  const near = at(PROFILE, W)
+  const far = at(PROFILE, 0)
+  const last = PROFILE.length - 1
   // Flanc droit, entier et visible.
   paths.push({ d: polyline(near, true), kind: 'line' })
-  // Flanc gauche : le toit et l'avant se voient, l'arrière et le bas sont cachés (en tirets).
-  paths.push({ d: polyline([far[1], far[2], far[3], far[4], far[5], far[6]]), kind: 'line' })
-  paths.push({ d: polyline([far[6], far[0], far[1]]), kind: 'hidden' })
-  // Arêtes transversales : visibles au toit et à l'avant, cachée en bas à l'arrière.
-  for (const i of [1, 2, 3, 4, 5, 6]) paths.push({ d: segment(near[i], far[i]), kind: 'line' })
+  // Flanc gauche : le haut et l'avant se voient, l'arrière et le bas sont cachés (en tirets).
+  paths.push({ d: polyline(far.slice(1)), kind: 'line' })
+  paths.push({ d: polyline([far[last], far[0], far[1]]), kind: 'hidden' })
+  // Arêtes transversales : visibles en haut et à l'avant, cachée en bas à l'arrière.
+  for (let i = 1; i <= last; i++) paths.push({ d: segment(near[i], far[i]), kind: 'line' })
   paths.push({ d: segment(near[0], far[0]), kind: 'hidden' })
-  // Ligne de ceinture.
-  paths.push({ d: segment([0.05, 1.62, W], [L - 0.02, 1.62, W]), kind: 'thin' })
+  // Îlot de toit, un peu en retrait des flancs.
+  const islandNear = at(ISLAND, W - ISLAND_INSET)
+  const islandFar = at(ISLAND, ISLAND_INSET)
+  paths.push({ d: polyline(islandNear, true), kind: 'line' })
+  paths.push({ d: polyline(islandFar.slice(1)), kind: 'line' })
+  for (let i = 2; i < ISLAND.length; i++) paths.push({ d: segment(islandNear[i], islandFar[i]), kind: 'line' })
+  // Ligne de ceinture et bas de la bande noire au-dessus des vitres.
+  paths.push({ d: segment([0.05, 1.2, W], [L - 0.02, 1.2, W]), kind: 'thin' })
+  paths.push({ d: segment([0.2, 2.36, W], [L - 0.5, 2.36, W]), kind: 'thin' })
   return { paths, fills: [], labels: [] }
 }
 
@@ -196,31 +249,19 @@ function buildDetails(): SketchLayer {
   const paths: SketchPath[] = []
   // Portes : cadre, séparation des vantaux et vitrages.
   for (const [x0, x1] of DOORS) {
-    paths.push({ d: polyline(sideRect(x0, x1, FLOOR + 0.04, 2.78), true), kind: 'line' })
+    paths.push({ d: polyline(sideRect(x0, x1, FLOOR + 0.04, ECITARO_DOOR_TOP), true), kind: 'line' })
     const mid = (x0 + x1) / 2
-    paths.push({ d: segment([mid, FLOOR + 0.04, W], [mid, 2.78, W]), kind: 'thin' })
-    paths.push({ d: polyline(sideRect(x0 + 0.08, mid - 0.06, 0.9, 2.62), true), kind: 'thin' })
-    paths.push({ d: polyline(sideRect(mid + 0.06, x1 - 0.08, 0.9, 2.62), true), kind: 'thin' })
+    paths.push({ d: segment([mid, FLOOR + 0.04, W], [mid, ECITARO_DOOR_TOP, W]), kind: 'thin' })
+    paths.push({ d: polyline(sideRect(x0 + 0.08, mid - 0.06, 0.62, ECITARO_DOOR_TOP - 0.12), true), kind: 'thin' })
+    paths.push({ d: polyline(sideRect(mid + 0.06, x1 - 0.08, 0.62, ECITARO_DOOR_TOP - 0.12), true), kind: 'thin' })
   }
-  // Vitres latérales, en évitant les portes.
-  const panes: [number, number][] = []
-  let x = 0.4
-  while (x < L - 0.9) {
-    const door = DOORS.find(([d0, d1]) => x >= d0 - 0.12 && x < d1 + 0.12)
-    if (door) {
-      x = door[1] + 0.14
-      continue
-    }
-    const nextDoor = DOORS.find(([d0]) => d0 > x)
-    const limit = Math.min(nextDoor ? nextDoor[0] - 0.14 : L - 0.85, L - 0.85)
-    const end = Math.min(x + 1.25, limit)
-    if (end - x > 0.35) panes.push([x, end])
-    x = end + 0.1
-  }
-  for (const [x0, x1] of panes) paths.push({ d: polyline(sideRect(x0, x1, 1.78, 2.74), true), kind: 'line' })
-  // Roues, jantes, moyeux et passages de roue.
+  // Vitres latérales relevées sur la vue officielle.
+  for (const [x0, x1] of PANES) paths.push({ d: polyline(sideRect(x0, x1, WIN0, WIN1), true), kind: 'line' })
+  // Roues, jantes, moyeux, passages de roue et leur relief qui monte vers les vitres.
   for (const axle of [REAR_AXLE, FRONT_AXLE]) {
-    paths.push({ d: polyline(circleOnSide(axle, WHEEL_R, W, 0.62, 0, Math.PI)), kind: 'line' })
+    paths.push({ d: polyline(circleOnSide(axle, WHEEL_R, W, 0.6, 0, Math.PI)), kind: 'line' })
+    const flare = Math.asin((WHEEL_R - FLOOR) / 0.78)
+    paths.push({ d: polyline(circleOnSide(axle, WHEEL_R, W, 0.78, -flare, Math.PI + flare)), kind: 'thin' })
     paths.push({ d: polyline(circleOnSide(axle, WHEEL_R, W + 0.02, WHEEL_R), true), kind: 'line' })
     paths.push({ d: polyline(circleOnSide(axle, WHEEL_R, W + 0.02, 0.3), true), kind: 'thin' })
     paths.push({ d: polyline(circleOnSide(axle, WHEEL_R, W + 0.02, 0.07), true), kind: 'thin' })
@@ -235,35 +276,35 @@ function buildDetails(): SketchLayer {
       })
     }
   }
-  // Face avant : pare-brise sur la partie inclinée, girouette, phares.
+  // Prise de recharge CCS2, au-dessus de la roue avant droite.
+  paths.push({ d: polyline(sideRect(FRONT_AXLE - 0.16, FRONT_AXLE + 0.16, 1.1, 1.28), true), kind: 'accent' })
+  // Feu arrière enveloppant, dans le montant d'angle.
+  paths.push({ d: polyline(sideRect(0.03, 0.3, 0.86, 1.58), true), kind: 'thin' })
+  // Face avant : pare-brise qui monte dans le toit et englobe la girouette, montants A0.
   const glass = (z0: number, z1: number) => [
-    [L, 1.2, z0],
-    [L, 1.2, z1],
-    [L - 0.3, H - 0.32, z1],
-    [L - 0.3, H - 0.32, z0],
+    [L, 1.02, z0],
+    [L, 1.02, z1],
+    [L - 0.3, 2.58, z1],
+    [L - 0.3, 2.58, z0],
   ] as Vec3[]
   paths.push({ d: polyline(glass(0.14, W - 0.14), true), kind: 'line' })
   paths.push({
-    d: polyline([[L - 0.32, H - 0.27, 0.4], [L - 0.32, H - 0.27, W - 0.4], [L - 0.42, H - 0.08, W - 0.4], [L - 0.42, H - 0.08, 0.4]], true),
+    d: polyline([[L - 0.25, 2.32, 0.42], [L - 0.25, 2.32, W - 0.42], [L - 0.28, 2.5, W - 0.42], [L - 0.28, 2.5, 0.42]], true),
     kind: 'thin',
   })
-  for (const [z0, z1] of [[0.18, 0.62], [W - 0.62, W - 0.18]] as [number, number][]) {
-    paths.push({ d: polyline([[L, 0.52, z0], [L, 0.52, z1], [L, 0.74, z1], [L, 0.74, z0]], true), kind: 'thin' })
+  // Panneau noir et phares LED en amande.
+  paths.push({ d: polyline(frontRect(0.08, W - 0.08, 0.5, 0.92), true), kind: 'thin' })
+  for (const [zc, side] of [[0.42, -1], [W - 0.42, 1]] as [number, number][]) {
+    const lens: Vec3[] = []
+    const point = (t: number, bulge: number): Vec3 => [L, 0.71 + side * 0.03 * t + bulge * (1 - t * t), zc + side * 0.22 * t]
+    for (let i = 0; i <= 8; i++) lens.push(point(-1 + i / 4, 0.09))
+    for (let i = 7; i >= 0; i--) lens.push(point(-1 + i / 4, -0.05))
+    paths.push({ d: polyline(lens), kind: 'thin' })
   }
-  // Rétroviseur côté portes.
-  paths.push({ d: polyline([[L - 0.05, 2.35, W], [L + 0.3, 2.42, W + 0.25], [L + 0.3, 1.95, W + 0.25]]), kind: 'line' })
-  // Module de climatisation sur le toit.
-  const ac: Vec3[] = [
-    [4.0, H, 0.45],
-    [7.2, H, 0.45],
-    [7.2, H, 2.1],
-    [4.0, H, 2.1],
-  ]
-  const acTop = ac.map(([ax, , az]) => [ax, H + 0.32, az] as Vec3)
-  paths.push({ d: polyline(acTop, true), kind: 'line' })
-  paths.push({ d: polyline([ac[3], ac[2], ac[1]]), kind: 'line' })
-  for (const i of [1, 2, 3]) paths.push({ d: segment(ac[i], acTop[i]), kind: 'line' })
-  for (let gx = 4.4; gx < 7.0; gx += 0.4) paths.push({ d: segment([gx, H + 0.32, 0.6], [gx, H + 0.32, 1.95]), kind: 'thin' })
+  // Pare-chocs avec support de plaque.
+  paths.push({ d: polyline(frontRect(W / 2 - 0.26, W / 2 + 0.26, 0.34, 0.46), true), kind: 'thin' })
+  // Rétroviseur côté portes, en corne de bélier.
+  paths.push({ d: polyline([[L - 0.3, 2.58, W], [L + 0.25, 2.62, W + 0.2], [L + 0.25, 1.98, W + 0.2]]), kind: 'line' })
   return { paths, fills: [], labels: [] }
 }
 
@@ -272,13 +313,16 @@ function buildRender(): SketchLayer {
   const labels: SketchLabel[] = []
   const fills: SketchFill[] = [
     // Flanc entier, hachures légères ; vitrages et pare-brise, hachures denses.
-    { d: polyline(at(W), true) },
-    { d: polyline([[L, 1.2, 0.14], [L, 1.2, W - 0.14], [L - 0.3, H - 0.32, W - 0.14], [L - 0.3, H - 0.32, 0.14]], true), dense: true },
+    { d: polyline(at(PROFILE, W), true) },
+    { d: polyline([[L, 1.02, 0.14], [L, 1.02, W - 0.14], [L - 0.3, 2.58, W - 0.14], [L - 0.3, 2.58, 0.14]], true), dense: true },
   ]
-  for (const [x0, x1] of DOORS) fills.push({ d: polyline(sideRect(x0 + 0.08, x1 - 0.08, 0.9, 2.62), true), dense: true })
+  for (const [x0, x1] of DOORS) fills.push({ d: polyline(sideRect(x0 + 0.08, x1 - 0.08, 0.62, ECITARO_DOOR_TOP - 0.12), true), dense: true })
+  for (const [x0, x1] of PANES) fills.push({ d: polyline(sideRect(x0, x1, WIN0, WIN1), true), dense: true })
 
+  // Hauteur au sommet de l'îlot de toit ; le pavillon n'est pas coté.
+  const islandRear = HALF + ECITARO_ISLAND[0] + 0.25
   const length = dimension([0, 0, W], [L, 0, W], [0, 0, 1.25], 'length')
-  const height = dimension([0, 0, W], [0, H, W], [-0.95, 0, 0], 'height')
+  const height = dimension([islandRear, 0, W], [islandRear, H, W], [-islandRear - 0.95, 0, 0], 'height')
   const width = dimension([L, 0, 0], [L, 0, W], [1.1, 0, 0], 'width')
   for (const dim of [length, height, width]) {
     paths.push(...dim.paths)
