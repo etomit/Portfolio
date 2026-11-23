@@ -150,6 +150,24 @@ L'étendue exacte des opérations faites à Ligny sur l'eCitaro, de la caisse au
 | Module de récupération | De série | [C26] |
 | Emplacement | Dans le porte-à-faux arrière de 3 430 mm, debout ou couché selon la version. **Le côté et la tour moteur ne sont pas confirmés par écrit.** | |
 | Norme | Euro VI | [C26] |
+| Alésage × course | **110 × 135 mm**, identiques sur l'OM 934 (4 cylindres) | [D12] |
+| Entraxe des cylindres | **128 mm**, le même que sur l'OM 934 | [D12] |
+| Cylindrée calculée | 6 × π/4 × 11,0² × 13,5 cm³ ≈ **7 697 cm³** : concorde avec les 7,7 l de [C26] | calcul |
+| Distribution | **2 arbres à cames en tête**, **4 soupapes par cylindre**, admission et échappement « par paires parallèles », culasse à flux transversal (admission d'un côté, échappement de l'autre) | [PT] ; [TE12] |
+| Entraînement de la distribution | Cascade de pignons **à l'arrière du moteur, côté volant** | [TE12] |
+| Culasse et carter | Fonte grise à graphite lamellaire (GJL) pour la culasse ; carter rigide « de la même matière », avec une structure de longerons porteurs | [D12] |
+| Injection | Rampe commune jusqu'à **2 400 bar**, injections multiples | [PT] ; [TE12] |
+| Suralimentation | Un ou deux étages selon la puissance ([PT]). **Jusqu'à 220 kW** : un seul turbocompresseur asymétrique à turbine double flux. Les puissances au-dessus, dont 260 kW, passent à deux étages avec deux turbocompresseurs. | [PT] ; [D12] ; [TE12] |
+| Encombrement (A × B × C) | **1 057 × 680 × 1 050 mm** (longueur × largeur hors tuyau d'air de suralimentation × hauteur), « selon l'équipement » | [PT] |
+| Masse DIN 70020 | **652 kg** avec un étage de suralimentation, 666 kg avec deux | [PT] |
+| Gamme bus | 175, 200, 220, 235 et 260 kW à 1 800 tr/min ; 1 000 à 1 400 Nm entre 1 200 et 1 600 tr/min | [PT] |
+
+**Non sourcé, donc estimé dans la scène 3D** (`src/three/engineScene.ts`) : rayon de manivelle (course / 2, déduit), longueur de bielle (environ 1,6 × la course, valeur usuelle des diesels de cette taille), diamètre du volant, hauteur de la culasse, forme exacte des collecteurs et position du turbocompresseur sur le flanc. L'ordre d'allumage 1-5-3-6-2-4, habituel des six-cylindres en ligne, n'est pas confirmé pour l'OM 936.
+
+Sources du §5 :
+- **[PT]** : brochure officielle « Mercedes-Benz Powertrain – Portfolio Bus Euro VI », Daimler Truck, version en ligne lue le 23/11/2026, pages 10 et 12 : https://www.powertrain.mercedes-benz-trucks.com/content/dam/powertrain/files/Bus-EURO-VI-Powertrain-EN.pdf.coredownload.pdf
+- **[D12]** : communiqué Daimler du 13/03/2012 (« Stuttgart, 13 March 2012 ») sur les nouveaux moteurs moyens OM 934 et OM 936. L'original du site média Daimler n'a pas pu être lu (erreur TLS) ; le texte est repris mot pour mot par https://carsite.co.za/the-new-medium-duty-engines-from-mercedes-benz
+- **[TE12]** : Transport Engineer, « Euro 6 of the best », 08/05/2012 (presse technique, sur les fiches Daimler) : https://www.transportengineer.org.uk/content/features/euro-6-of-the-best
 
 ---
 

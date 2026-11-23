@@ -302,6 +302,33 @@
   place-items: center;
 }
 
+/* La ville et le moteur se suivent ; le moteur passe son canevas à gauche pour rompre la répétition. */
+.scene-cards {
+  display: grid;
+  gap: 20px;
+}
+
+.engine-card {
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+}
+
+.engine-card .city-copy {
+  order: 2;
+}
+
+.engine-card .city-stage {
+  border-left: 0;
+  border-right: 1px solid var(--line-3);
+}
+
+.engine-source {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
 .game-cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -369,10 +396,16 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .city-stage {
+  .city-stage,
+  .engine-card .city-stage {
     min-height: 300px;
     border-top: 1px solid var(--line-3);
     border-left: 0;
+    border-right: 0;
+  }
+
+  .engine-card .city-copy {
+    order: 0;
   }
 
   .archive-list li {
