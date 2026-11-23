@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ElementType, type ReactNode } from 'react'
 
 interface RevealProps {
   children: ReactNode
   className?: string
   /** Décalage en millisecondes, pour échelonner plusieurs blocs voisins. */
   delay?: number
+  as?: ElementType
 }
 
 /** Fait apparaître son contenu la première fois qu'il entre dans la fenêtre. */
-export function Reveal({ children, className = '', delay = 0 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null)
+export function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }: RevealProps) {
+  const ref = useRef<HTMLElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -21,30 +22,51 @@ export function Reveal({ children, className = '', delay = 0 }: RevealProps) {
         setVisible(true)
         observer.disconnect()
       },
-      { threshold: 0.08, rootMargin: '0px 0px -6% 0px' },
+      { threshold: 0.06, rootMargin: '0px 0px -6% 0px' },
     )
     observer.observe(node)
     return () => observer.disconnect()
   }, [])
 
   return (
-    <div
+    <Tag
       ref={ref}
       className={`reveal ${visible ? 'is-visible' : ''} ${className}`}
       style={{ '--reveal-delay': `${delay}ms` } as CSSProperties}
     >
       {children}
+    </Tag>
+  )
+}
+
+/** Croix de repérage (⊕) d'un coin de feuille. */
+function Cross({ corner }: { corner: 'tl' | 'tr' | 'bl' | 'br' }) {
+  return (
+    <svg className={`cross cross-${corner}`} viewBox="0 0 26 26" aria-hidden="true">
+      <circle cx="13" cy="13" r="6.5" fill="none" stroke="currentColor" strokeWidth="1" />
+      <path d="M13 0v26M0 13h26" stroke="currentColor" strokeWidth="1" />
+    </svg>
+  )
+}
+
+export function Crosses() {
+  return (
+    <div className="crosses" aria-hidden="true">
+      <Cross corner="tl" />
+      <Cross corner="tr" />
+      <Cross corner="bl" />
+      <Cross corner="br" />
     </div>
   )
 }
 
-/** Nom d'un « arrêt » : chaque section en est un sur la ligne qui longe la page. */
-export function Stop({ children, terminus = false }: { children: ReactNode; terminus?: boolean }) {
+/** Une feuille de plan : cadre fin, double filet et croix de repérage aux quatre coins. */
+export function Sheet({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <p className={`stop ${terminus ? 'stop-terminus' : ''}`}>
-      <span className="stop-dot" aria-hidden="true" />
+    <div className={`sheet ${className}`}>
+      <Crosses />
       {children}
-    </p>
+    </div>
   )
 }
 
@@ -54,15 +76,15 @@ interface SectionHeadProps {
   headingId: string
 }
 
-/** En-tête de section : le titre est le nom de l'arrêt, suivi d'un paragraphe écrit à la première personne. */
+/** En-tête de section : « / Titre », sans numéro, suivi d'une phrase à la première personne. */
 export function SectionHead({ title, intro, headingId }: SectionHeadProps) {
   return (
     <Reveal className="section-head">
-      <h2 id={headingId} className="stop-title">
-        <span className="stop-dot" aria-hidden="true" />
+      <h2 id={headingId}>
+        <span className="slash" aria-hidden="true">/</span>
         {title}
       </h2>
-      <p className="section-intro">{intro}</p>
+      {intro && <p className="section-intro">{intro}</p>}
     </Reveal>
   )
 }
@@ -75,4 +97,9 @@ export function Tags({ items }: { items: string[] }) {
       ))}
     </ul>
   )
+}
+
+/** Bouton ou lien en crochets : [ Libellé ] suivi d'une icône facultative. */
+export function BracketLabel({ children }: { children: ReactNode }) {
+  return <span className="bracket-label">{children}</span>
 }

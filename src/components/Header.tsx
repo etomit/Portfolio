@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LINKS, SECTION_IDS, type SectionId } from '../content'
 import { useI18n } from '../i18n'
 import type { Theme } from '../useTheme'
 import { GithubIcon, MoonIcon, SunIcon } from './icons'
 
-/** Suit la section actuellement à l'écran pour surligner le lien correspondant. */
+/** Suit la section actuellement à l'écran pour souligner le lien correspondant. */
 function useActiveSection() {
   const [active, setActive] = useState<SectionId | null>(null)
 
@@ -38,11 +38,17 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
   const { lang, setLang, t } = useI18n()
   const active = useActiveSection()
   const [menuOpen, setMenuOpen] = useState(false)
+  const navRef = useRef<HTMLElement>(null)
+  const menuToggleRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!menuOpen) return
+    // Les liens précèdent le bouton dans la page : sans cela, Tab quitterait le menu qu'on vient d'ouvrir.
+    navRef.current?.querySelector('a')?.focus()
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false)
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      menuToggleRef.current?.focus()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -51,12 +57,13 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
   return (
     <header className={`site-header ${menuOpen ? 'is-menu-open' : ''}`}>
       <div className="shell header-inner">
+        {/* Le nom accessible commence par le texte visible, « Portfolio » : la commande vocale le retrouve. */}
         <a className="brand" href="#top" aria-label={t.a11y.home} onClick={() => setMenuOpen(false)}>
-          <span className="brand-mark" aria-hidden="true" />
-          Timothée Maire
+          <span className="brand-slash" aria-hidden="true">/</span>
+          {t.brand}
         </a>
 
-        <nav id="site-nav" className="site-nav" aria-label={t.a11y.mainNav}>
+        <nav ref={navRef} id="site-nav" className="site-nav" aria-label={t.a11y.mainNav}>
           {SECTION_IDS.map((id) => (
             <a
               key={id}
@@ -65,7 +72,7 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
               aria-current={active === id ? 'location' : undefined}
               onClick={() => setMenuOpen(false)}
             >
-              {t.nav[id]}
+              <span className="nav-label">{t.nav[id]}</span>
             </a>
           ))}
         </nav>
@@ -84,11 +91,15 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
             className="tool-button lang-toggle"
             type="button"
             onClick={() => setLang(lang === 'fr' ? 'en' : 'fr')}
-            aria-label={t.a11y.switchLang}
           >
+            {/* Le nom accessible reprend le texte visible, puis l'action, dans la langue visée. */}
             <span className={lang === 'fr' ? 'is-current' : ''}>FR</span>
             <span aria-hidden="true">/</span>
             <span className={lang === 'en' ? 'is-current' : ''}>EN</span>
+            <span className="sr-only" lang={lang === 'fr' ? 'en' : 'fr'}>
+              {' — '}
+              {t.a11y.switchLang}
+            </span>
           </button>
           <button
             className="tool-button"
@@ -99,6 +110,7 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </button>
           <button
+            ref={menuToggleRef}
             className="tool-button menu-toggle"
             type="button"
             onClick={() => setMenuOpen((open) => !open)}

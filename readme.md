@@ -1,36 +1,47 @@
 # Portfolio — Timothée Maire
 
-Portfolio personnel en React, TypeScript et Vite, bilingue français / anglais.
+Portfolio personnel en React 19, TypeScript, Vite et Three.js, bilingue français / anglais. C'est aussi un CV en ligne : parcours, projets, compétences et formation y sont complets.
 
-## L'idée
+## L'idée : un plan d'architecte
 
-Une ligne longe toute la page, comme un plan de ligne de bus : chaque section est un arrêt, un petit bus reste à hauteur du regard pendant le défilement, et le bloc de contact est le terminus. C'est un clin d'œil à Daimler Buses, et c'est ce qui remplace les habituels repères numérotés.
+Tout le site est dessiné comme un plan : fond bleu de Prusse quadrillé, traits clairs au trait, croix de repérage aux coins des feuilles, cotes en millimètres, annotations au crayon et un cartouche en pied de page. Un second thème, « tirage papier », retourne le plan en bleu encre sur papier calque.
 
-Les textes suivent une ligne éditoriale simple : « je », des phrases courtes, des noms propres et des dates plutôt que des adjectifs. Pas de slogan, pas de liste de qualités.
+Le fil conducteur est un **bus** (clin d'œil à Daimler Buses) :
+
+- dans le hero, un bus urbain de 12 m en fil de fer, en 3D, avec ses cotes ; il tourne lentement, suit la souris et passe en vue éclatée ;
+- dans « À propos », le même bus se dessine pendant le défilement — le plan, le volume, les détails, le rendu — en même temps que le parcours se lit.
+
+Les repères de section ne sont jamais numérotés : crochets, barres obliques et cadres suffisent.
 
 ## Ce qu'on y trouve
 
-- le parcours, sous forme d'accordéon (le poste actuel est ouvert par défaut) ;
-- PokéLine et MonCommerce Rapide, avec capture et lien vers la version en ligne ;
-- une section IA : les projets menés avec des équipes d'agents et les techniques utilisées (agent à agent, contrats gelés, revue croisée…) ;
-- une section « Côté humain » : le savoir-être, appuyé sur des faits du parcours ;
-- une ville procédurale en Three.js, chargée seulement quand elle approche de l'écran ;
-- deux mini-jeux (2048 et Wordle), chargés seulement quand on les ouvre ;
-- thème clair / sombre et langue mémorisés localement ;
-- aucun traceur, aucune requête vers un service tiers : les polices sont servies par le site.
+- une intro d'ouverture (tracés de construction, nom tracé au trait, hachures), jouée une fois par session, passable au clic ou au clavier, absente si l'utilisateur préfère réduire les animations ;
+- des chronologies « cotées » pour le parcours et la formation : chaque période est une ligne de cote ;
+- des cartes projets avec vignette filaire, qui ouvrent une fiche détaillée ; une liste d'archives ;
+- une section IA (le trajet d'une mission confiée à des agents, les techniques utilisées) et une nomenclature des compétences ;
+- une ville procédurale en Three.js et deux mini-jeux (2048, Wordle) ;
+- une nappe filaire qui ondule derrière le contact ;
+- thème et langue mémorisés localement, aucun traceur, aucune ressource externe (polices servies par le site) ;
+- une version imprimable : à l'impression, le site passe en « tirage papier » et affiche tout son contenu.
+
+Les scènes Three.js ne sont téléchargées qu'à l'approche de l'écran, mises en pause hors écran, et remplacées par un dessin SVG si WebGL manque.
 
 ## Où modifier quoi
 
 | Je veux changer… | Fichier |
 | --- | --- |
-| un texte, un poste, un diplôme, un lien | `src/content.ts` |
-| les couleurs, les polices | `src/styles/tokens.css` |
-| la ligne de bus et les arrêts | `src/styles/base.css` (bloc « La ligne ») |
-| une section | `src/components/` et la feuille du même nom dans `src/styles/` |
-| la scène 3D | `src/three/cityScene.ts` |
+| un texte, un poste, un diplôme, un projet, un lien | `src/content.ts` (puis `node scripts/typo-fr.mjs` pour les espaces insécables du français) |
+| les couleurs des deux thèmes, les polices | `src/styles/tokens.css` |
+| le fond quadrillé, les feuilles, les boutons en crochets | `src/styles/base.css` |
+| une section | `src/components/` et la feuille correspondante dans `src/styles/` |
+| le bus en 3D, la vague, la ville | `src/three/busScene.ts`, `waveScene.ts`, `cityScene.ts` |
+| le bus en dessin technique | `src/sketch/busSketch.ts` |
+| les vignettes des projets | `src/components/Sketch.tsx` |
+| l'intro du hero | `src/components/HeroName.tsx`, `Hero.tsx` et la fin de `src/styles/hero.css` |
 | les mini-jeux | `src/games/` |
+| l'image de partage (LinkedIn, etc.) | `public/og-image.jpg`, régénérée par `node scripts/og-image.mjs` |
 
-Les images affichées sont des WebP générés à partir des originaux rangés dans `assets-source/` (hors du site publié). Pour les régénérer : installer `sharp`, puis `node assets-source/convert-images.mjs assets-source public`.
+Les images affichées sont des WebP générés à partir des originaux rangés dans `assets-source/` : `node assets-source/convert-images.mjs assets-source public` (avec `sharp` installé).
 
 ## Développement
 
@@ -44,9 +55,21 @@ Avant de déployer :
 ```bash
 npm run lint
 npm run build
-npm run preview
 ```
+
+Captures de contrôle (desktop 1440 px, mobile 390 px, français et anglais, deux thèmes, intro, fiche projet), écrites dans `docs/refonte-blueprint/captures/` :
+
+```bash
+npx playwright install chromium
+node scripts/captures.mjs http://localhost:5173
+```
+
+Image de partage (1 200 × 630, tirée du hero) : `node scripts/og-image.mjs http://localhost:5173`.
+
+Le brief et la maquette de cette refonte sont dans `docs/refonte-blueprint/`. Avant le build, la refonte a été relue par un second agent (Fable 5.2) : ses propositions ont été débattues point par point, retenues, amendées ou refusées, puis vérifiées sur le résultat.
 
 ## Sécurité
 
-Le site applique une politique CSP stricte (aucune source externe), refuse l'intégration en iframe et limite les permissions navigateur. Les en-têtes sont définis dans `vite.config.ts` pour les serveurs Vite de développement et de prévisualisation ; en production, ils doivent être repris par l'hébergeur ou le reverse proxy.
+La balise meta d'`index.html` porte une politique CSP sans aucune source externe. Au build, un petit plugin de `vite.config.ts` la resserre : le script de thème en ligne est autorisé par son empreinte SHA-256 au lieu de `'unsafe-inline'`, et `ws:` / `wss:` (utiles au seul rechargement à chaud) disparaissent.
+
+Les autres en-têtes (refus de l'intégration en iframe, permissions navigateur, `X-Frame-Options`…) sont définis dans `vite.config.ts` pour les serveurs Vite **de développement et de prévisualisation seulement**. Une balise meta ne peut pas porter `frame-ancestors` : en production, l'hébergeur ou le reverse proxy doit reprendre ces en-têtes.

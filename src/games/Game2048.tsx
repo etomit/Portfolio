@@ -142,7 +142,7 @@ export default function Game2048({ onClose }: { onClose: () => void }) {
       <div className="g2048-bar">
         <p><span>{t.games.score}</span><strong>{state.score}</strong></p>
         <p><span>{t.games.best}</span><strong>{state.best}</strong></p>
-        <button type="button" className="button button-ghost" onClick={restart}>{t.games.newGame}</button>
+        <button type="button" className="bracket bracket-small" onClick={restart}><span className="bracket-label">{t.games.newGame}</span></button>
       </div>
 
       <div
@@ -157,7 +157,7 @@ export default function Game2048({ onClose }: { onClose: () => void }) {
         {state.status !== 'playing' && (
           <div className="game-result" role="status">
             <p>{state.status === 'won' ? t.games.won : t.games.lost}</p>
-            <button type="button" className="button button-primary" onClick={restart}>{t.games.retry}</button>
+            <button type="button" className="bracket bracket-small" onClick={restart}><span className="bracket-label">{t.games.retry}</span></button>
           </div>
         )}
       </div>

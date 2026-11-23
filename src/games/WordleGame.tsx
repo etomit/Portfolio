@@ -165,7 +165,7 @@ function WordleBoard({ onClose }: { onClose: () => void }) {
         {status !== 'playing' && (
           <div className="game-result" role="status">
             <p>{status === 'won' ? t.games.won : `${t.games.wordleAnswer} ${target}`}</p>
-            <button type="button" className="button button-primary" onClick={restart}>{t.games.retry}</button>
+            <button type="button" className="bracket bracket-small" onClick={restart}><span className="bracket-label">{t.games.retry}</span></button>
           </div>
         )}
       </div>
@@ -180,6 +180,9 @@ function WordleBoard({ onClose }: { onClose: () => void }) {
                 className={`wl-key ${key.length > 1 ? 'is-wide' : ''}`}
                 data-state={keyStates[key]}
                 aria-label={key === 'ENTER' ? t.games.enter : key === 'BACKSPACE' ? t.games.backspace : undefined}
+                // Un clic de souris ne donne pas le focus à la touche : sinon l'Entrée du clavier physique
+                // réactiverait cette touche au lieu de valider le mot.
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={() => press(key)}
               >
                 {key === 'ENTER' ? '↵' : key === 'BACKSPACE' ? '⌫' : key}
