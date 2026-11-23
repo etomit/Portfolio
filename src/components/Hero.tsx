@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import { prefersReducedMotion } from '../useLazyScene'
 import { BusStage } from './BusStage'
@@ -26,10 +26,19 @@ function useIntro() {
     }
     return prefersReducedMotion() ? 'done' : 'play'
   })
+  const skipRef = useRef<HTMLButtonElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const refocus = useRef(false)
+
+  // Le bouton « Passer l'animation » disparaît avec l'intro : s'il avait le focus,
+  // celui-ci passe au titre du hero au lieu de retomber sur la page.
+  const finish = useCallback(() => {
+    if (skipRef.current && document.activeElement === skipRef.current) refocus.current = true
+    setState('done')
+  }, [])
 
   useEffect(() => {
     if (state !== 'play') return
-    const finish = () => setState('done')
     const timer = window.setTimeout(finish, INTRO_DURATION)
     window.addEventListener('keydown', finish, { once: true })
     window.addEventListener('pointerdown', finish, { once: true })
@@ -40,10 +49,14 @@ function useIntro() {
       window.removeEventListener('pointerdown', finish)
       window.removeEventListener('wheel', finish)
     }
-  }, [state])
+  }, [state, finish])
 
   useEffect(() => {
     if (state !== 'done') return
+    if (refocus.current) {
+      refocus.current = false
+      titleRef.current?.focus()
+    }
     try {
       sessionStorage.setItem(INTRO_KEY, '1')
     } catch {
@@ -51,7 +64,7 @@ function useIntro() {
     }
   }, [state])
 
-  return { state, skip: () => setState('done') }
+  return { state, skip: finish, skipRef, titleRef }
 }
 
 export function Hero() {
@@ -77,7 +90,7 @@ export function Hero() {
               </p>
 
               <p className="hero-kicker label">{hero.kicker}</p>
-              <h1 id="hero-title">
+              <h1 id="hero-title" ref={intro.titleRef} tabIndex={-1}>
                 <span className="sr-only">{hero.nameLines.join(' ')}</span>
                 <HeroName lines={hero.nameLines} />
               </h1>
@@ -132,7 +145,7 @@ export function Hero() {
           </a>
 
           {intro.state === 'play' && (
-            <button type="button" className="intro-skip label" onClick={intro.skip}>
+            <button ref={intro.skipRef} type="button" className="intro-skip label" onClick={intro.skip}>
               {hero.skipIntro}
             </button>
           )}

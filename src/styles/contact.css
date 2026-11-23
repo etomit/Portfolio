@@ -95,6 +95,9 @@
   text-decoration: underline;
   text-decoration-color: var(--line-3);
   text-underline-offset: 5px;
+  /* Au moins 24 px de haut à toucher, sans changer l'espacement de la liste. */
+  padding-block: 4px;
+  margin-block: -4px;
 }
 
 .contact-links a:hover {

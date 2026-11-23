@@ -57,6 +57,7 @@ export function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: 
   return (
     <header className={`site-header ${menuOpen ? 'is-menu-open' : ''}`}>
       <div className="shell header-inner">
+        {/* Le nom accessible commence par le texte visible, « Portfolio » : la commande vocale le retrouve. */}
         <a className="brand" href="#top" aria-label={t.a11y.home} onClick={() => setMenuOpen(false)}>
           <span className="brand-slash" aria-hidden="true">/</span>
           {t.brand}

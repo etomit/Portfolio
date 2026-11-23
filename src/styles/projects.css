@@ -209,6 +209,9 @@
   font: 500 0.78rem var(--font-mono);
   text-decoration: none;
   white-space: nowrap;
+  /* Au moins 24 px de haut à toucher, sans changer la hauteur des lignes. */
+  padding-block: 4px;
+  margin-block: -4px;
 }
 
 .archive-link:hover {

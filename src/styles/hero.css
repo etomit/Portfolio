@@ -68,6 +68,11 @@
   margin: 10px 0 0;
 }
 
+/* Le titre ne reçoit le focus que par script, à la fin de l'intro : pas de cadre autour du nom. */
+.hero h1:focus {
+  outline: none;
+}
+
 .hero-name {
   display: block;
   width: min(100%, 560px);

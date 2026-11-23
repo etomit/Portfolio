@@ -382,7 +382,7 @@ const fr = {
   },
   a11y: {
     skip: 'Aller au contenu',
-    home: 'Timothée Maire — retour en haut de page',
+    home: 'Portfolio de Timothée Maire — retour en haut de page',
     mainNav: 'Navigation principale',
     openMenu: 'Ouvrir le menu',
     closeMenu: 'Fermer le menu',
@@ -904,7 +904,7 @@ const en: Content = {
   },
   a11y: {
     skip: 'Skip to content',
-    home: 'Timothée Maire — back to top',
+    home: 'Portfolio — Timothée Maire, back to top',
     mainNav: 'Main navigation',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',

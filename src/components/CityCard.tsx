@@ -37,7 +37,13 @@ export function CityCard() {
         </button>
       </div>
       <div className="city-stage" ref={stageRef}>
-        <canvas ref={canvasRef} role="img" aria-label={copy.canvasLabel} />
+        {/* Tant que la ville n'est pas dessinée, seul le message de statut est lu : pas d'image vide annoncée. */}
+        <canvas
+          ref={canvasRef}
+          role="img"
+          aria-label={copy.canvasLabel}
+          aria-hidden={effective !== 'ready' || undefined}
+        />
         {effective === 'ready' && <p className="city-hint label" aria-hidden="true">{copy.hint}</p>}
         {(effective === 'idle' || effective === 'loading') && <p className="city-status label">{copy.loading}</p>}
         {effective === 'unsupported' && <p className="city-status label">{copy.unsupported}</p>}
