@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import { prefersReducedMotion } from '../useLazyScene'
-import { BusSketch } from './BusSketch'
+import { PortraitSketch } from './PortraitSketch'
 import { SectionHead, Sheet } from './Reveal'
 
 const clamp01 = (value: number) => Math.min(1, Math.max(0, value))
 
 /**
- * « À propos » : quatre étapes de parcours, et à côté un bus qui se dessine au défilement.
+ * « À propos » : quatre étapes de parcours, et à côté un portrait qui se dessine au défilement
+ * (construction, contour, ombres, puis la photo).
  * L'avancement est écrit directement dans les variables CSS du dessin (--s1 à --s4),
  * sans repasser par React à chaque image ; seuls le changement d'étape et le nombre de calques finis déclenchent un rendu.
  */
@@ -15,7 +16,7 @@ export function About() {
   const { t } = useI18n()
   const about = t.about
   const stepsRef = useRef<HTMLOListElement>(null)
-  const sketchRef = useRef<SVGSVGElement>(null)
+  const sketchRef = useRef<HTMLDivElement>(null)
   const drawingRef = useRef<HTMLDivElement>(null)
   // Mouvement réduit : tout le dessin est là d'emblée, la légende entièrement allumée, aucune étape mise en avant.
   const [reduced] = useState(prefersReducedMotion)
@@ -47,7 +48,7 @@ export function About() {
         if (rect.top < line) current = index
         return clamp01((line - rect.top) / Math.max(rect.height, viewport * 0.25))
       })
-      // Le premier calque (le plan) se trace dès que le dessin entre dans l'écran : la zone n'est jamais vide.
+      // Le premier calque (les tracés de construction) se trace dès que le dessin entre dans l'écran : la zone n'est jamais vide.
       const entry = clamp01((viewport * 0.95 - drawing.getBoundingClientRect().top) / (viewport * 0.35))
       progress[0] = Math.max(progress[0], entry)
       progress.forEach((value, index) => sketch.style.setProperty(`--s${index + 1}`, value.toFixed(3)))
@@ -75,20 +76,6 @@ export function About() {
 
           <div className="about-grid">
             <div className="about-text">
-              <figure className="portrait">
-                <img
-                  src="/portrait-520.webp"
-                  srcSet="/portrait-520.webp 520w, /portrait-900.webp 900w"
-                  sizes="(min-width: 900px) 220px, 46vw"
-                  width="520"
-                  height="608"
-                  alt={about.portraitAlt}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <figcaption className="label">{about.portraitCaption}</figcaption>
-              </figure>
-
               <ol className="about-steps" ref={stepsRef}>
                 {about.stages.map((stage, index) => (
                   <li key={stage.note} className={!reduced && index === active ? 'is-active' : ''}>
@@ -101,7 +88,7 @@ export function About() {
 
             <div className="about-drawing" ref={drawingRef}>
               <div className="about-drawing-inner">
-                <BusSketch ref={sketchRef} labels={t.hero.dims} label={about.sketchLabel} stages={[0, 0, 0, 0]} />
+                <PortraitSketch ref={sketchRef} alt={about.portraitAlt} caption={about.portraitCaption} stages={[0, 0, 0, 0]} />
                 <ul className="about-legend" aria-hidden="true">
                   {about.stages.map((stage, index) => (
                     <li key={stage.note} className={reduced || index < lit ? 'is-on' : ''}>

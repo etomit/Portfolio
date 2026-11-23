@@ -470,7 +470,6 @@ const fr = {
     ],
     portraitAlt: 'Photo de Timothée Maire, de face, avec des lunettes, une barbe courte et un manteau sombre',
     portraitCaption: 'Timothée Maire',
-    sketchLabel: 'Portrait de Timothée Maire qui se dessine en quatre calques : tracés de construction, contour, ombres hachurées, puis la photo',
   },
   experience: {
     title: 'Parcours',
@@ -1024,7 +1023,6 @@ const en: Content = {
     ],
     portraitAlt: 'Photo of Timothée Maire, facing the camera, with glasses, a short beard and a dark coat',
     portraitCaption: 'Timothée Maire',
-    sketchLabel: 'Portrait of Timothée Maire drawn in four layers: construction lines, outline, hatched shading, then the photo',
   },
   experience: {
     title: 'Work',

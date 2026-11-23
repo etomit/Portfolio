@@ -500,6 +500,24 @@ button {
     --s4: 1 !important;
   }
 
+  /* Le portrait d'« À propos » s'imprime entier : tous les calques, les deux jeux de hachures et la photo, sans masque. */
+  .portrait-sketch {
+    --s1: 1 !important;
+    --s2: 1 !important;
+    --s3: 1 !important;
+    --s4: 1 !important;
+  }
+
+  .portrait-sketch .ps-photo {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .portrait-sketch .ps-hatch-odd,
+  .portrait-sketch .ps-cartouche {
+    display: revert;
+  }
+
   /* Sans la scène 3D, le dessin technique du bus reprend sa place. */
   .bus-view .bus-fallback {
     opacity: 1 !important;
