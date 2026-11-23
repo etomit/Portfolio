@@ -2,6 +2,7 @@ import { lazy, Suspense, useState } from 'react'
 import type { ProjectItem } from '../content'
 import { useI18n } from '../i18n'
 import { CityCard } from './CityCard'
+import { EngineCard } from './EngineCard'
 import { Dialog } from './Dialog'
 import { ArrowRight, ArrowUpRight } from './icons'
 import { BracketLabel, Reveal, SectionHead, Sheet, Tags } from './Reveal'
@@ -134,7 +135,10 @@ export function Projects() {
 
           <Reveal className="playground">
             <h3 className="subhead">{playground.title}</h3>
-            <CityCard />
+            <div className="scene-cards">
+              <CityCard />
+              <EngineCard />
+            </div>
             <div className="game-cards">
               <article className="game-card">
                 <div className="mini-2048" aria-hidden="true">

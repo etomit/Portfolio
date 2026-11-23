@@ -1,6 +1,7 @@
 import sharp from 'sharp'
 import { statSync } from 'node:fs'
 import path from 'node:path'
+import { PORTRAIT_CROP } from './portrait-crop.mjs'
 
 // Usage : node assets-source/convert-images.mjs <dossier des PNG sources> [dossier de sortie]
 // Exemple : node assets-source/convert-images.mjs assets-source public
@@ -13,7 +14,7 @@ const kb = (file) => `${Math.round(statSync(file).size / 1024)} KB`
 for (const width of [520, 900]) {
   const file = out(`portrait-${width}.webp`)
   await sharp(path.join(pub, 'profile-optimized.png'))
-    .extract({ left: 40, top: 270, width: 1000, height: 1170 })
+    .extract(PORTRAIT_CROP)
     .resize({ width })
     .webp({ quality: 82, alphaQuality: 90 })
     .toFile(file)

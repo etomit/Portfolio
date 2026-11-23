@@ -29,10 +29,24 @@ import {
   Vector3,
   WebGLRenderer,
 } from 'three'
+import {
+  ECITARO_DOORS,
+  ECITARO_DOOR_TOP,
+  ECITARO_FRONT_AXLE,
+  ECITARO_HEIGHT,
+  ECITARO_ISLAND,
+  ECITARO_LENGTH,
+  ECITARO_REAR_AXLE,
+  ECITARO_RIGHT_PANES,
+  ECITARO_WIDTH,
+  ECITARO_WINDOW,
+} from '../sketch/busSketch'
 
 export interface BusSceneOptions {
-  /** Libellés des cotes, déjà formatés et traduits par l'appelant, ex. '12 000 mm'. */
+  /** Libellés des cotes, déjà formatés et traduits par l'appelant, ex. '12 135 mm'. */
   labels: { length: string; width: string; height: string }
+  /** Étiquettes des pièces de la vue éclatée : batteries, essieu moteur, prise de recharge. */
+  parts?: string[]
 }
 
 export interface BusScene {
@@ -40,6 +54,8 @@ export interface BusScene {
   setExploded(exploded: boolean): void
   /** Met le rendu en pause quand la scène n'est pas à l'écran. */
   setRunning(running: boolean): void
+  /** Remplace les libellés des cotes et des pièces (changement de langue) et les redessine. */
+  setLabels(dims: BusSceneOptions['labels'], tags: string[]): void
   dispose(): void
 }
 
@@ -49,43 +65,51 @@ type Ring = V2[]
 /** Projette un point d'un plan de dessin (u, v) dans le repère du bus. */
 type Mapper = (u: number, v: number) => P3
 
-// --- Gabarit : bus urbain standard de 12 m (1 unité = 1 m) -----------------------
-// Repère du bus : avant vers +X, côté portes (droit) vers +Z, sol à y = 0.
-const HALF_L = 6
-const WIDTH = 2.55
+// --- Gabarit : Mercedes-Benz eCitaro solo (1 unité = 1 m) --------------------------
+// Repère du bus : avant vers +X, côté portes (droit) vers +Z, sol à y = 0, origine au milieu.
+// Cotes : docs/ecitaro/REFERENCE.md ; positions relevées sur les vues officielles : docs/ecitaro/RELEVES.md.
+const HALF_L = ECITARO_LENGTH / 2
+const WIDTH = ECITARO_WIDTH
 const HALF_W = WIDTH / 2
-const HEIGHT = 3.05
+const HEIGHT = ECITARO_HEIGHT // sommet de l'îlot de toit
 const FLOOR_Y = 0.32 // bas de caisse
-const ROOF_Y = 2.8 // dessus du pavillon, hors climatisation
-const ROOF_CUT_Y = 2.6 // jonction flancs / pavillon
-const FRONT_CUT_X = 5.6 // jonction flancs / face avant
-const REAR_CUT_X = -5.6 // jonction flancs / face arrière
+const TAGS_MIN_WIDTH = 560 // largeur de canevas (px CSS) sous laquelle les pièces ne sont nommées que par la liste DOM
+const ROOF_Y = 2.8 // dessus du pavillon, sous l'îlot (non coté)
+const ROOF_CUT_Y = 2.72 // jonction flancs / pavillon
+const BAND_Y = 2.36 // bas de la bande noire qui prolonge le vitrage jusqu'au toit
+const ISLAND_BAND_Y = 3.05 // haut de cette bande sur le toit, base du capot de l'îlot
+const ISLAND_HALF_W = 1.12 // demi-largeur du capot de l'îlot, en retrait des flancs
+const FRONT_CUT_X = 5.55 // jonction flancs / face avant
+const REAR_CUT_X = -5.62 // jonction flancs / face arrière
 const SHELL = 0.04 // épaisseur des flancs
 const WHEEL_R = 0.48
 const ARCH_R = 0.6
-const FRONT_AXLE = 3.2
-const REAR_AXLE = -2.65
+const FLARE_R = 0.78 // relief du passage de roue, qui monte vers la ligne de vitrage
+const FRONT_AXLE = ECITARO_FRONT_AXLE
+const REAR_AXLE = ECITARO_REAR_AXLE
 const ARCH_BETA = Math.asin((WHEEL_R - FLOOR_Y) / ARCH_R)
 const ARCH_HALF = ARCH_R * Math.cos(ARCH_BETA) // demi-largeur d'un passage de roue au bas de caisse
-const WINDOW_Y0 = 1.3
-const WINDOW_Y1 = 2.42
-const DOOR_TOP = 2.45
-const SCREEN_Y0 = 1.0 // bas du pare-brise
-const SCREEN_Y1 = 2.55 // haut de la face avant, sous l'arrondi du pavillon
-const SCREEN_LEAN = 0.15 // recul du haut du pare-brise
-const AC_X0 = -4.9
-const AC_X1 = -1.9
+const [WINDOW_Y0, WINDOW_Y1] = ECITARO_WINDOW
+const DOOR_TOP = ECITARO_DOOR_TOP
+const SCREEN_Y0 = 0.95 // bas du pare-brise
+const SCREEN_LEAN = 0.32 // recul du haut du pare-brise
+const SCREEN_Y1 = ROOF_Y - (HALF_L - SCREEN_LEAN - FRONT_CUT_X) // haut de la face avant, sous l'arrondi
+const REAR_R = 0.42 // arrondi du haut de la face arrière
+const AC_X: V2 = [1.4, 3.4] // climatisation, à l'avant de l'îlot (estimé)
+const ROOF_PACKS: V2[] = [[-5.1, -3.2], [-3.0, -1.1], [-0.9, 1.0]] // 3 packs NMC4 sous l'îlot (estimé)
+const PACK_H = 0.32
+const SOCKET = { x: FRONT_AXLE, y0: 1.1, y1: 1.28, half: 0.16 } // prise CCS2 au-dessus de la roue avant droite
 const STEP = 0.3 // pas du maillage fin
 
-const RIGHT_DOORS: V2[] = [[-4.58, -3.38], [-0.36, 0.94], [4.04, 5.3]]
-const RIGHT_PANES: V2[] = [[-5.45, -4.7], [-3.26, -2.06], [-1.94, -0.48], [1.06, 2.36], [2.48, 3.92]]
+const RIGHT_DOORS: V2[] = ECITARO_DOORS.map(([a, b]): V2 => [a, b])
+const RIGHT_PANES: V2[] = ECITARO_RIGHT_PANES.map(([a, b]): V2 => [a, b])
 const LEFT_PANES: V2[] = [
   ...Array.from({ length: 7 }, (_, index): V2 => {
-    const width = (9.77 - 6 * 0.12) / 7
-    const start = -5.45 + index * (width + 0.12)
+    const width = (9.9 - 6 * 0.14) / 7
+    const start = -5.5 + index * (width + 0.14)
     return [start, start + width]
   }),
-  [4.44, 5.42], // vitre du poste de conduite
+  [4.55, 5.42], // vitre du poste de conduite
 ]
 
 // --- Mise en scène ----------------------------------------------------------------
@@ -252,6 +276,7 @@ function extrusionGrid(
   profile: Ring,
   skip: (a: V2, b: V2) => boolean,
   holes: (a: V2, b: V2, length: number) => Ring[] = () => [],
+  halfWidth = HALF_W,
 ) {
   let travelled = 0
   profile.forEach((a, index) => {
@@ -259,7 +284,7 @@ function extrusionGrid(
     const length = Math.hypot(b[0] - a[0], b[1] - a[1])
     if (length > 1e-6 && !skip(a, b)) {
       const map: Mapper = (z, t) => [a[0] + ((b[0] - a[0]) * t) / length, a[1] + ((b[1] - a[1]) * t) / length, z]
-      planarGrid(out, [rect(-HALF_W, 0, HALF_W, length), ...holes(a, b, length)], map, 0, -travelled)
+      planarGrid(out, [rect(-halfWidth, 0, halfWidth, length), ...holes(a, b, length)], map, 0, -travelled)
     }
     travelled += length
   })
@@ -289,14 +314,6 @@ function box(x0: number, y0: number, z0: number, x1: number, y1: number, z1: num
 function extrudeZ(ring: Ring, z0: number, z1: number, holes: Ring[] = []): BufferGeometry {
   const geometry = new ExtrudeGeometry(toShape(ring, holes), { depth: z1 - z0, bevelEnabled: false, steps: 1 })
   return geometry.translate(0, 0, z0)
-}
-
-/** Section (z, y) extrudée entre x0 et x1. */
-function extrudeX(section: Ring, x0: number, x1: number): BufferGeometry {
-  // rotateY(π/2) envoie (u, v, w) sur (w, v, -u) : on inverse u pour retrouver z.
-  const shape = toShape(section.map(([z, y]): V2 => [-z, y]))
-  const geometry = new ExtrudeGeometry(shape, { depth: x1 - x0, bevelEnabled: false, steps: 1 })
-  return geometry.rotateY(Math.PI / 2).translate(x0, 0, 0)
 }
 
 /** Plaque sans épaisseur (vitre, vantail) dans le plan z. */
@@ -344,14 +361,44 @@ function buildChassis(): Sketch {
     // Passage de roue : demi-cylindre qui ferme la découpe des flancs au-dessus de la roue.
     const housing = new CylinderGeometry(ARCH_R, ARCH_R, 2 * inner, 28, 1, true, Math.PI / 2 - ARCH_BETA, Math.PI + 2 * ARCH_BETA)
     sketch.solid(housing.rotateX(Math.PI / 2).translate(axle, WHEEL_R, 0))
-    sketch.solid(box(axle - 0.05, WHEEL_R - 0.05, -0.95, axle + 0.05, WHEEL_R + 0.05, 0.95)) // essieu
   }
-  sketch.solid(box(REAR_AXLE - 0.17, WHEEL_R - 0.15, -0.2, REAR_AXLE + 0.17, WHEEL_R + 0.15, 0.2)) // pont arrière
+  // Essieu avant à roues indépendantes ; l'essieu moteur arrière est une pièce à part.
+  sketch.solid(box(FRONT_AXLE - 0.05, WHEEL_R - 0.05, -0.95, FRONT_AXLE + 0.05, WHEEL_R + 0.05, 0.95))
+  return sketch
+}
+
+/** Essieu portique arrière, ses deux moteurs près des moyeux et ses roues jumelées : une seule pièce. */
+function buildDriveAxle(): Sketch {
+  const sketch = new Sketch()
+  const x = REAR_AXLE
+  for (const side of [1, -1] as const) {
+    const outer = side * (HALF_W - SHELL - 0.15)
+    addTire(sketch, x, outer, side, true)
+    addTire(sketch, x, outer - side * 0.31, side, false)
+    // Carter du renvoi portique, entre le moteur et la roue.
+    sketch.solid(box(x - 0.19, WHEEL_R - 0.24, side * 0.56, x + 0.19, WHEEL_R + 0.2, side * 0.62))
+    // Moteur électrique près du moyeu : cylindre couché selon l'essieu, en couleur d'accent.
+    const cy = WHEEL_R - 0.06
+    const z0 = side * 0.3
+    const z1 = side * 0.56
+    sketch.fills.push(new CylinderGeometry(0.17, 0.17, 0.26, 20).rotateX(Math.PI / 2).translate(x, cy, side * 0.43))
+    const angles = Array.from({ length: 20 }, (_, k) => (k / 20) * Math.PI * 2)
+    for (const z of [z0, z1, side * 0.37, side * 0.49]) {
+      polyline(sketch.accent, angles.map((a): P3 => [x + 0.17 * Math.cos(a), cy + 0.17 * Math.sin(a), z]), true)
+    }
+    for (let k = 0; k < 8; k++) {
+      const a = (k / 8) * Math.PI * 2
+      segment(sketch.accent, [x + 0.17 * Math.cos(a), cy + 0.17 * Math.sin(a), z0], [x + 0.17 * Math.cos(a), cy + 0.17 * Math.sin(a), z1])
+    }
+    polyline(sketch.accent, angles.map((a): P3 => [x + 0.07 * Math.cos(a), cy + 0.07 * Math.sin(a), z0]), true)
+  }
+  // Pont abaissé au centre : il laisse passer l'allée à plancher bas.
+  sketch.solid(box(x - 0.11, 0.2, -0.3, x + 0.11, 0.4, 0.3))
   return sketch
 }
 
 /** Contour d'un flanc : bas de caisse découpé par les passages de roue et, à droite, par les portes. */
-function sideOutline(doors: V2[]): Ring {
+function sideOutline(doors: V2[], top = ROOF_CUT_Y): Ring {
   const corner = 0.06
   const cuts = [
     ...[REAR_AXLE, FRONT_AXLE].map((axle) => ({
@@ -372,8 +419,8 @@ function sideOutline(doors: V2[]): Ring {
     [REAR_CUT_X, FLOOR_Y],
     ...cuts.flatMap((cut) => cut.points),
     [FRONT_CUT_X, FLOOR_Y],
-    [FRONT_CUT_X, ROOF_CUT_Y],
-    [REAR_CUT_X, ROOF_CUT_Y],
+    [FRONT_CUT_X, top],
+    [REAR_CUT_X, top],
   ])
 }
 
@@ -387,13 +434,34 @@ function buildWall(side: 1 | -1): Sketch {
   const inner = side * (HALF_W - SHELL)
   sketch.solid(extrudeZ(contour, Math.min(outer, inner), Math.max(outer, inner), holes))
   const onSide: Mapper = (x, y) => [x, y, outer]
-  planarGrid(sketch.soft, [contour, ...holes], onSide)
+  // Le maillage s'arrête sous la bande noire : au-dessus, le vitrage se prolonge visuellement jusqu'au toit.
+  planarGrid(sketch.soft, [sideOutline(doors, BAND_Y), ...holes], onSide)
+  for (const [x0, x1] of spansWithout(REAR_CUT_X, FRONT_CUT_X, doors)) segment(sketch.detail, onSide(x0, BAND_Y), onSide(x1, BAND_Y))
   // Ceinture sous les vitres et jonc de bas de caisse, interrompus par les portes et les passages de roue.
-  for (const [x0, x1] of spansWithout(REAR_CUT_X, FRONT_CUT_X, doors)) segment(sketch.detail, onSide(x0, 1.18), onSide(x1, 1.18))
-  const arches = [REAR_AXLE, FRONT_AXLE].map((axle): V2 => [axle - 0.59, axle + 0.59])
+  for (const [x0, x1] of spansWithout(REAR_CUT_X, FRONT_CUT_X, doors)) segment(sketch.detail, onSide(x0, 1.2), onSide(x1, 1.2))
+  const arches = [REAR_AXLE, FRONT_AXLE].map((axle): V2 => [axle - FLARE_R, axle + FLARE_R])
   for (const [x0, x1] of spansWithout(REAR_CUT_X, FRONT_CUT_X, [...doors, ...arches])) {
     segment(sketch.detail, onSide(x0, 0.66), onSide(x1, 0.66))
   }
+  // Relief des passages de roue, qui monte jusque sous la ligne de vitrage.
+  const flare = Math.asin((WHEEL_R - FLOOR_Y) / FLARE_R)
+  for (const axle of [REAR_AXLE, FRONT_AXLE]) {
+    polyline(sketch.detail, arc(axle, WHEEL_R, FLARE_R, Math.PI + flare, -flare, 20).map(([x, y]) => onSide(x, y)))
+  }
+  return sketch
+}
+
+/** Prise de recharge CCS2 : trappe au-dessus de la roue avant droite (position VDV). */
+function buildSocket(): Sketch {
+  const sketch = new Sketch()
+  const { x, y0, y1, half } = SOCKET
+  const z = HALF_W + 0.02
+  const onFlap: Mapper = (u, v) => [u, v, z]
+  sketch.solid(box(x - half, y0, HALF_W, x + half, y1, z))
+  outline(sketch.detail, roundedRect(x - half + 0.03, y0 + 0.025, x + half - 0.03, y1 - 0.025, 0.02), onFlap)
+  // Partie haute (type 2) et deux broches de courant continu en dessous.
+  outline(sketch.accent, circle(x, y1 - 0.065, 0.04, 16), onFlap)
+  for (const dx of [-0.05, 0.05]) outline(sketch.accent, circle(x + dx, y0 + 0.05, 0.022, 12), onFlap)
   return sketch
 }
 
@@ -427,32 +495,91 @@ function buildRoof(): Sketch {
   const sketch = new Sketch()
   sketch.solid(box(REAR_CUT_X, ROOF_CUT_Y, -HALF_W, FRONT_CUT_X, ROOF_Y, HALF_W))
   planarGrid(sketch.soft, [rect(REAR_CUT_X, -HALF_W, FRONT_CUT_X, HALF_W)], (x, z) => [x, ROOF_Y, z])
-  for (const side of [1, -1]) {
-    planarGrid(sketch.soft, [rect(REAR_CUT_X, ROOF_CUT_Y, FRONT_CUT_X, ROOF_Y)], (x, y) => [x, y, side * HALF_W])
+  return sketch
+}
+
+/** Profil de l'îlot vu de côté : plat au-dessus des batteries, en pente douce jusqu'au haut du pare-brise. */
+function islandProfile(): Ring {
+  const [rear, front] = ECITARO_ISLAND
+  const nose: Ring = Array.from({ length: 9 }, (_, index): V2 => {
+    // Courbe de Bézier quadratique du bas de la pente vers le début de la partie plate.
+    const t = index / 8
+    const u = 1 - t
+    const p0: V2 = [FRONT_CUT_X - 0.2, ISLAND_BAND_Y]
+    const p1: V2 = [front + 0.75, HEIGHT]
+    const p2: V2 = [front, HEIGHT]
+    return [u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0], u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1]]
+  })
+  return dedupe([
+    [rear, ISLAND_BAND_Y],
+    ...nose,
+    ...arc(rear + 0.25, HEIGHT - 0.25, 0.25, Math.PI / 2, Math.PI, 6),
+  ])
+}
+
+/**
+ * L'« îlot » couleur carrosserie qui coiffe le toit, posé sur une bande noire qui prolonge le vitrage.
+ * Il couvre la climatisation et les packs de batteries du toit.
+ */
+function buildIsland(): Sketch {
+  const sketch = new Sketch()
+  const bandRear = -HALF_L + REAR_R
+  const bandFront = FRONT_CUT_X + 0.05
+  const band: Ring = [[bandRear, ROOF_Y], [bandFront, ROOF_Y], [bandFront - 0.3, ISLAND_BAND_Y], [bandRear + 0.1, ISLAND_BAND_Y]]
+  sketch.solid(extrudeZ(band, -HALF_W, HALF_W))
+  const profile = islandProfile()
+  sketch.solid(extrudeZ(profile, -ISLAND_HALF_W, ISLAND_HALF_W))
+  for (const side of [1, -1]) planarGrid(sketch.soft, [profile], (x, y) => [x, y, side * ISLAND_HALF_W])
+  extrusionGrid(sketch.soft, profile, (a, b) => onSegment(a, b, 1, ISLAND_BAND_Y), () => [], ISLAND_HALF_W)
+  // Joints entre les segments de l'îlot (relevés sur la vue de profil).
+  for (const x of [-3.3, 0.65]) {
+    polyline(sketch.detail, [[x, HEIGHT, -ISLAND_HALF_W], [x, HEIGHT, ISLAND_HALF_W]])
+    for (const side of [1, -1]) segment(sketch.detail, [x, ISLAND_BAND_Y, side * ISLAND_HALF_W], [x, HEIGHT, side * ISLAND_HALF_W])
   }
-  // Trappes de toit.
-  for (const x of [1.3, 4.0]) {
-    sketch.solid(box(x - 0.4, ROOF_Y, -0.36, x + 0.4, ROOF_Y + 0.05, 0.36))
-    outline(sketch.detail, rect(x - 0.32, -0.28, x + 0.32, 0.28), (u, v) => [u, ROOF_Y + 0.05, v])
+  return sketch
+}
+
+/** Pack de batteries : boîtier, couvercle et neuf modules marqués sur le dessus. */
+function addPack(sketch: Sketch, x0: number, x1: number, y0: number, y1: number, halfZ: number) {
+  sketch.solid(box(x0, y0, -halfZ, x1, y1, halfZ))
+  const onTop: Mapper = (x, z) => [x, y1, z]
+  outline(sketch.detail, rect(x0 + 0.06, -halfZ + 0.06, x1 - 0.06, halfZ - 0.06), onTop)
+  for (let k = 1; k < 3; k++) {
+    const x = x0 + ((x1 - x0) * k) / 3
+    const z = -halfZ + (2 * halfZ * k) / 3
+    segment(sketch.soft, onTop(x, -halfZ + 0.06), onTop(x, halfZ - 0.06))
+    segment(sketch.soft, onTop(x0 + 0.06, z), onTop(x1 - 0.06, z))
   }
+  for (const side of [1, -1]) segment(sketch.detail, [x0, y0 + 0.08, side * halfZ], [x1, y0 + 0.08, side * halfZ])
+}
+
+/** Trois packs NMC4 sur le toit, sous l'îlot. */
+function buildRoofPacks(): Sketch {
+  const sketch = new Sketch()
+  for (const [x0, x1] of ROOF_PACKS) addPack(sketch, x0, x1, ROOF_Y, ROOF_Y + PACK_H, 0.98)
+  return sketch
+}
+
+/** Deux packs NMC4 dans l'ancien compartiment moteur, derrière la porte 3 (position estimée). */
+function buildRearPacks(): Sketch {
+  const sketch = new Sketch()
+  addPack(sketch, -5.85, -5.0, 0.62, 1.02, 1.0)
+  addPack(sketch, -5.85, -5.0, 1.07, 1.47, 1.0)
   return sketch
 }
 
 function buildAirConditioning(): Sketch {
   const sketch = new Sketch()
-  const shoulder = ROOF_Y + 0.09
-  sketch.solid(extrudeX([[-1, ROOF_Y], [1, ROOF_Y], [1, shoulder], [0.8, HEIGHT], [-0.8, HEIGHT], [-1, shoulder]], AC_X0, AC_X1))
-  // Nervures sur les pans coupés.
-  for (let k = Math.ceil(AC_X0 / STEP + 1e-6); k * STEP < AC_X1 - 1e-6; k++) {
-    const x = k * STEP
-    for (const side of [1, -1]) {
-      segment(sketch.soft, [x, ROOF_Y, side], [x, shoulder, side])
-      segment(sketch.soft, [x, shoulder, side], [x, HEIGHT, side * 0.8])
-    }
+  const [x0, x1] = AC_X
+  const top = ROOF_Y + 0.22
+  sketch.solid(box(x0, ROOF_Y, -0.95, x1, top, 0.95))
+  // Grilles sur les flancs du bloc.
+  for (let k = Math.ceil(x0 / STEP + 1e-6); k * STEP < x1 - 1e-6; k++) {
+    for (const side of [1, -1]) segment(sketch.soft, [k * STEP, ROOF_Y + 0.04, side * 0.95], [k * STEP, top - 0.04, side * 0.95])
   }
   // Deux ventilateurs sur le dessus.
-  const onTop: Mapper = (x, z) => [x, HEIGHT, z]
-  for (const cx of [-4.15, -2.65]) {
+  const onTop: Mapper = (x, z) => [x, top, z]
+  for (const cx of [x0 + 0.5, x1 - 0.5]) {
     outline(sketch.edges, circle(cx, 0, 0.32, 32), onTop)
     outline(sketch.detail, circle(cx, 0, 0.08, 16), onTop)
     for (let k = 0; k < 3; k++) {
@@ -486,52 +613,73 @@ function buildFront(): Sketch {
   sketch.solid(extrudeZ(profile, -HALF_W, HALF_W))
   for (const side of [1, -1]) planarGrid(sketch.soft, [profile], (x, y) => [x, y, side * HALF_W])
 
-  const windshield = roundedRect(-1.16, 1.07, 1.16, 2.24, 0.1)
-  const sign = roundedRect(-0.92, 2.3, 0.92, 2.5, 0.03)
+  // Pare-brise bombé qui monte jusque sous le toit et englobe la girouette ; montants A0 de part et d'autre.
+  const glassTop = SCREEN_Y1 - 0.04
+  const windshield = roundedRect(-1.14, 1.02, 1.14, glassTop, 0.12)
+  const panel = roundedRect(-1.2, 0.5, 1.2, 0.92, 0.06) // panneau noir brillant
   const screenLength = Math.hypot(SCREEN_LEAN, SCREEN_Y1 - SCREEN_Y0)
   const onFace = (ring: Ring) => ring.map(([z, y]): V2 => [z, ((y - SCREEN_Y0) / (SCREEN_Y1 - SCREEN_Y0)) * screenLength])
+  const noseBottom = FLOOR_Y + 0.12
   extrusionGrid(
     sketch.soft,
     profile,
     (a, b) => onSegment(a, b, 0, FRONT_CUT_X) || onSegment(a, b, 1, FLOOR_Y),
-    (a) => (near(a[0], HALF_L) && near(a[1], SCREEN_Y0) ? [onFace(windshield), onFace(sign)] : []),
+    (a) => {
+      if (near(a[0], HALF_L) && near(a[1], SCREEN_Y0)) return [onFace(windshield)]
+      if (near(a[0], HALF_L) && near(a[1], noseBottom)) return [panel.map(([z, y]): V2 => [z, y - noseBottom])]
+      return []
+    },
   )
 
   // Arêtes de raccordement des arrondis : sans elles, la silhouette se perdrait dans le fond.
-  for (const [x, y] of [[HALF_L, FLOOR_Y + 0.12], [HALF_L - SCREEN_LEAN, SCREEN_Y1]]) {
+  for (const [x, y] of [[HALF_L, noseBottom], [HALF_L - SCREEN_LEAN, SCREEN_Y1]]) {
     segment(sketch.edges, [x, y, -HALF_W], [x, y, HALF_W])
   }
 
   // Pare-brise, joint, reflets et essuie-glaces au repos.
   outline(sketch.edges, windshield, onScreen)
-  outline(sketch.detail, roundedRect(-1.11, 1.12, 1.11, 2.19, 0.07), onScreen)
-  glints(sketch.detail, -1.16, 1.07, 1.16, 2.24, onScreen)
-  segment(sketch.detail, onScreen(-0.98, 1.12), onScreen(-0.18, 1.15))
-  segment(sketch.detail, onScreen(0.06, 1.12), onScreen(0.86, 1.15))
-  // Girouette (afficheur de ligne) au-dessus du pare-brise.
-  outline(sketch.edges, sign, onScreen)
-  outline(sketch.accent, roundedRect(-0.86, 2.34, 0.86, 2.46, 0.02), onScreen)
-
-  // Phares et bouclier.
-  const onNose: Mapper = (z, y) => [HALF_L, y, z]
+  outline(sketch.detail, roundedRect(-1.09, 1.07, 1.09, glassTop - 0.05, 0.09), onScreen)
+  glints(sketch.detail, -1.14, 1.02, 1.14, 2.2, onScreen)
+  segment(sketch.detail, onScreen(-0.98, 1.07), onScreen(-0.18, 1.1))
+  segment(sketch.detail, onScreen(0.06, 1.07), onScreen(0.86, 1.1))
+  // Montants A0 : du bas du pare-brise jusqu'au toit.
+  for (const side of [1, -1]) polyline(sketch.detail, [onScreen(side * 1.2, SCREEN_Y0), onScreen(side * 1.2, SCREEN_Y1)])
+  // Girouette (afficheur de ligne), derrière le haut du pare-brise.
+  outline(sketch.detail, roundedRect(-0.88, 2.3, 0.88, 2.5, 0.03), onScreen)
+  outline(sketch.accent, roundedRect(-0.82, 2.34, 0.82, 2.46, 0.02), onScreen)
+  // Vitres latérales du poste avant, le long des montants A0.
   for (const side of [1, -1]) {
-    outline(sketch.edges, roundedRect(0.7, 0.6, 1.12, 0.8, 0.06).map(([z, y]): V2 => [side * z, y]), onNose)
-    for (const z of [0.81, 1.01]) outline(sketch.detail, circle(side * z, 0.7, 0.055, 14), onNose)
+    const onFlank: Mapper = (x, y) => [x, y, side * HALF_W]
+    outline(sketch.detail, [[FRONT_CUT_X + 0.04, WINDOW_Y0], [faceX(WINDOW_Y0) - 0.08, WINDOW_Y0], [faceX(2.45) - 0.08, 2.45], [FRONT_CUT_X + 0.04, 2.45]], onFlank)
   }
-  segment(sketch.detail, onNose(-HALF_W, 0.5), onNose(HALF_W, 0.5))
 
-  // Rétroviseurs « cornes de bélier » qui retombent devant le pare-brise.
+  // Panneau noir avec phares LED en amande, pare-chocs et support de plaque.
+  const onNose: Mapper = (z, y) => [HALF_L, y, z]
+  outline(sketch.edges, panel, onNose)
   for (const side of [1, -1]) {
-    const p0: P3 = [5.72, 2.62, side * 1.18]
-    const p1: P3 = [6.26, 2.74, side * 1.43]
-    const p2: P3 = [6.24, 2.42, side * 1.43]
+    const lens = (bulge: number) => Array.from({ length: 9 }, (_, index): V2 => {
+      const t = -1 + index / 4
+      return [side * (0.9 + 0.22 * t), 0.71 + 0.03 * t + bulge * (1 - t * t)]
+    })
+    outline(sketch.detail, dedupe([...lens(0.09), ...lens(-0.05).reverse()]), onNose)
+    for (const z of [0.76, 0.9, 1.04]) outline(sketch.detail, circle(side * z, 0.72, 0.03, 10), onNose)
+    segment(sketch.detail, onNose(side * 0.2, 0.68), onNose(side * 0.58, 0.68))
+  }
+  segment(sketch.detail, onNose(-HALF_W, 0.44), onNose(HALF_W, 0.44))
+  outline(sketch.detail, rect(-0.26, 0.33, 0.26, 0.43), onNose)
+
+  // Rétroviseurs « cornes de bélier » qui retombent devant le pare-brise (2 950 mm de large avec eux).
+  for (const side of [1, -1]) {
+    const p0: P3 = [HALF_L - SCREEN_LEAN, 2.58, side * 1.18]
+    const p1: P3 = [6.33, 2.72, side * 1.4]
+    const p2: P3 = [6.31, 2.42, side * 1.4]
     const arm = Array.from({ length: 11 }, (_, index): P3 => {
       const t = index / 10
       const u = 1 - t
       return [0, 1, 2].map((axis) => u * u * p0[axis] + 2 * u * t * p1[axis] + t * t * p2[axis]) as P3
     })
     polyline(sketch.edges, arm)
-    sketch.solid(box(6.205, 1.99, side * 1.32, 6.275, 2.41, side * 1.54))
+    sketch.solid(box(6.275, 1.98, side * 1.26, 6.345, 2.42, side * 1.475))
   }
   return sketch
 }
@@ -539,7 +687,7 @@ function buildFront(): Sketch {
 function rearProfile(): Ring {
   return dedupe([
     [REAR_CUT_X, ROOF_Y],
-    ...arc(-HALF_L + 0.3, ROOF_Y - 0.3, 0.3, Math.PI / 2, Math.PI, 8),
+    ...arc(-HALF_L + REAR_R, ROOF_Y - REAR_R, REAR_R, Math.PI / 2, Math.PI, 8),
     ...arc(-HALF_L + 0.1, FLOOR_Y + 0.1, 0.1, Math.PI, Math.PI * 1.5, 6),
     [REAR_CUT_X, FLOOR_Y],
   ])
@@ -552,7 +700,7 @@ function buildRear(): Sketch {
   for (const side of [1, -1]) planarGrid(sketch.soft, [profile], (x, y) => [x, y, side * HALF_W])
 
   const onTail: Mapper = (z, y) => [-HALF_L, y, z]
-  const backlight = roundedRect(-0.98, 1.72, 0.98, 2.36, 0.08)
+  const backlight = roundedRect(-0.98, 1.62, 0.98, 2.3, 0.08)
   extrusionGrid(
     sketch.soft,
     profile,
@@ -560,18 +708,25 @@ function buildRear(): Sketch {
     (a, b) => (onSegment(a, b, 0, -HALF_L) ? [backlight.map(([z, y]): V2 => [z, Math.abs(y - a[1])])] : []),
   )
   // Arêtes de raccordement des arrondis.
-  for (const [x, y] of [[-HALF_L, ROOF_Y - 0.3], [-HALF_L + 0.3, ROOF_Y], [-HALF_L, FLOOR_Y + 0.1]]) {
+  for (const [x, y] of [[-HALF_L, ROOF_Y - REAR_R], [-HALF_L + REAR_R, ROOF_Y], [-HALF_L, FLOOR_Y + 0.1]]) {
     segment(sketch.edges, [x, y, -HALF_W], [x, y, HALF_W])
   }
-  // Lunette arrière.
+  // Lunette arrière, reliée au toit par deux barres noires qui suivent l'arrondi.
   outline(sketch.edges, backlight, onTail)
-  outline(sketch.detail, roundedRect(-0.93, 1.77, 0.93, 2.31, 0.06), onTail)
-  glints(sketch.detail, -0.98, 1.72, 0.98, 2.36, onTail)
-  // Feux, grille du compartiment moteur, bouclier.
-  for (const side of [1, -1]) {
-    outline(sketch.edges, roundedRect(0.92, 0.62, 1.16, 1.5, 0.05).map(([z, y]): V2 => [side * z, y]), onTail)
-    for (const y of [0.9, 1.2]) segment(sketch.detail, onTail(side * 0.92, y), onTail(side * 1.16, y))
+  outline(sketch.detail, roundedRect(-0.93, 1.67, 0.93, 2.25, 0.06), onTail)
+  glints(sketch.detail, -0.98, 1.62, 0.98, 2.3, onTail)
+  const curve = arc(-HALF_L + REAR_R, ROOF_Y - REAR_R, REAR_R, Math.PI, Math.PI / 2, 8)
+  for (const z of [-0.62, 0.62]) {
+    polyline(sketch.detail, [[-HALF_L, 2.3, z], ...curve.map(([x, y]): P3 => [x, y, z])])
   }
+  // Feux du Citaro, enveloppants dans les montants d'angle ; capot arrière et pare-chocs.
+  for (const side of [1, -1]) {
+    outline(sketch.edges, roundedRect(0.98, 0.86, 1.22, 1.58, 0.05).map(([z, y]): V2 => [side * z, y]), onTail)
+    for (const y of [1.1, 1.34]) segment(sketch.detail, onTail(side * 0.98, y), onTail(side * 1.22, y))
+    const onFlank: Mapper = (x, y) => [x, y, side * HALF_W]
+    outline(sketch.edges, roundedRect(-HALF_L + 0.03, 0.86, -HALF_L + 0.3, 1.58, 0.05), onFlank)
+  }
+  outline(sketch.detail, roundedRect(-0.8, 0.58, 0.8, 1.5, 0.05), onTail)
   for (let k = 0; k < 6; k++) segment(sketch.detail, onTail(-0.62, 0.68 + k * 0.075), onTail(0.62, 0.68 + k * 0.075))
   segment(sketch.detail, onTail(-HALF_W, 0.5), onTail(HALF_W, 0.5))
   return sketch
@@ -622,7 +777,6 @@ function buildWheel(axle: number, side: 1 | -1): Sketch {
   const sketch = new Sketch()
   const outer = side * (HALF_W - SHELL - 0.15)
   addTire(sketch, axle, outer, side, true)
-  if (axle < 0) addTire(sketch, axle, outer - side * 0.31, side, false) // roues jumelées à l'arrière
   return sketch
 }
 
@@ -719,9 +873,13 @@ interface Label {
   heightPx: number
   /** Texte couché le long d'une ligne de cote presque verticale. */
   steep: boolean
+  /** Étiquette de pièce : fond plein et filet, pour rester lisible par-dessus le fil de fer. */
+  plate: boolean
 }
 
 interface Dimension {
+  /** Cote mesurée : sert à retrouver son libellé lors d'un changement de langue. */
+  kind: keyof BusSceneOptions['labels']
   lines: LineSegments
   material: LineBasicMaterial
   label: Label
@@ -798,10 +956,11 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const part: Part = { group, offset: new Vector3(...config.offset), delay: config.delay }
     parts.push(part)
     for (const point of config.anchors ?? []) anchors.push({ part, point: new Vector3(...point) })
+    return part
   }
 
   addPart(buildChassis(), {
-    offset: [0, -0.85, 0],
+    offset: [0, -0.42, 0],
     delay: 0.06,
     start: 0,
     anchors: [[REAR_CUT_X + 0.4, FLOOR_Y, HALF_W - SHELL], [FRONT_CUT_X - 0.4, FLOOR_Y, HALF_W - SHELL]],
@@ -810,11 +969,18 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     addPart(buildWall(side), { offset: [0, 0, 0], delay: 0, start: side === 1 ? 0.06 : 0.1 })
   }
   addPart(buildRear(), {
-    offset: [-1.3, 0, 0],
+    offset: [-1.4, 0, 0],
     delay: 0.04,
     start: 0.16,
     key: (_x, y) => y,
-    anchors: [[REAR_CUT_X, 1.4, HALF_W], [REAR_CUT_X, 1.4, -HALF_W]],
+    anchors: [[REAR_CUT_X, 1.9, HALF_W], [REAR_CUT_X, 1.9, -HALF_W]],
+  })
+  // Les deux packs de l'ancien compartiment moteur reculent, entre les flancs et la face arrière.
+  addPart(buildRearPacks(), {
+    offset: [-0.95, 0, 0],
+    delay: 0.1,
+    start: 0.18,
+    anchors: [[-5.0, 1.045, 0]],
   })
   addPart(buildFront(), {
     offset: [1.3, 0, 0],
@@ -823,20 +989,26 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     key: (_x, y) => y,
     anchors: [[FRONT_CUT_X, 1.4, HALF_W], [FRONT_CUT_X, 1.4, -HALF_W]],
   })
+  // L'essieu moteur et ses roues jumelées descendent d'une seule pièce, sous le plancher.
+  const driveAxle = addPart(buildDriveAxle(), {
+    offset: [0, -1.6, 0],
+    delay: 0.14,
+    start: 0.2,
+    key: (x, y, z) => Math.abs(z) * 2 + Math.atan2(y - WHEEL_R, x - REAR_AXLE) * 0.1,
+    anchors: [[REAR_AXLE, WHEEL_R, 0.43], [REAR_AXLE, WHEEL_R, -0.43]],
+  })
   let wheelIndex = 0
-  for (const axle of [REAR_AXLE, FRONT_AXLE]) {
-    for (const side of [1, -1] as const) {
-      addPart(buildWheel(axle, side), {
-        offset: [0, -0.5, side * 1.5],
-        delay: 0.14,
-        start: 0.2 + 0.03 * wheelIndex++,
-        key: (x, y) => Math.atan2(y - WHEEL_R, x - axle),
-        anchors: [[axle, WHEEL_R, side * (HALF_W - SHELL - 0.05)]],
-      })
-    }
+  for (const side of [1, -1] as const) {
+    addPart(buildWheel(FRONT_AXLE, side), {
+      offset: [0, -0.42, side * 1.45],
+      delay: 0.14,
+      start: 0.23 + 0.03 * wheelIndex++,
+      key: (x, y) => Math.atan2(y - WHEEL_R, x - FRONT_AXLE),
+      anchors: [[FRONT_AXLE, WHEEL_R, side * (HALF_W - SHELL - 0.05)]],
+    })
   }
   addPart(buildRoof(), {
-    offset: [0, 1.25, 0],
+    offset: [0, 0.6, 0],
     delay: 0.02,
     start: 0.3,
     anchors: [-HALF_W, HALF_W].flatMap((z): P3[] => [[REAR_CUT_X + 0.3, ROOF_CUT_Y, z], [FRONT_CUT_X - 0.3, ROOF_CUT_Y, z]]),
@@ -846,14 +1018,33 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
       offset: [0, 0, side * 1.35],
       delay: 0.1,
       start: side === 1 ? 0.36 : 0.4,
-      anchors: [[-4.0, 1.86, side * HALF_W], [3.0, 1.86, side * HALF_W]],
+      anchors: [[-4.0, 1.8, side * HALF_W], [3.0, 1.8, side * HALF_W]],
     })
   }
-  addPart(buildAirConditioning(), {
-    offset: [0, 1.85, 0],
+  const socket = addPart(buildSocket(), {
+    offset: [0, 0, 0.55],
     delay: 0.12,
-    start: 0.45,
-    anchors: [[(AC_X0 + AC_X1) / 2, ROOF_Y, 0]],
+    start: 0.42,
+    anchors: [[SOCKET.x, (SOCKET.y0 + SOCKET.y1) / 2, HALF_W]],
+  })
+  // Sous l'îlot : les 3 packs du toit et la climatisation se soulèvent, l'îlot monte plus haut encore.
+  const roofPacks = addPart(buildRoofPacks(), {
+    offset: [0, 1.15, 0],
+    delay: 0.08,
+    start: 0.44,
+    anchors: ROOF_PACKS.map(([x0, x1]): P3 => [(x0 + x1) / 2, ROOF_Y, 0]),
+  })
+  addPart(buildAirConditioning(), {
+    offset: [0, 1.15, 0],
+    delay: 0.1,
+    start: 0.46,
+    anchors: [[(AC_X[0] + AC_X[1]) / 2, ROOF_Y, 0]],
+  })
+  addPart(buildIsland(), {
+    offset: [0, 1.95, 0],
+    delay: 0.04,
+    start: 0.5,
+    anchors: [[ECITARO_ISLAND[0] + 0.3, ROOF_Y, 0], [ECITARO_ISLAND[1], ROOF_Y, 0]],
   })
 
   // Traits d'axe pointillés de la vue éclatée : de la position d'origine à la position courante.
@@ -872,14 +1063,14 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
   const labelCanvas = document.createElement('canvas')
   const labelContext = labelCanvas.getContext('2d')
 
-  function createLabel(text: string, position: Vector3): Label {
+  function createLabel(text: string, position: Vector3, plate = false): Label {
     const material = new SpriteMaterial({ transparent: true, depthTest: false, depthWrite: false, sizeAttenuation: false, opacity: 0 })
     const sprite = new Sprite(material)
     sprite.position.copy(position)
     sprite.renderOrder = 10
     sprite.visible = false
     bus.add(sprite)
-    return { text, sprite, material, texture: null, widthPx: 0, heightPx: 0, steep: false }
+    return { text, sprite, material, texture: null, widthPx: 0, heightPx: 0, steep: false, plate }
   }
 
   let compactLabels = false
@@ -889,13 +1080,21 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const fontPx = compactLabels ? 11 : 12
     const font = `500 ${fontPx * ratio}px ${LABEL_FONT}`
     labelContext.font = font
-    const width = Math.ceil(labelContext.measureText(label.text).width + 4 * ratio)
-    const height = Math.ceil((fontPx + 4) * ratio)
+    const pad = label.plate ? 7 : 2
+    const width = Math.ceil(labelContext.measureText(label.text).width + 2 * pad * ratio)
+    const height = Math.ceil((fontPx + (label.plate ? 10 : 4)) * ratio)
     const paint = document.createElement('canvas')
     paint.width = width
     paint.height = height
     const context = paint.getContext('2d')
     if (!context) return
+    if (label.plate) {
+      context.fillStyle = colors.fill
+      context.fillRect(0, 0, width, height)
+      context.strokeStyle = colors.accent
+      context.lineWidth = ratio
+      context.strokeRect(ratio / 2, ratio / 2, width - ratio, height - ratio)
+    }
     context.font = font
     context.fillStyle = colors.accent
     context.textAlign = 'center'
@@ -914,12 +1113,42 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
   }
   const drawLabels = () => {
     for (const dimension of dimensions) drawLabel(dimension.label)
+    for (const tag of partTags) drawLabel(tag.label)
     dirty = true
   }
 
+  // --- Étiquettes des pièces de la vue éclatée --------------------------------------------
+  // Une par pièce, au-dessus (side = 1) ou au-dessous (side = -1) de son point d'attache, qui suit la pièce.
+  // Chaque étiquette se pose au-dessus du point le plus haut (ou au-dessous du plus bas) de sa pièce à l'écran,
+  // pour ne jamais masquer la pièce, quel que soit l'angle de vue.
+  const partTags: Array<{ label: Label; part: Part; points: Vector3[]; side: 1 | -1; index: number }> = []
+  const tagTexts = options.parts ?? []
+  const corners = (x0: number, x1: number, y: number, z0: number, z1: number): P3[] => [[x0, y, z0], [x1, y, z0], [x0, y, z1], [x1, y, z1]]
+  const tagSpecs: Array<[Part, P3[], 1 | -1]> = [
+    [roofPacks, corners(ROOF_PACKS[0][0], ROOF_PACKS[2][1], ROOF_Y + PACK_H, -0.98, 0.98), 1],
+    [driveAxle, corners(REAR_AXLE - WHEEL_R, REAR_AXLE + WHEEL_R, 0, -HALF_W + SHELL, HALF_W - SHELL), -1],
+    [socket, corners(SOCKET.x - SOCKET.half, SOCKET.x + SOCKET.half, SOCKET.y1, HALF_W, HALF_W + 0.02), 1],
+  ]
+  tagSpecs.forEach(([part, points, side], index) => {
+    const text = tagTexts[index]
+    if (!text) return
+    const vectors = points.map((point) => new Vector3(...point))
+    partTags.push({ label: createLabel(text, vectors[0], true), part, points: vectors, side, index })
+  })
+  // Traits de rappel : de la pièce au bord de son étiquette, 1 px, tracés sous les étiquettes.
+  const leaderPositions = new Float32Array(partTags.length * 6)
+  const leaderGeometry = new BufferGeometry()
+  leaderGeometry.setAttribute('position', new BufferAttribute(leaderPositions, 3))
+  const leaderMaterial = new LineBasicMaterial({ transparent: true, depthTest: false, depthWrite: false, opacity: 0 })
+  const leaders = new LineSegments(leaderGeometry, leaderMaterial)
+  leaders.frustumCulled = false
+  leaders.renderOrder = 9
+  leaders.visible = false
+  bus.add(leaders)
+
   /** Ligne de cote avec flèches aux deux bouts, lignes d'attache et libellé. */
   function addDimension(
-    text: string,
+    kind: Dimension['kind'],
     start: Vector3,
     end: Vector3,
     across: Vector3,
@@ -946,8 +1175,8 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const lines = new LineSegments(geometry, material)
     lines.visible = false
     bus.add(lines)
-    const label = createLabel(text, start.clone().add(end).multiplyScalar(0.5))
-    dimensions.push({ lines, material, label, start, end, visibility })
+    const label = createLabel(options.labels[kind], start.clone().add(end).multiplyScalar(0.5))
+    dimensions.push({ kind, lines, material, label, start, end, visibility })
   }
 
   const v = (x: number, y: number, z: number) => new Vector3(x, y, z)
@@ -958,19 +1187,19 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     const z = side * HALF_W
     const facing = (view: Vector3) => smoothstep(0.12, 0.4, side * view.z)
     // Longueur, sous le bus, du côté visible.
-    addDimension(options.labels.length, v(-HALF_L, LENGTH_Y, z), v(HALF_L, LENGTH_Y, z), v(0, 1, 0), [
+    addDimension('length', v(-HALF_L, LENGTH_Y, z), v(HALF_L, LENGTH_Y, z), v(0, 1, 0), [
       [v(-HALF_L, FLOOR_Y + 0.1, z), v(-HALF_L, LENGTH_Y, z)],
       [v(HALF_L, FLOOR_Y + 0.12, z), v(HALF_L, LENGTH_Y, z)],
     ], facing)
-    // Hauteur, à l'arrière, au droit du sommet de la climatisation.
+    // Hauteur, à l'arrière, au sommet de l'îlot de toit (le pavillon n'est pas coté).
     const zh = side * 0.8
-    addDimension(options.labels.height, v(HEIGHT_X, 0, zh), v(HEIGHT_X, HEIGHT, zh), v(1, 0, 0), [
+    addDimension('height', v(HEIGHT_X, 0, zh), v(HEIGHT_X, HEIGHT, zh), v(1, 0, 0), [
       [v(-HALF_L, 0, zh), v(HEIGHT_X, 0, zh)],
-      [v(AC_X0, HEIGHT, zh), v(HEIGHT_X, HEIGHT, zh)],
+      [v(ECITARO_ISLAND[0] + 0.25, HEIGHT, zh), v(HEIGHT_X, HEIGHT, zh)],
     ], facing)
   }
   // Largeur, à l'avant, au sol.
-  addDimension(options.labels.width, v(WIDTH_X, 0, -HALF_W), v(WIDTH_X, 0, HALF_W), v(1, 0, 0), [
+  addDimension('width', v(WIDTH_X, 0, -HALF_W), v(WIDTH_X, 0, HALF_W), v(1, 0, 0), [
     [v(HALF_L, 0, -HALF_W), v(WIDTH_X, 0, -HALF_W)],
     [v(HALF_L, 0, HALF_W), v(WIDTH_X, 0, HALF_W)],
   ], (view) => smoothstep(0.12, 0.4, view.x))
@@ -996,7 +1225,10 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
   let tiltTarget = 0
   let viewWidth = 1
   let viewHeight = 1
-  const framing = { assembled: frame(7.1, -0.85, 3.1, 1), exploded: frame(7.75, -0.65, 4.95, 1) }
+  // Encombrements : cotes comprises en vue assemblée ; îlot soulevé, essieu descendu et étiquettes en vue éclatée.
+  const ASSEMBLED: [number, number, number] = [7.15, -0.85, 3.5]
+  const EXPLODED: [number, number, number] = [7.8, -2.0, 5.45]
+  const framing = { assembled: frame(...ASSEMBLED, 1), exploded: frame(...EXPLODED, 1) }
 
   function applyColors() {
     const style = getComputedStyle(document.documentElement)
@@ -1017,6 +1249,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     if (colors.accent) {
       accentMaterial.color.set(colors.accent)
       for (const dimension of dimensions) dimension.material.color.set(colors.accent)
+      leaderMaterial.color.set(colors.accent)
     }
     drawLabels()
   }
@@ -1123,6 +1356,83 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     }
   }
 
+  // Coins de la caisse (hors pièces éclatées), projetés à chaque image pour en tirer l'emprise à l'écran.
+  const bodyCorners = [-HALF_L, HALF_L].flatMap((x) => [FLOOR_Y, ROOF_Y].flatMap((y) => [-HALF_W, HALF_W].map((z) => new Vector3(x, y, z))))
+  const leaderEnd = new Vector3()
+
+  /** Étiquettes des pièces : visibles en fin d'éclatement, entières dans le canevas, hors de la silhouette de la caisse. */
+  function updatePartTags() {
+    // Canevas étroit : pas d'étiquettes de pièces dans la scène, la liste affichée sous le bus les nomme déjà.
+    // Le seuil est relu à chaque image sur la largeur courante : rotation d'écran et redimensionnement compris.
+    const shown = viewWidth < TAGS_MIN_WIDTH ? 0 : smoothstep(0.6, 1, easeInOutCubic(explodeProgress)) * smoothstep(0.72, 1, buildProgress)
+    const scale = 2 / (camera.projectionMatrix.elements[5] * viewHeight)
+    leaderMaterial.opacity = shown
+    leaders.visible = shown > 0.01
+    leaderPositions.fill(0)
+    // Centre et demi-encombrement des zones déjà prises : d'abord la caisse, puis chaque étiquette posée.
+    let minX = Infinity
+    let maxX = -Infinity
+    let minY = Infinity
+    let maxY = -Infinity
+    for (const corner of bodyCorners) {
+      projectedA.copy(corner).applyMatrix4(bus.matrixWorld).project(camera)
+      const px = (projectedA.x * viewWidth) / 2
+      const py = (projectedA.y * viewHeight) / 2
+      minX = Math.min(minX, px)
+      maxX = Math.max(maxX, px)
+      minY = Math.min(minY, py)
+      maxY = Math.max(maxY, py)
+    }
+    const placed: Array<[number, number, number, number]> = [[(minX + maxX) / 2, (minY + maxY) / 2, (maxX - minX) / 2, (maxY - minY) / 2]]
+    for (const [slot, { label, part, points, side }] of partTags.entries()) {
+      label.material.opacity = shown
+      label.material.rotation = 0
+      label.sprite.visible = shown > 0.01 && label.texture !== null
+      if (!label.sprite.visible) continue
+      // Point d'attache : le coin extrême à l'écran dans le sens de l'étiquette, centré sur la pièce en largeur.
+      let middle = 0 // abscisse moyenne de la pièce à l'écran
+      let sx = 0 // coin retenu, où le sprite est posé
+      let sy = side * -Infinity
+      let sz = 0 // profondeur normalisée du coin retenu, pour ramener le bout du trait de rappel dans la scène
+      for (const point of points) {
+        projectedB.copy(point).add(part.group.position)
+        projectedA.copy(projectedB).applyMatrix4(bus.matrixWorld).project(camera)
+        const px = (projectedA.x * viewWidth) / 2
+        const py = (projectedA.y * viewHeight) / 2
+        middle += px / points.length
+        if (side * py > side * sy) {
+          sx = px
+          sy = py
+          sz = projectedA.z
+          label.sprite.position.copy(projectedB)
+        }
+      }
+      const halfW = label.widthPx / 2
+      const halfH = label.heightPx / 2
+      const cx = clamp(middle, -viewWidth / 2 + halfW + 4, viewWidth / 2 - halfW - 4)
+      const limitY = (y: number) => clamp(y, -viewHeight / 2 + halfH + 4, viewHeight / 2 - halfH - 4)
+      let cy = limitY(sy + side * (halfH + 6))
+      // Deux étiquettes qui se chevauchent : la suivante s'écarte dans son sens (au-dessus ou au-dessous).
+      for (let pass = 0; pass < 3; pass++) {
+        const hit = placed.find(([px, py, pw, ph]) => Math.abs(cx - px) < halfW + pw + 4 && Math.abs(cy - py) < halfH + ph + 4)
+        if (!hit) break
+        const moved = limitY(hit[1] + side * (halfH + hit[3] + 5))
+        cy = moved === cy ? limitY(hit[1] - side * (halfH + hit[3] + 5)) : moved
+      }
+      placed.push([cx, cy, halfW, halfH])
+      label.sprite.center.set(0.5 - (cx - sx) / label.widthPx, 0.5 - (cy - sy) / label.heightPx)
+      label.sprite.scale.set(label.widthPx * scale, label.heightPx * scale, 1)
+      // Trait de rappel : du coin de la pièce au bord de l'étiquette qui lui fait face.
+      const ex = clamp(sx, cx - halfW + 2, cx + halfW - 2)
+      const ey = sy < cy ? cy - halfH : cy + halfH
+      leaderEnd.set((2 * ex) / viewWidth, (2 * ey) / viewHeight, sz).unproject(camera)
+      bus.worldToLocal(leaderEnd)
+      const anchor = label.sprite.position
+      leaderPositions.set([anchor.x, anchor.y, anchor.z, leaderEnd.x, leaderEnd.y, leaderEnd.z], slot * 6)
+    }
+    leaderGeometry.getAttribute('position').needsUpdate = true
+  }
+
   function resize() {
     const { clientWidth: width, clientHeight: height } = canvas
     if (width === 0 || height === 0) return
@@ -1131,8 +1441,8 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     renderer.setSize(width, height, false)
     camera.aspect = width / height
     camera.updateProjectionMatrix()
-    framing.assembled = frame(7.1, -0.85, 3.1, camera.aspect)
-    framing.exploded = frame(7.75, -0.65, 4.95, camera.aspect)
+    framing.assembled = frame(...ASSEMBLED, camera.aspect)
+    framing.exploded = frame(...EXPLODED, camera.aspect)
     const compact = width < 520
     if (compact !== compactLabels) {
       compactLabels = compact
@@ -1184,6 +1494,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
     updateCamera()
     scene.updateMatrixWorld()
     updateDimensions()
+    updatePartTags()
     renderer.render(scene, camera)
   }
 
@@ -1262,6 +1573,13 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
         frameId = requestAnimationFrame(tick)
       }
     },
+    setLabels(dims, tags) {
+      if (disposed) return
+      // Textes mis à jour même quand les étiquettes de pièces sont masquées : justes dès que le canevas s'élargit.
+      for (const dimension of dimensions) dimension.label.text = dims[dimension.kind]
+      for (const tag of partTags) tag.label.text = tags[tag.index] ?? tag.label.text
+      drawLabels()
+    },
     dispose() {
       disposed = true
       cancelAnimationFrame(frameId)
@@ -1283,6 +1601,7 @@ export function createBusScene(canvas: HTMLCanvasElement, options: BusSceneOptio
         }
       })
       for (const dimension of dimensions) dimension.label.texture?.dispose()
+      for (const tag of partTags) tag.label.texture?.dispose()
       for (const material of materials) material.dispose()
       renderer.dispose()
     },

@@ -82,42 +82,104 @@
 /* ---------- Section « À propos » ---------- */
 
 .about-grid {
+  /* Hauteur de la légende sous le portrait (une ligne), et hauteur maximale du portrait :
+     il tient dans l'écran sous l'en-tête, avec sa légende. */
+  --legend-h: 40px;
+  --ps-h: min(560px, calc(100svh - 96px - var(--legend-h) - 24px));
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
   gap: clamp(28px, 5vw, 72px);
 }
 
-.portrait {
-  position: relative;
-  width: min(220px, 52%);
-  margin: 0 0 clamp(28px, 4vw, 44px);
-  padding: 8px;
-  border: 1px solid var(--line-3);
+.about-text {
+  max-width: 62ch;
 }
 
-.portrait img {
-  display: block;
+/* ---------- Le portrait qui se dessine ---------- */
+
+.portrait-sketch {
+  --line-w: 3.2; /* épaisseurs en unités du viewBox (1000 de large) : au moins 1 px à l'écran */
+  --thin-w: 2.4;
+}
+
+.ps-box {
+  position: relative;
+  width: min(100%, calc(var(--ps-h) * 1000 / 1170));
+  aspect-ratio: 1000 / 1170;
+  margin-inline: auto;
+  /* Fond opaque du thème : le mélange de la photo se fait sur lui, sur ordinateur comme sur mobile. */
+  background: var(--bg);
+}
+
+/* Calque 4 : la photo, révélée par un masque qui descend, teintée par le thème. */
+.ps-photo {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  height: auto;
-  background: var(--bg-raised);
+  height: 100%;
   filter: grayscale(1) contrast(1.08);
   mix-blend-mode: luminosity;
+  opacity: min(1, calc(var(--s4, 1) * 2.5));
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(var(--s4, 1) * 125% - 25%), transparent calc(var(--s4, 1) * 125%));
+  mask-image: linear-gradient(to bottom, #000 calc(var(--s4, 1) * 125% - 25%), transparent calc(var(--s4, 1) * 125%));
+  /* Découpée au filet du cadre de mise au carreau (x = 28, y = 1142 du viewBox 1000 × 1170) : rien ne déborde en bas ni à gauche. */
+  clip-path: inset(0 0 calc(28 / 1170 * 100%) calc(28 / 1000 * 100%));
 }
 
-.portrait::after {
-  content: '';
+/* Une fois la photo là, les traits restent en surimpression légère, comme un calque sur un tirage. */
+.ps-svg {
   position: absolute;
-  inset: 8px;
-  background-image:
-    linear-gradient(var(--grid-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
-  background-size: 16px 16px;
-  pointer-events: none;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: calc(1 - var(--s4, 1) * 0.62);
 }
 
-.portrait figcaption {
-  margin-top: 8px;
-  font-size: 0.72rem;
+.ps-l1 {
+  --draw: var(--s1, 1);
+  stroke: var(--line-2);
+  stroke-width: var(--thin-w);
+  opacity: 0.75;
+}
+
+.ps-l2 {
+  --draw: var(--s2, 1);
+  stroke: var(--line);
+  stroke-width: var(--line-w);
+}
+
+/* Chaque trait se trace dans sa fenêtre [--a, --a + --b] de l'avancement du calque. */
+.ps-stroke {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, (var(--draw) - var(--a)) / var(--b), 1));
+}
+
+/* Calque 3 : les hachures, découvertes par un demi-plan qui balaie en diagonale. */
+.ps-hatch {
+  fill: none;
+  stroke: var(--line-2);
+  stroke-width: var(--thin-w);
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+
+.ps-sweep {
+  transform: rotate(45deg) translateX(calc(var(--s3, 1) * 1580px - 20px));
+}
+
+.ps-cartouche {
+  position: absolute;
+  right: 2.8%;
+  bottom: 2.4%;
+  padding: 3px 8px;
+  border-top: 1px solid var(--line-3);
+  border-left: 1px solid var(--line-3);
+  background: var(--bg);
+  font-size: 0.7rem;
   letter-spacing: 0.04em;
 }
 
@@ -140,8 +202,16 @@
   border-left-color: var(--accent);
 }
 
+/* La dernière étape mesure au moins le quart de l'écran (la base du calcul d'avancement dans About.tsx) :
+   le calque 4 est fini quand son bas passe la ligne de lecture, à 60 % de l'écran. */
 .about-steps li:last-child {
-  min-height: 0;
+  min-height: 25vh;
+}
+
+/* Espace sous la dernière étape : le dessin collant ne décroche qu'une fois le calque 4 fini,
+   c'est-à-dire quand le bas de la grille passe sous le dessin (en-tête + 32 px + portrait + légende). */
+.about-steps {
+  padding-bottom: max(0px, calc(var(--header-height) + 32px + var(--ps-h) + 14px + var(--legend-h) - 60svh + 16px));
 }
 
 .about-note {
@@ -161,7 +231,7 @@
 }
 
 .about-step-text {
-  max-width: 48ch;
+  max-width: 62ch;
   margin-top: 6px;
   color: var(--ink-soft);
   font-size: 1.05rem;
@@ -175,13 +245,13 @@
 .about-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 22px;
+  gap: 8px 14px;
   justify-content: center;
   margin: 14px 0 0;
   padding: 0;
   list-style: none;
   font-family: var(--font-hand);
-  font-size: 1.3rem;
+  font-size: 1.12rem;
   color: var(--muted);
 }
 
@@ -229,16 +299,47 @@
     position: static;
   }
 
-  .about-drawing .bus-sketch {
-    max-height: 30vh;
+  /* Le portrait tient dans la bande : un tiers d'écran environ, traits plus épais en unités du viewBox
+     pour rester à 1 px au moins, un seul des deux jeux de hachures. */
+  .about-drawing .ps-box {
+    width: calc(30svh * 1000 / 1170);
+  }
+
+  .portrait-sketch {
+    --line-w: 5.6;
+    --thin-w: 4.8;
+  }
+
+  .ps-hatch-odd {
+    display: none;
+  }
+
+  .ps-cartouche {
+    display: none;
   }
 
   .about-legend {
     margin-top: 4px;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
+    gap: 12px;
+    /* La légende déborde un peu de la colonne du dessin, dans la marge du bandeau. */
+    margin-inline: -12px;
+  }
+
+  /* Losange plus serré : avec le débord, les quatre notes tiennent sur une ligne à 390 px. */
+  .about-legend li::before {
+    margin-right: 5px;
+  }
+
+  .about-text {
+    max-width: none;
   }
 
   .about-steps li {
     min-height: 30vh;
+  }
+
+  .about-steps {
+    padding-bottom: 0;
   }
 }
